@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Sultan - Python Developer Portfolio" />
   <title>Sultan | Python Developer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code&family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-papKdcREv1MVnZPYCx4xQ4F2U6ie6MbOmiE62rDCtZKz3rC3OJZfdOEdBBYZFFccrMZBXda3FqluG2RN+77p+A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <style>
     * {
@@ -12,31 +13,58 @@
       padding: 0;
       box-sizing: border-box;
     }
+
     body {
-      font-family: 'Segoe UI', sans-serif;
+      font-family: 'Roboto', sans-serif;
       background-color: #0f0f0f;
       color: #fff;
-      line-height: 1.6;
       padding: 20px;
     }
-    header, section {
-      margin-bottom: 40px;
+
+    h1, h2 {
+      color: #f72ee2;
+      margin-bottom: 10px;
     }
+
+    p, li {
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+
     header {
       text-align: center;
+      margin-bottom: 40px;
     }
-    header img {
+
+    header img:first-child {
       max-width: 100%;
       height: auto;
     }
-    h1, h2 {
-      color: #f72ee2;
+
+    header img:nth-child(2) {
+      width: 180px;
+      margin-top: 20px;
     }
+
+    pre {
+      background: #1c1c1c;
+      padding: 15px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-family: 'Fira Code', monospace;
+      margin-top: 10px;
+    }
+
     .technologies img {
       width: 40px;
-      margin-right: 10px;
-      vertical-align: middle;
+      margin: 5px;
+      transition: transform 0.3s ease;
     }
+
+    .technologies img:hover {
+      transform: scale(1.2);
+    }
+
     .projects img {
       width: 300px;
       height: 150px;
@@ -45,23 +73,49 @@
       border-radius: 10px;
       transition: transform 0.3s ease;
     }
+
     .projects img:hover {
       transform: scale(1.05);
     }
+
+    ul {
+      margin-left: 20px;
+      margin-top: 10px;
+    }
+
     .contact a {
       color: #00f0ff;
       text-decoration: none;
       margin-right: 15px;
+      font-weight: bold;
+      font-size: 1.1rem;
     }
+
+    .contact a i {
+      margin-right: 5px;
+    }
+
     footer {
       text-align: center;
       margin-top: 60px;
       font-size: 14px;
       color: #777;
     }
+
+    section {
+      margin-bottom: 40px;
+      border-left: 3px solid #f72ee2;
+      padding-left: 15px;
+    }
+
     @media (max-width: 600px) {
       .projects img {
-        width: 90%;
+        width: 100%;
+      }
+
+      .contact a {
+        display: block;
+        margin: 10px 0;
       }
     }
   </style>
@@ -70,10 +124,11 @@
   <header>
     <img src="https://readme-typing-svg.herokuapp.com?&font=IBM+Plex+Sans&color=F72EE2&size=25&lines=Welcome+to+My+GitHub+Profile!;Python+Enthusiast+and+Developer!;Building+Projects+One+Line+at+a+Time!" alt="Typing banner" />
     <br>
-    <img src="https://media.giphy.com/media/M9gbBd9nbDrOTu1Mqx/giphy.gif" width="200" />
+    <img src="https://media.giphy.com/media/M9gbBd9nbDrOTu1Mqx/giphy.gif" alt="Coding gif" />
     <h1>Xoş Gəldiniz!</h1>
     <p>Python proqramçısı | Bot yaradıcısı | Avtomatlaşdırma həvəskarı</p>
   </header>
+
   <section>
     <h2>Haqqımda</h2>
     <pre><code>class Sultan:
@@ -83,12 +138,15 @@
     self.location = "Azərbaycan"
     self.skills = ["Python", "JavaScript", "Linux", "Automation"]
     self.goals = "Innovative Bot Development"
-  def __str__(self): return f"Developer: {self.name}, Location: {self.location}"
+
+  def __str__(self):
+    return f"Developer: {self.name}, Location: {self.location}"
 
 if __name__ == '__main__':
   me = Sultan()
   print(me)</code></pre>
   </section>
+
   <section class="technologies">
     <h2>İstifadə Etdiyim Texnologiyalar</h2>
     <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg" alt="Git">
@@ -99,11 +157,13 @@ if __name__ == '__main__':
     <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-plain.svg" alt="HTML">
     <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-plain.svg" alt="CSS">
   </section>
+
   <section class="projects">
     <h2>Proyektlərim</h2>
     <img src="https://via.placeholder.com/300x150?text=Проект+1" alt="Project 1">
     <img src="https://via.placeholder.com/300x150?text=Проект+2" alt="Project 2">
   </section>
+
   <section>
     <h2>Dəfəələr və Sertifikatlar</h2>
     <ul>
@@ -112,6 +172,7 @@ if __name__ == '__main__':
       <li>🎯 Kodlaşdırma müsabiqələrində mükafatlar qazanmışam</li>
     </ul>
   </section>
+
   <section>
     <h2>2024 Məqsədlərim</h2>
     <ul>
@@ -120,6 +181,7 @@ if __name__ == '__main__':
       <li>🎓 Open Source layihələrdə iştirak edərək 100+ kodlamaya töhfə vermək</li>
     </ul>
   </section>
+
   <section class="contact">
     <h2>Əlaqə</h2>
     <p>
@@ -127,9 +189,9 @@ if __name__ == '__main__':
       <a href="mailto:sultanov.mbk@gmail.com"><i class="fas fa-envelope"></i> Email</a>
     </p>
   </section>
+
   <footer>
-    <p>© 2025 Sultan | Hazırlandı Emilya dəstəyi ilə</p>
+    <p>© 2025 Sultan | Hazırlandı Emilyanın dəstəyi ilə</p>
   </footer>
 </body>
 </html>
-    
