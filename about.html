@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Haqqımda | Sultan</title>
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
+  <script src="https://kit.fontawesome.com/a2e8b6d37f.js" crossorigin="anonymous"></script>
+  <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet" />
+</head>
+<body id="top">
+  <nav class="navbar">
+    <div class="container">
+      <div class="logo">Sultan</div>
+      <ul class="nav-links">
+        <li><a href="index.html">Ana Səhifə</a></li>
+        <li><a href="about.html" class="active">Haqqımda</a></li>
+        <li><a href="projects.html">Proyektlərim</a></li>
+        <li><a href="contact.html">Əlaqə</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <section class="about">
+    <div class="container">
+      <h2 data-aos="fade-right">Mən Kiməm?</h2>
+      <p data-aos="fade-up">
+        Mən Sultan – Python proqramçısıyam. Xüsusilə Telegram botları, avtomatlaşdırma sistemləri və data analizi sahəsində təcrübəm var. Açıq mənbə layihələrdə iştirak etməyi və yeni texnologiyalar öyrənməyi sevirəm.
+      </p>
+      <p data-aos="fade-up" data-aos-delay="200">
+        Təşkilatlarda iş axınlarını sadələşdirmək və prosesləri avtomatlaşdırmaq üzrə həllər təqdim edirəm. Linux, Git, API inteqrasiyası və data ilə işləmə mənim gündəlik alətlərimdir.
+      </p>
+
+      <!-- Statistikalar -->
+      <div class="stats">
+        <div class="stat" data-aos="flip-up">
+          <h3 class="counter" data-target="22">0</h3>
+          <p>Layihə tamamlandı</p>
+        </div>
+        <div class="stat" data-aos="flip-up" data-aos-delay="100">
+          <h3 class="counter" data-target="1200">0</h3>
+          <p>Kod yazılıb</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p>© 2025 Sultan. Hazırlandı Emilyanın köməyi ilə.</p>
+  </footer>
+
+  <a href="#top" class="scroll-up" id="scrollUpBtn"><i class="fas fa-arrow-up"></i></a>
+
+  <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+  <script>
+    AOS.init({ duration: 1000, once: true, offset: 100 });
+
+    const scrollUpBtn = document.getElementById("scrollUpBtn");
+    window.addEventListener("scroll", () => {
+      scrollUpBtn.classList.toggle("show", window.scrollY > 300);
+    });
+
+    // Sayğac effekti
+    const counters = document.querySelectorAll('.counter');
+    const speed = 200;
+
+    const animateCounters = () => {
+      counters.forEach(counter => {
+        const updateCount = () => {
+          const target = +counter.getAttribute('data-target');
+          const count = +counter.innerText;
+          const increment = Math.ceil(target / speed);
+
+          if (count < target) {
+            counter.innerText = count + increment;
+            setTimeout(updateCount, 20);
+          } else {
+            // Son rəqəmi formatla, + saat əlavə et 1000-dən böyük rəqəmlərə
+            counter.innerText = target >= 1000 ? target.toLocaleString() + "+" : target.toLocaleString();
+          }
+        };
+        updateCount();
+      });
+    };
+
+    // AOS animasiyası görününcə sayğacı işə sal
+    document.addEventListener('aos:in', ({ detail }) => {
+      if (detail.classList.contains('stat')) {
+        animateCounters();
+      }
+    });
+  </script>
+</body>
+</html>

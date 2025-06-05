@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Əlaqə | Sultan</title>
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
+  <script src="https://kit.fontawesome.com/a2e8b6d37f.js" crossorigin="anonymous"></script>
+  <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet" />
+</head>
+<body>
+  <nav class="navbar">
+    <div class="container">
+      <div class="logo">Sultan</div>
+      <ul class="nav-links">
+        <li><a href="index.html">Ana Səhifə</a></li>
+        <li><a href="about.html">Haqqımda</a></li>
+        <li><a href="projects.html">Proyektlər</a></li>
+        <li><a href="contact.html" class="active">Əlaqə</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="container">
+      <h1 data-aos="fade-up">Əlaqə</h1>
+      <p data-aos="fade-up" data-aos-delay="200">
+        Mənimlə əlaqə saxlamaq üçün aşağıdakı formadan istifadə edə və ya sosial platformalardan birini seçə bilərsiniz.
+      </p>
+    </div>
+  </section>
+
+  <section class="contact-section">
+    <div class="container contact-grid">
+
+      <!-- Əlaqə Forması -->
+      <div class="contact-form" data-aos="fade-up" data-aos-delay="100">
+        <form>
+          <input type="text" placeholder="Adınız" required />
+          <input type="email" placeholder="Email ünvanınız" required />
+          <textarea rows="6" placeholder="Mesajınız..." required></textarea>
+          <button type="submit">Göndər</button>
+        </form>
+      </div>
+
+      <!-- Sosial Linklər -->
+      <div class="contact-info" data-aos="fade-up" data-aos-delay="200">
+        <h3>Sosial Şəbəkələr</h3>
+        <ul class="social-links">
+          <li><a href="https://t.me/sultanov" target="_blank"><i class="fab fa-telegram"></i> Telegram</a></li>
+          <li><a href="https://github.com/sultanovali" target="_blank"><i class="fab fa-github"></i> GitHub</a></li>
+          <li><a href="mailto:sultanov.ali96@gmail.com"><i class="fas fa-envelope"></i> Email</a></li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p>© 2025 Sultan. Sayt Emilya ilə sevgi ilə hazırlanıb.</p>
+  </footer>
+
+  <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+  <script>
+    AOS.init({ duration: 1000, once: true, offset: 100 });
+  </script>
+</body>
+</html>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sultan | Python Developer</title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="assets/css/style.css" />
+
+  <!-- Fonts və İkonlar -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
+  <script src="https://kit.fontawesome.com/a2e8b6d37f.js" crossorigin="anonymous"></script>
+
+  <!-- AOS CSS -->
+  <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet" />
+
+  <!-- Typed.js -->
+  <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
+</head>
+<body id="top">
+  <!-- Navbar -->
+  <nav class="navbar modern-navbar">
+    <div class="container">
+      <div class="logo">Neon Sultan</div>
+      <button class="menu-toggle" id="mobileMenuBtn">
+        <i class="fas fa-bars"></i>
+      </button>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html" class="active">Ana Səhifə</a></li>
+        <li><a href="about.html">Haqqımda</a></li>
+        <li><a href="projects.html">Proyektlərim</a></li>
+        <li><a href="contact.html">Əlaqə</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <header class="hero modern-hero">
+    <div class="container">
+      <h1 data-aos="fade-up">👋 Salam, Mənim kod adım <mark>Neon Sultan</mark>-dır</h1>
+      <p data-aos="fade-up" data-aos-delay="200">
+        <span id="typed"></span>
+      </p>
+      <a href="projects.html" class="btn primary-btn" data-aos="fade-up" data-aos-delay="400">🚀 Proyektlərimə bax</a>
+    </div>
+  </header>
+
+  <!-- Qısa tanıtım -->
+  <section class="about-preview" id="aboutPreview">
+    <div class="container">
+      <h2 data-aos="fade-right">Qısa tanıtım</h2>
+      <p data-aos="fade-up" data-aos-delay="100">
+        Mən Python dili ilə müxtəlif avtomatlaşdırma və Telegram bot layihələri üzərində çalışan bir proqramçiyam. Məqsədim texnologiya ilə gündəlik həyatı daha asan və məhsuldar etməkdir.
+      </p>
+      <a href="about.html" class="btn secondary-btn" data-aos="fade-up" data-aos-delay="200">Daha ətraflı →</a>
+    </div>
+  </section>
+
+  <!-- Proyektlərdən önizləmə -->
+  <section class="project-preview" id="projectsPreview">
+    <div class="container">
+      <h2 data-aos="fade-left">✨ Son Proyektlərim</h2>
+      <div class="projects-grid">
+        <div class="project-card" data-aos="zoom-in" data-aos-delay="100">
+          <img src="assets/images/metabase.png" alt="MetaBase Bot">
+          <h3>MetaBase Bot</h3>
+        </div>
+        <div class="project-card" data-aos="zoom-in" data-aos-delay="200">
+          <img src="assets/images/startconverter.png" alt="StartConverter">
+          <h3>StartConverter</h3>
+        </div>
+        <div class="project-card" data-aos="zoom-in" data-aos-delay="300">
+          <img src="assets/images/neon_game.png" alt="NEON Game">
+          <h3>NEON Game</h3>
+        </div>
+      </div>
+      <a href="projects.html" class="btn secondary-btn" data-aos="fade-up" data-aos-delay="400">Hamısına bax →</a>
+    </div>
+  </section>
+
+  <!-- Texnologiyalar -->
+  <section class="tech" id="tech">
+    <div class="container">
+      <h2 data-aos="fade-right">💻 İşlədiyim Texnologiyalar</h2>
+      <div class="tech-icons" data-aos="zoom-in">
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" alt="Python">
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" alt="JavaScript">
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linux/linux-original.svg" alt="Linux">
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg" alt="Git">
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg" alt="HTML">
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg" alt="CSS">
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>© 2025 Sultan. Hazırlandı Emilyanın köməyi ilə.</p>
+  </footer>
+
+  <!-- Scroll-up düyməsi -->
+  <a href="#top" class="scroll-up" id="scrollUpBtn">
+    <i class="fas fa-arrow-up"></i>
+  </a>
+
+  <!-- Tema dəyişmə düyməsi -->
+  <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+
+  <!-- AOS JS -->
+  <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+
+  <!-- Scriptlər -->
+  <script>
+    AOS.init({ duration: 1000, once: true, offset: 100 });
+
+    // Scroll düyməsi
+    const scrollUpBtn = document.getElementById("scrollUpBtn");
+    window.addEventListener("scroll", () => {
+      scrollUpBtn.classList.toggle("show", window.scrollY > 300);
+    });
+
+    // Mobil menyu
+    const menuBtn = document.getElementById("mobileMenuBtn");
+    const navLinks = document.getElementById("navLinks");
+    menuBtn.addEventListener("click", () => {
+      navLinks.classList.toggle("open");
+    });
+
+    // Typed.js
+    new Typed("#typed", {
+      strings: [
+        "Python proqramçısıyam 🐍",
+        "Botlar yaradıram 🤖",
+        "Avtomatlaşdırma ilə məşğulam ⚙️"
+      ],
+      typeSpeed: 60,
+      backSpeed: 40,
+      backDelay: 2000,
+      loop: true
+    });
+
+    // Tema dəyişmə
+    const themeToggle = document.getElementById("themeToggle");
+    themeToggle.addEventListener("click", () => {
+      document.body.classList.toggle("dark-theme");
+      themeToggle.innerHTML =
+        document.body.classList.contains("dark-theme")
+          ? '<i class="fas fa-sun"></i>'
+          : '<i class="fas fa-moon"></i>';
+    });
+  </script>
+</body>
+</html>
