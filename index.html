@@ -139,64 +139,6 @@
 
   <!-- AOS JS -->
   <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
-
-  <!-- Scriptlər -->
-  <script>
-    AOS.init({ duration: 1000, once: true, offset: 100 });
-
-    // Scroll düyməsi və progress
-    const scrollUpBtn = document.getElementById("scrollUpBtn");
-    const scrollProgress = document.querySelector('.scroll-progress');
-    window.addEventListener("scroll", () => {
-      scrollUpBtn.classList.toggle("show", window.scrollY > 300);
-
-      // Progress effect
-      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-      const scrolled = (window.scrollY / docHeight);
-      const dasharray = 81.68;
-      if (scrollProgress) {
-        scrollProgress.style.strokeDashoffset = dasharray - (dasharray * scrolled);
-      }
-    });
-
-    // Mobil menyu
-    const menuBtn = document.getElementById("mobileMenuBtn");
-    const navLinks = document.getElementById("navLinks");
-    menuBtn.addEventListener("click", () => {
-      navLinks.classList.toggle("open");
-    });
-
-    // Typed.js
-    new Typed("#typed", {
-      strings: [
-        "Python proqramçısıyam 🐍",
-        "Botlar yaradıram 🤖",
-        "Avtomatlaşdırma ilə məşğulam ⚙️"
-      ],
-      typeSpeed: 60,
-      backSpeed: 40,
-      backDelay: 2000,
-      loop: true
-    });
-
-    // Tema dəyişmə (UI/UX toggle)
-    const themeToggle = document.getElementById("themeToggle");
-    const iconMoon = document.querySelector('.icon-moon');
-    const iconSun = document.querySelector('.icon-sun');
-    function updateThemeIcon() {
-      if (document.body.classList.contains("light-mode")) {
-        iconMoon.style.display = "inline";
-        iconSun.style.display = "none";
-      } else {
-        iconMoon.style.display = "none";
-        iconSun.style.display = "inline";
-      }
-    }
-    themeToggle.addEventListener("click", () => {
-      document.body.classList.toggle("light-mode");
-      updateThemeIcon();
-    });
-    updateThemeIcon();
-  </script>
+  <script src="assets/js/script.js"></script>
 </body>
 </html>
