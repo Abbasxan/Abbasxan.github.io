@@ -6,10 +6,22 @@
   <title>Əlaqə | Sultan</title>
   <link rel="stylesheet" href="assets/css/style.css" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
-  <script src="https://kit.fontawesome.com/a2e8b6d37f.js" crossorigin="anonymous"></script>
   <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet" />
 </head>
-<body>
+<body id="top">
+  <!-- Theme Toggle Button (UI/UX) -->
+  <button id="themeToggle" class="theme-toggle" title="Tema Dəyiş">
+    <span class="toggle-icon">
+      <svg class="icon-moon" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 1 0 9.79 9.79z"/>
+      </svg>
+      <svg class="icon-sun" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="5"/>
+        <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M16.36 16.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M16.36 7.64l1.42-1.42"/>
+      </svg>
+    </span>
+  </button>
+
   <nav class="navbar">
     <div class="container">
       <div class="logo">Sultan</div>
@@ -40,7 +52,7 @@
           <input type="text" placeholder="Adınız" required />
           <input type="email" placeholder="Email ünvanınız" required />
           <textarea rows="6" placeholder="Mesajınız..." required></textarea>
-          <button type="submit">Göndər</button>
+          <button type="submit" class="btn primary-btn">Göndər</button>
         </form>
       </div>
 
@@ -48,9 +60,24 @@
       <div class="contact-info" data-aos="fade-up" data-aos-delay="200">
         <h3>Sosial Şəbəkələr</h3>
         <ul class="social-links">
-          <li><a href="https://t.me/sultanov" target="_blank"><i class="fab fa-telegram"></i> Telegram</a></li>
-          <li><a href="https://github.com/sultanovali" target="_blank"><i class="fab fa-github"></i> GitHub</a></li>
-          <li><a href="mailto:sultanov.ali96@gmail.com"><i class="fas fa-envelope"></i> Email</a></li>
+          <li>
+            <a href="https://t.me/sultanov" target="_blank">
+              <svg width="22" height="22" fill="currentColor" viewBox="0 0 24 24"><path d="M9.043 16.462 9 13.497l7.176-6.499-8.711 5.417-3.25-1.016c-.682-.211-.677-1.13.007-1.336l17.237-5.096c.68-.201 1.306.484 1.094 1.152l-3.215 10.308c-.174.558-.87.734-1.309.327L13.2 14.108l-3.073 2.354a.41.41 0 0 1-.084.049Z"/></svg>
+              Telegram
+            </a>
+          </li>
+          <li>
+            <a href="https://github.com/sultanovali" target="_blank">
+              <svg width="22" height="22" fill="currentColor" viewBox="0 0 24 24"><path d="M12.026 2c-5.514 0-9.981 4.466-9.981 9.98 0 4.419 2.868 8.164 6.839 9.489.5.092.682-.215.682-.479 0-.237-.009-.868-.013-1.703-2.782.604-3.369-1.343-3.369-1.343-.454-1.154-1.109-1.461-1.109-1.461-.908-.621.069-.608.069-.608 1.004.07 1.532 1.032 1.532 1.032.892 1.53 2.341 1.088 2.91.832.091-.646.349-1.088.635-1.339-2.221-.253-4.555-1.112-4.555-4.951 0-1.092.389-1.986 1.029-2.685-.103-.253-.446-1.272.099-2.652 0 0 .84-.27 2.75 1.025A9.564 9.564 0 0 1 12 6.844c.849.004 1.705.115 2.504.337 1.908-1.295 2.747-1.025 2.747-1.025.546 1.38.203 2.399.1 2.652.64.699 1.028 1.593 1.028 2.685 0 3.849-2.337 4.695-4.566 4.944.359.309.678.919.678 1.852 0 1.336-.012 2.419-.012 2.748 0 .266.18.574.688.477C19.116 20.141 22 16.397 22 11.98c0-5.514-4.467-9.98-9.974-9.98Z"/></svg>
+              GitHub
+            </a>
+          </li>
+          <li>
+            <a href="mailto:sultanov.ali96@gmail.com">
+              <svg width="22" height="22" fill="currentColor" viewBox="0 0 24 24"><path d="M20 4H4C2.897 4 2 4.897 2 6V18C2 19.103 2.897 20 4 20H20C21.103 20 22 19.103 22 18V6C22 4.897 21.103 4 20 4ZM20 6L12 13L4 6H20ZM4 18V8.236L11.292 15.292C11.683 15.683 12.317 15.683 12.708 15.292L20 8.236V18H4Z"/></svg>
+              Email
+            </a>
+          </li>
         </ul>
       </div>
 
@@ -61,9 +88,20 @@
     <p>© 2025 Sultan. Sayt Emilya ilə sevgi ilə hazırlanıb.</p>
   </footer>
 
+  <!-- Scroll-up düyməsi (UI/UX) -->
+  <a href="#top" class="scroll-up" id="scrollUpBtn" title="Yuxarı">
+    <span class="scroll-icon">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+        <circle cx="14" cy="14" r="13" stroke="currentColor" stroke-width="2" opacity="0.14"/>
+        <circle class="scroll-progress" cx="14" cy="14" r="13" stroke="#fff" stroke-width="2"
+          fill="none" stroke-dasharray="81.68" stroke-dashoffset="81.68"/>
+        <path d="M14 20V10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <path d="M10 14L14 10L18 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </span>
+  </a>
+
   <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
-  <script>
-    AOS.init({ duration: 1000, once: true, offset: 100 });
-  </script>
+  <script src="assets/js/script.js"></script>
 </body>
 </html>
