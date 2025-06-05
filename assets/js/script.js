@@ -1,33 +1,62 @@
-// Toggle mobil menyu
-document.addEventListener("DOMContentLoaded", function () {
-  const toggleBtn = document.querySelector(".toggle-menu");
-  const navLinks = document.querySelector(".nav-links");
+// AOS init
+AOS.init({ duration: 1000, once: true, offset: 100 });
 
-  if (toggleBtn) {
-    toggleBtn.addEventListener("click", () => {
-      navLinks.classList.toggle("active");
-    });
+// Scroll Up Button + Progress
+const scrollUpBtn = document.getElementById("scrollUpBtn");
+const scrollProgress = document.querySelector('.scroll-progress');
+window.addEventListener("scroll", () => {
+  scrollUpBtn.classList.toggle("show", window.scrollY > 300);
+
+  // Scroll progress effect
+  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+  const scrolled = (window.scrollY / docHeight);
+  const dasharray = 81.68;
+  if (scrollProgress) {
+    scrollProgress.style.strokeDashoffset = dasharray - (dasharray * scrolled);
   }
 });
 
-// Dark/Light mode toggle
-const themeToggle = document.createElement("button");
-themeToggle.innerText = "🌓";
-themeToggle.className = "theme-toggle";
-document.body.appendChild(themeToggle);
+// Mobile menu
+const menuBtn = document.getElementById("mobileMenuBtn");
+const navLinks = document.getElementById("navLinks");
+if (menuBtn && navLinks) {
+  menuBtn.addEventListener("click", () => {
+    navLinks.classList.toggle("open");
+  });
+}
 
-themeToggle.style.position = "fixed";
-themeToggle.style.bottom = "20px";
-themeToggle.style.right = "20px";
-themeToggle.style.padding = "10px 14px";
-themeToggle.style.borderRadius = "50%";
-themeToggle.style.border = "none";
-themeToggle.style.cursor = "pointer";
-themeToggle.style.zIndex = "1000";
-themeToggle.style.background = "#f72ee2";
-themeToggle.style.color = "#fff";
+// Typed.js
+if (document.getElementById("typed")) {
+  new Typed("#typed", {
+    strings: [
+      "Python proqramçısıyam 🐍",
+      "Botlar yaradıram 🤖",
+      "Avtomatlaşdırma ilə məşğulam ⚙️"
+    ],
+    typeSpeed: 60,
+    backSpeed: 40,
+    backDelay: 2000,
+    loop: true
+  });
+}
 
-themeToggle.addEventListener("click", () => {
-  document.body.classList.toggle("light-mode");
-});
-
+// Theme toggle (UI/UX toggle)
+const themeToggle = document.getElementById("themeToggle");
+const iconMoon = document.querySelector('.icon-moon');
+const iconSun = document.querySelector('.icon-sun');
+function updateThemeIcon() {
+  if (document.body.classList.contains("light-mode")) {
+    if (iconMoon) iconMoon.style.display = "inline";
+    if (iconSun) iconSun.style.display = "none";
+  } else {
+    if (iconMoon) iconMoon.style.display = "none";
+    if (iconSun) iconSun.style.display = "inline";
+  }
+}
+if (themeToggle) {
+  themeToggle.addEventListener("click", () => {
+    document.body.classList.toggle("light-mode");
+    updateThemeIcon();
+  });
+  updateThemeIcon();
+}
