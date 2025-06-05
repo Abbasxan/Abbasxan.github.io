@@ -314,36 +314,3 @@ body.light-mode .social-links a:hover {
 
 
 
-.stats {
-  display: flex;
-  justify-content: center;
-  gap: 4rem;
-  margin-top: 3rem;
-  flex-wrap: wrap;
-}
-
-.stat {
-  background: #1e1e2f;
-  padding: 2rem;
-  border-radius: 1rem;
-  text-align: center;
-  color: white;
-  min-width: 150px;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-  transition: transform 0.3s ease;
-}
-
-.stat:hover {
-  transform: scale(1.05);
-}
-
-.stat h3 {
-  font-size: 2.5rem;
-  margin-bottom: 0.5rem;
-  color: #ffcd57;
-}
-
-.stat p {
-  font-size: 1.1rem;
-  margin: 0;
-}
