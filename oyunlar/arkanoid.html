@@ -7,10 +7,23 @@
   <link rel="stylesheet" href="../assets/css/style.css" />
   <style>
     .arkanoid-container { display:flex; flex-direction:column; align-items:center; margin-top:48px;}
-    #arkanoidCanvas { background:#18181a; border:3px solid #eee; border-radius:13px; margin-top:24px; max-width:100vw;}
-    .arkanoid-score { color:#61dafb; font-size:1.2em; margin-top:16px;}
-    .arkanoid-btn { margin-top:18px; padding:10px 24px; font-size:1em; border-radius:8px; border:none; background:#61dafb; color:#222; font-weight:bold; cursor:pointer;}
-    .arkanoid-btn:hover { background:#21a1f3; color:#fff;}
+    #arkanoidCanvas {
+      background: linear-gradient(160deg, #191924 0%, #23304f 100%);
+      border:3px solid #eee;
+      border-radius:18px;
+      margin-top:24px;
+      max-width:100vw;
+      box-shadow: 0 10px 40px #000a, 0 1.5px 0.5px #61dafb44;
+      transition: box-shadow 0.25s;
+    }
+    .arkanoid-score { color:#61dafb; font-size:1.2em; margin-top:16px; text-shadow: 0 2px 8px #222b;}
+    .arkanoid-btn { margin-top:18px; padding:10px 24px; font-size:1em; border-radius:11px; border:none; background:linear-gradient(90deg,#61dafb,#fbbd23); color:#222; font-weight:bold; cursor:pointer; box-shadow:0 2px 8px #0004; transition:.2s;}
+    .arkanoid-btn:hover { background:linear-gradient(90deg,#fbbd23,#61dafb); color:#fff; transform: translateY(-2px) scale(1.055);}
+    .arkanoid-level { color: #fbbd23; font-size: 1.1em; margin-top: 14px; text-shadow: 0 2px 8px #222a;}
+    body {
+      background: radial-gradient(ellipse at 60% 15%, #495082 0%, #181924 100%);
+      min-height: 100vh;
+    }
   </style>
 </head>
 <body>
@@ -28,7 +41,8 @@
     </div>
   </nav>
   <main class="container arkanoid-container">
-    <h1>Arkanoid</h1>
+    <h1 style="text-shadow:0 4px 16px #61dafb33;">Arkanoid</h1>
+    <div class="arkanoid-level" id="arkanoidLevel">Səviyyə: 1</div>
     <canvas id="arkanoidCanvas" width="480" height="320"></canvas>
     <div class="arkanoid-score" id="arkanoidScore">Xal: 0</div>
     <button class="arkanoid-btn" onclick="arkanoidStart()">Yenidən başla</button>
@@ -38,60 +52,316 @@
     <p>© 2025 Sultan. Neon Group Azerbaijan | <a href="../license.html">Lisenziya</a></p>
   </footer>
   <script>
-    // Simple Arkanoid/Breakout
+    // 3D/Neon Arkanoid with Level Progression
     const canvas = document.getElementById("arkanoidCanvas");
     const ctx = canvas.getContext("2d");
-    let paddle, ball, bricks, score, running, interval;
+
+    // Paddle settings
+    const paddleWidth = 80, paddleHeight = 14, paddleMargin = 10;
+    const paddleDepth = 13;
+
+    // Ball
+    const ballRadius = 9;
+
+    // Level configurations (colors, rows, columns, gaps, brick shape)
+    const LEVELS = [
+      {bg:"#18181a", brickColor:"#61dafb", paddle:"#fbbd23", ball:"#fff", rows:4,cols:8,gap:8, brickShape:"rect"},
+      {bg:"#232b3d", brickColor:"#fbbd23", paddle:"#fff", ball:"#61dafb", rows:5,cols:8,gap:9, brickShape:"rect"},
+      {bg:"#1e272e", brickColor:"#f00", paddle:"#61dafb", ball:"#fbbd23", rows:4,cols:9,gap:8, brickShape:"circle"},
+      {bg:"#111b1e", brickColor:"#00e676", paddle:"#fbbd23", ball:"#fff", rows:6,cols:7,gap:8, brickShape:"rect"},
+      {bg:"#312244", brickColor:"#d500f9", paddle:"#00e676", ball:"#fff", rows:5,cols:10,gap:7, brickShape:"circle"},
+      {bg:"#2b2b2b", brickColor:"#fbc02d", paddle:"#f44336", ball:"#fff", rows:4,cols:8,gap:10, brickShape:"rect"},
+      {bg:"#15171b", brickColor:"#00bcd4", paddle:"#d500f9", ball:"#fbc02d", rows:6,cols:8,gap:7, brickShape:"circle"},
+      {bg:"#3e2723", brickColor:"#ffd600", paddle:"#00e676", ball:"#00bcd4", rows:5,cols:9,gap:8, brickShape:"rect"},
+      {bg:"#1a237e", brickColor:"#e91e63", paddle:"#ffd600", ball:"#fff", rows:6,cols:10,gap:6, brickShape:"circle"},
+      {bg:"#212121", brickColor:"#fff", paddle:"#e91e63", ball:"#ffd600", rows:7,cols:10,gap:6, brickShape:"rect"}
+    ];
+    const brickWidth = 40;
+    const brickHeight = 16;
+    const brickOffsetTop = 34;
+    const brickOffsetLeft = 13;
+
+    let level, paddleX, ballX, ballY, ballDX, ballDY, bricks, score, running, animationFrame, totalScore;
+
     function arkanoidStart() {
-      paddle = {x:200, w:80, h:14, y:canvas.height-18};
-      ball = {x:240, y:160, dx:3, dy:-3, r:8};
+      level = 1;
+      totalScore = 0;
+      startLevel(level);
+    }
+
+    function startLevel(lvl) {
+      // Level params
+      const L = LEVELS[lvl-1];
+      document.getElementById("arkanoidLevel").textContent = "Səviyyə: " + lvl;
+      canvas.style.background = L.bg;
+      paddleX = (canvas.width - paddleWidth) / 2;
+      ballX = canvas.width / 2;
+      ballY = canvas.height - 42;
+      ballDX = 3 * (Math.random() > 0.5 ? 1 : -1);
+      ballDY = -3 - 0.19 * (lvl-1);
       bricks = [];
-      for(let r=0;r<4;r++) for(let c=0;c<8;c++) bricks.push({x:10+c*57,y:30+r*30,w:50,h:18,hit:false});
-      score=0;running=true;
-      if(interval) cancelAnimationFrame(interval);
-      loop();
-    }
-    function draw() {
-      ctx.clearRect(0,0,480,320);
-      // Bricks
-      for(let b of bricks) if(!b.hit){
-        ctx.fillStyle="#61dafb";ctx.fillRect(b.x,b.y,b.w,b.h);
+      for (let c = 0; c < L.cols; c++) {
+        bricks[c] = [];
+        for (let r = 0; r < L.rows; r++) {
+          bricks[c][r] = { x: 0, y: 0, status: 1, shade: Math.random() };
+        }
       }
-      // Paddle
-      ctx.fillStyle="#fbbd23";
-      ctx.fillRect(paddle.x,paddle.y,paddle.w,paddle.h);
-      // Ball
-      ctx.beginPath();ctx.arc(ball.x,ball.y,ball.r,0,2*Math.PI);ctx.fillStyle="#fff";ctx.fill();
-    }
-    function movePaddle(e) {
-      let rect = canvas.getBoundingClientRect();
-      paddle.x = Math.min(Math.max(0, e.clientX-rect.left-paddle.w/2), canvas.width-paddle.w);
-    }
-    canvas.addEventListener("mousemove",movePaddle);
-    document.addEventListener("keydown",e=>{
-      if(e.key==="ArrowLeft") paddle.x=Math.max(0,paddle.x-30);
-      if(e.key==="ArrowRight") paddle.x=Math.min(canvas.width-paddle.w,paddle.x+30);
-    });
-    function loop() {
-      if(!running) return;
-      ball.x+=ball.dx; ball.y+=ball.dy;
-      // Wall
-      if(ball.x<ball.r||ball.x>canvas.width-ball.r) ball.dx*=-1;
-      if(ball.y<ball.r) ball.dy*=-1;
-      // Paddle
-      if(ball.y+ball.r>paddle.y&&ball.x>paddle.x&&ball.x<paddle.x+paddle.w) ball.dy*=-1;
-      // Bricks
-      for(let b of bricks) if(!b.hit&&ball.x>b.x&&ball.x<b.x+b.w&&ball.y-b.r<b.y+b.h&&ball.y+b.r>b.y){
-        b.hit=true;ball.dy*=-1;score+=10;break;
-      }
-      // Lose
-      if(ball.y>canvas.height+ball.r) {running=false; document.getElementById("arkanoidScore").textContent = "Oyun bitdi! Xal: "+score; return;}
-      // Win
-      if(bricks.every(b=>b.hit)) {running=false; document.getElementById("arkanoidScore").textContent = "Təbriklər! Xal: "+score; return;}
+      score = 0;
+      running = true;
+      if (animationFrame) cancelAnimationFrame(animationFrame);
       draw();
-      document.getElementById("arkanoidScore").textContent = "Xal: "+score;
-      interval=requestAnimationFrame(loop);
     }
+
+    function drawBricks() {
+      const L = LEVELS[level-1];
+      for (let c = 0; c < L.cols; c++) {
+        for (let r = 0; r < L.rows; r++) {
+          if (bricks[c][r].status === 1) {
+            const gap = L.gap;
+            const x = c * (brickWidth + gap) + brickOffsetLeft;
+            const y = r * (brickHeight + gap) + brickOffsetTop;
+            bricks[c][r].x = x;
+            bricks[c][r].y = y;
+            ctx.save();
+            // 3D/glossy effect
+            if(L.brickShape === "rect") {
+              const grad = ctx.createLinearGradient(x, y, x, y+brickHeight);
+              grad.addColorStop(0, L.brickColor);
+              grad.addColorStop(1, shadeColor(L.brickColor, -25));
+              ctx.fillStyle = grad;
+              ctx.shadowColor = "#fff";
+              ctx.shadowBlur = 10;
+              ctx.fillRect(x, y, brickWidth, brickHeight);
+              ctx.globalAlpha = 0.36;
+              ctx.fillStyle = "#fff";
+              ctx.fillRect(x+3, y+3, brickWidth-6, 6);
+              ctx.globalAlpha = 1;
+              ctx.shadowBlur = 0;
+              ctx.strokeStyle = "#222";
+              ctx.lineWidth = 1.2;
+              ctx.strokeRect(x, y, brickWidth, brickHeight);
+            } else {
+              // 3D neon glowing circle
+              ctx.save();
+              ctx.shadowColor = L.brickColor;
+              ctx.shadowBlur = 24;
+              ctx.beginPath();
+              ctx.arc(x+brickWidth/2, y+brickHeight/2, Math.min(brickWidth, brickHeight)/2, 0, 2*Math.PI);
+              ctx.fillStyle = L.brickColor;
+              ctx.globalAlpha = 0.82;
+              ctx.fill();
+              ctx.globalAlpha = 1;
+              ctx.shadowBlur = 0;
+              ctx.beginPath();
+              ctx.arc(x+brickWidth/2, y+brickHeight/2, Math.min(brickWidth, brickHeight)/2-2, Math.PI*0.93, Math.PI*2.16);
+              ctx.strokeStyle = "#fff8";
+              ctx.lineWidth = 3;
+              ctx.stroke();
+              ctx.restore();
+            }
+            ctx.restore();
+          }
+        }
+      }
+    }
+
+    function drawPaddle() {
+      const L = LEVELS[level-1];
+      // "3D" rounded paddle
+      ctx.save();
+      ctx.shadowColor = "#fff";
+      ctx.shadowBlur = 20;
+      let grad = ctx.createLinearGradient(paddleX,canvas.height-paddleHeight-paddleMargin,paddleX+paddleWidth,canvas.height-paddleHeight-paddleMargin+paddleHeight);
+      grad.addColorStop(0,shadeColor(L.paddle,-5));
+      grad.addColorStop(0.45,L.paddle);
+      grad.addColorStop(1,shadeColor(L.paddle,22));
+      ctx.fillStyle = grad;
+      roundRect(ctx, paddleX, canvas.height-paddleHeight-paddleMargin, paddleWidth, paddleHeight, 8, true, false);
+      ctx.shadowBlur = 0;
+      ctx.globalAlpha = 0.22;
+      ctx.fillStyle = "#fff";
+      roundRect(ctx, paddleX+9, canvas.height-paddleHeight-paddleMargin+3, paddleWidth-18, 4, 2, true, false);
+      ctx.globalAlpha = 1;
+      ctx.restore();
+    }
+
+    function drawBall() {
+      const L = LEVELS[level-1];
+      ctx.save();
+      ctx.shadowColor = L.ball;
+      ctx.shadowBlur = 20;
+      ctx.beginPath();
+      ctx.arc(ballX, ballY, ballRadius, 0, Math.PI * 2);
+      ctx.fillStyle = L.ball;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+      // Glossy highlight
+      ctx.globalAlpha = 0.5;
+      ctx.beginPath();
+      ctx.arc(ballX-4, ballY-4, ballRadius/2, Math.PI*1.4, Math.PI*1.9);
+      ctx.strokeStyle = "#fff";
+      ctx.lineWidth = 3;
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+      ctx.restore();
+    }
+
+    function drawScore() {
+      document.getElementById("arkanoidScore").textContent = "Xal: " + (totalScore + score);
+    }
+
+    function collisionDetection() {
+      const L = LEVELS[level-1];
+      for (let c = 0; c < L.cols; c++) {
+        for (let r = 0; r < L.rows; r++) {
+          const b = bricks[c][r];
+          if (b.status === 1) {
+            if (
+              ballX > b.x &&
+              ballX < b.x + brickWidth &&
+              ballY - ballRadius > b.y &&
+              ballY - ballRadius < b.y + brickHeight
+            ) {
+              ballDY = -ballDY;
+              b.status = 0;
+              score += 10 * level;
+              if (isWin()) {
+                totalScore += score;
+                if (level < 10) {
+                  showLevelComplete();
+                  setTimeout(()=>startLevel(level+1), 1200);
+                  level++;
+                } else {
+                  document.getElementById("arkanoidScore").textContent = "Təbriklər! Bütün səviyyələri keçdin! Ümumi xal: " + (totalScore + score);
+                  running = false;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    function isWin() {
+      const L = LEVELS[level-1];
+      for (let c = 0; c < L.cols; c++)
+        for (let r = 0; r < L.rows; r++)
+          if (bricks[c][r].status === 1) return false;
+      return true;
+    }
+
+    function showLevelComplete() {
+      ctx.save();
+      ctx.globalAlpha = 0.84;
+      ctx.fillStyle = "#161a2d";
+      ctx.fillRect(0, canvas.height/2-36, canvas.width, 72);
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = "#61dafb";
+      ctx.font = "bold 30px 'Inter', Arial";
+      ctx.textAlign = "center";
+      ctx.shadowColor = "#fbbd23";
+      ctx.shadowBlur = 16;
+      ctx.fillText("Səviyyə tamamlandı!", canvas.width/2, canvas.height/2+10);
+      ctx.shadowBlur = 0;
+      ctx.restore();
+    }
+
+    function draw() {
+      const L = LEVELS[level-1];
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      drawBricks();
+      drawPaddle();
+      drawBall();
+      drawScore();
+
+      if (!running) return;
+
+      // Ball movement
+      ballX += ballDX;
+      ballY += ballDY;
+
+      // Collision with walls
+      if (ballX + ballRadius > canvas.width || ballX - ballRadius < 0) ballDX = -ballDX;
+      if (ballY - ballRadius < 0) ballDY = -ballDY;
+
+      // Paddle collision
+      if (
+        ballY + ballRadius > canvas.height - paddleHeight - paddleMargin &&
+        ballX > paddleX &&
+        ballX < paddleX + paddleWidth
+      ) {
+        ballDY = -Math.abs(ballDY);
+        // Add effect: ballDX changes slightly depending on hit position
+        const hitPoint = (ballX - (paddleX + paddleWidth / 2)) / (paddleWidth / 2);
+        ballDX += hitPoint * 1.5;
+        // Clamp speed
+        if (ballDX > 7) ballDX = 7;
+        if (ballDX < -7) ballDX = -7;
+      }
+
+      // Bottom out
+      if (ballY + ballRadius > canvas.height) {
+        document.getElementById("arkanoidScore").textContent = "Oyun bitdi! Ümumi xal: " + (totalScore + score);
+        running = false;
+        return;
+      }
+
+      collisionDetection();
+
+      animationFrame = requestAnimationFrame(draw);
+    }
+
+    // Paddle mouse control
+    canvas.addEventListener("mousemove", function (e) {
+      const rect = canvas.getBoundingClientRect();
+      let mouseX = e.clientX - rect.left;
+      paddleX = mouseX - paddleWidth / 2;
+      if (paddleX < 0) paddleX = 0;
+      if (paddleX + paddleWidth > canvas.width) paddleX = canvas.width - paddleWidth;
+    });
+
+    // Paddle keyboard control
+    document.addEventListener("keydown", function (e) {
+      if (!running) return;
+      if (e.key === "ArrowLeft") {
+        paddleX -= 40;
+        if (paddleX < 0) paddleX = 0;
+      } else if (e.key === "ArrowRight") {
+        paddleX += 40;
+        if (paddleX + paddleWidth > canvas.width) paddleX = canvas.width - paddleWidth;
+      }
+    });
+
+    // --- 3D/Neon helpers ---
+    // Draw rounded rectangle
+    function roundRect(ctx, x, y, w, h, r, fill, stroke) {
+      ctx.beginPath();
+      ctx.moveTo(x+r, y);
+      ctx.lineTo(x+w-r, y);
+      ctx.quadraticCurveTo(x+w, y, x+w, y+r);
+      ctx.lineTo(x+w, y+h-r);
+      ctx.quadraticCurveTo(x+w, y+h, x+w-r, y+h);
+      ctx.lineTo(x+r, y+h);
+      ctx.quadraticCurveTo(x, y+h, x, y+h-r);
+      ctx.lineTo(x, y+r);
+      ctx.quadraticCurveTo(x, y, x+r, y);
+      ctx.closePath();
+      if (fill) ctx.fill();
+      if (stroke) ctx.stroke();
+    }
+    // Lighten/darken color by percent
+    function shadeColor(color, percent) {
+      color = color.replace('#','');
+      let R = parseInt(color.substring(0,2),16);
+      let G = parseInt(color.substring(2,4),16);
+      let B = parseInt(color.substring(4,6),16);
+      R = Math.min(255,Math.max(0,parseInt(R * (100+percent)/100)));
+      G = Math.min(255,Math.max(0,parseInt(G * (100+percent)/100)));
+      B = Math.min(255,Math.max(0,parseInt(B * (100+percent)/100)));
+      return "#" + ("0"+R.toString(16)).slice(-2) + ("0"+G.toString(16)).slice(-2) + ("0"+B.toString(16)).slice(-2);
+    }
+
     arkanoidStart();
   </script>
 </body>
