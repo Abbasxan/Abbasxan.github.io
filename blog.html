@@ -9,100 +9,119 @@
   <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet" />
   <style>
     .blog-main {
-      max-width: 900px;
-      margin: 60px auto 80px auto;
-      background: linear-gradient(120deg, #18181a 85%, #202052 100%);
-      border-radius: 26px;
-      box-shadow: 0 7px 44px #000c;
-      padding: 44px 32px 40px 32px;
+      max-width: 980px;
+      margin: 70px auto 90px auto;
+      background: linear-gradient(120deg,#1a1a23 90%,#222255 100%);
+      border-radius: 32px;
+      box-shadow: 0 8px 48px #000c;
+      padding: 54px 42px 45px 42px;
       position: relative;
       overflow: hidden;
-      border: 1.5px solid #282849;
+      border: 1.7px solid #2d2d54;
     }
-    .blog-main::before {
+    .blog-main::before, .blog-main::after {
       content: "";
       position: absolute;
-      top: -80px; right: -60px;
-      width: 220px; height: 220px;
-      background: radial-gradient(circle, #61dafb35 0%, #23233b00 80%);
+      border-radius: 50%;
       z-index: 0;
+      pointer-events: none;
+    }
+    .blog-main::before {
+      top: -110px; right: -90px;
+      width: 260px; height: 260px;
+      background: radial-gradient(circle, #61dafb33 0%, #23233b00 85%);
+    }
+    .blog-main::after {
+      left: -100px; bottom: -100px;
+      width: 200px; height: 200px;
+      background: radial-gradient(circle, #fbbd2342 0%, #23233b00 85%);
     }
     .blog-title {
-      font-size: 2.7em;
+      font-size: 2.9em;
       font-weight: 900;
       color: #61dafb;
-      margin-bottom: 14px;
-      letter-spacing: 2px;
-      text-shadow: 0 3px 16px #61dafb33;
+      margin-bottom: 18px;
+      letter-spacing: 2.5px;
+      text-shadow: 0 4px 18px #61dafb3d;
       position: relative;
       z-index: 1;
+      line-height: 1.05;
     }
     .blog-desc {
       color: #fbbd23;
-      font-size: 1.14em;
-      margin-bottom: 30px;
+      font-size: 1.19em;
+      margin-bottom: 36px;
       font-weight: 500;
       z-index: 1;
       position: relative;
+      letter-spacing: .1px;
     }
     .blog-list { margin:0; padding:0; list-style:none; position:relative; z-index:1; }
     .blog-list li {
-      margin-bottom: 38px;
-      padding-bottom: 24px;
-      border-bottom: 1.7px solid #252540;
-      background: linear-gradient(120deg, #222237 80%, #2a2a3d 100%);
-      border-radius: 15px;
-      box-shadow: 0 2px 12px #1c1c2a22;
-      padding-left: 30px;
-      padding-right: 10px;
+      margin-bottom: 44px;
+      padding-bottom: 26px;
+      border-bottom: 2px solid #23233b;
+      background: linear-gradient(120deg, #23233e 80%, #23233b 100%);
+      border-radius: 18px;
+      box-shadow: 0 3px 18px #1c1c2a22;
+      padding-left: 42px;
+      padding-right: 20px;
       position: relative;
-      transition: box-shadow .18s;
+      transition: box-shadow .22s, border-color .22s, background .22s;
+      overflow: hidden;
     }
     .blog-list li:hover {
-      box-shadow: 0 7px 28px #61dafb33;
-      border-color: #61dafb44;
+      box-shadow: 0 10px 32px #61dafb44;
+      border-color: #61dafb77;
       background: linear-gradient(120deg, #23233b 80%, #202052 100%);
     }
     .blog-list a {
-      font-size: 1.25em;
+      font-size: 1.29em;
       color: #fbbd23;
-      font-weight: 700;
+      font-weight: 800;
       text-decoration: none;
       display: block;
       margin-bottom: 2px;
-      transition: color .18s;
+      transition: color .21s;
       letter-spacing: .1px;
+      text-shadow: 0 1px 8px #2222;
     }
     .blog-list a:hover { color: #61dafb; }
     .blog-meta {
-      font-size: .98em;
+      font-size: 1em;
       color: #aaa;
       margin-bottom: 7px;
       opacity: .86;
       font-family: 'Inter', monospace;
-      letter-spacing: 0.5px;
-    }
-    .blog-snippet {
-      color: #eee;
-      font-size:.99em;
-      margin-top: 2px;
+      letter-spacing: .6px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
     .blog-badge {
       display:inline-block;
-      font-size:0.91em;
-      padding:2px 10px;
-      margin-right:7px;
+      font-size:0.98em;
+      padding:2.5px 13px;
+      margin-right:10px;
       border-radius:7px;
       background: linear-gradient(90deg,#61dafb22 60%, #fbbd2322 100%);
       color:#61dafb;
       font-weight:700;
       letter-spacing:0.7px;
+      box-shadow: 0 1.5px 7px #61dafb22;
     }
-    @media(max-width:850px){.blog-main{padding:20px 2vw;}}
+    .blog-snippet {
+      color: #eee;
+      font-size:1.08em;
+      margin-top: 5px;
+      line-height: 1.7;
+      font-weight: 500;
+    }
+    @media(max-width:900px){.blog-main{padding:20px 2vw;}}
     @media(max-width:600px){
-      .blog-main{padding:10px 2vw;}
+      .blog-main{padding:8px 1vw;}
       .blog-title{font-size:2em;}
-      .blog-list li{padding-left:14px;}
+      .blog-list li{padding-left:10px;}
     }
   </style>
 </head>
@@ -138,17 +157,17 @@
     <div class="blog-desc">Proqramlaşdırma, oyun yaradılması, veb inkişaf və şəxsi təcrübələrim haqqında məqalələr.</div>
     <ul class="blog-list">
       <li>
-        <div class="blog-meta">05.06.2025 • <span class="blog-badge">Oyun inkişafı</span></div>
+        <div class="blog-meta"><span class="blog-badge">Oyun inkişafı</span>05.06.2025</div>
         <a href="#">Neon Sultan oyunlarında AI necə işləyir?</a>
         <div class="blog-snippet">Bu məqalədə NEON AI-nin quruluşu və oyunlarda tətbiqi barədə danışılır...</div>
       </li>
       <li>
-        <div class="blog-meta">27.05.2025 • <span class="blog-badge" style="color:#fbbd23;">Web Dizayn</span></div>
+        <div class="blog-meta"><span class="blog-badge" style="color:#fbbd23;">Web Dizayn</span>27.05.2025</div>
         <a href="#">Minimalist və neon veb stilin sirləri</a>
         <div class="blog-snippet">Klassik və neon üslubun birləşdirilməsi ilə müasir veb interfeys necə hazırlanır?</div>
       </li>
       <li>
-        <div class="blog-meta">15.05.2025 • <span class="blog-badge" style="color:#fff;">Layihə</span></div>
+        <div class="blog-meta"><span class="blog-badge" style="color:#fff;">Layihə</span>15.05.2025</div>
         <a href="#">Neon Sultan necə yaradıldı? - Qısa tarixçə</a>
         <div class="blog-snippet">İdeyadan prototipə qədər Neon Sultan layihəsinin inkişaf yolu...</div>
       </li>
