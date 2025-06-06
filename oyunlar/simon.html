@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Simon Game | Neon Sultan</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+  <style>
+    .simon-container { display: flex; flex-direction: column; align-items: center; margin-top: 48px; }
+    .simon-board { display: grid; grid-template-columns: repeat(2, 70px); grid-template-rows: repeat(2, 70px); gap: 10px; margin-top: 24px; }
+    .simon-btn { width: 70px; height: 70px; border-radius: 15px; border: none; outline: none; cursor: pointer; opacity: 0.90; transition: opacity .2s; }
+    .simon-btn.active { opacity: 1; box-shadow: 0 0 12px #fff; }
+    .simon-btn1 { background: #61dafb; }
+    .simon-btn2 { background: #fbbd23; }
+    .simon-btn3 { background: #f00; }
+    .simon-btn4 { background: #fff; }
+    .simon-status { margin-top: 20px; color: #61dafb; font-size: 1.1em; }
+    .simon-score { color: #fff; font-size: 1.2em; margin-top: 8px; }
+    .simon-control { margin-top: 18px; padding: 10px 24px; font-size: 1em; border-radius: 8px; border: none; background: #61dafb; color: #222; font-weight: bold; cursor: pointer; }
+    .simon-control:hover { background: #21a1f3; color: #fff; }
+  </style>
+</head>
+<body>
+  <nav class="navbar modern-navbar">
+    <div class="container">
+      <div class="logo">Neon Sultan</div>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="../index.html">Ana Səhifə</a></li>
+        <li><a href="../about.html">Haqqımda</a></li>
+        <li><a href="../projects.html">Proyektlərim</a></li>
+        <li><a href="../license.html">Lisenziya</a></li>
+        <li><a href="../contact.html">Əlaqə</a></li>
+        <li><a href="../oyunlar.html" class="active">Oyunlar</a></li>
+      </ul>
+    </div>
+  </nav>
+  <main class="container simon-container">
+    <h1>Simon Game</h1>
+    <div class="simon-score" id="simonScore">Səviyyə: 0</div>
+    <div class="simon-board">
+      <button class="simon-btn simon-btn1" id="btn1"></button>
+      <button class="simon-btn simon-btn2" id="btn2"></button>
+      <button class="simon-btn simon-btn3" id="btn3"></button>
+      <button class="simon-btn simon-btn4" id="btn4"></button>
+    </div>
+    <div class="simon-status" id="simonStatus">Başlamaq üçün "Başla" düyməsini basın.</div>
+    <button class="simon-control" onclick="simonStart()">Başla / Yenidən başla</button>
+    <a href="../oyunlar.html" class="simon-control" style="background:#222; color:#fff; margin-top:12px;">← Oyunlara qayıt</a>
+  </main>
+  <footer class="footer">
+    <p>© 2025 Sultan. Neon Group Azerbaijan | <a href="../license.html">Lisenziya</a></p>
+  </footer>
+  <script>
+    const btns = [null, document.getElementById('btn1'), document.getElementById('btn2'), document.getElementById('btn3'), document.getElementById('btn4')];
+    let seq = [], userSeq = [], level = 0, strict = false, waiting = false;
+    function simonStart() {
+      seq = []; userSeq = []; level = 0; waiting = false;
+      document.getElementById('simonScore').textContent = "Səviyyə: 0";
+      document.getElementById('simonStatus').textContent = "Diqqət yetir və ardıcıllığı təkrarla!";
+      setTimeout(addStep, 800);
+    }
+    function addStep() {
+      seq.push(Math.floor(Math.random()*4)+1);
+      level++;
+      document.getElementById('simonScore').textContent = "Səviyyə: " + level;
+      showSeq();
+    }
+    function showSeq() {
+      waiting = true; userSeq = [];
+      let i = 0;
+      function step() {
+        if (i > 0) btns[seq[i-1]].classList.remove('active');
+        if (i < seq.length) {
+          btns[seq[i]].classList.add('active');
+          setTimeout(step, 550);
+        } else {
+          btns[seq[seq.length-1]].classList.remove('active');
+          waiting = false;
+        }
+        i++;
+      }
+      setTimeout(step, 350);
+    }
+    btns.slice(1).forEach((btn, idx) => {
+      btn.onclick = () => {
+        if (waiting) return;
+        btn.classList.add('active');
+        setTimeout(() => btn.classList.remove('active'), 200);
+        userSeq.push(idx+1);
+        if (userSeq[userSeq.length-1] !== seq[userSeq.length-1]) {
+          document.getElementById('simonStatus').textContent = "Səhv! Yenidən cəhd et.";
+          waiting = true;
+          setTimeout(simonStart, 1200);
+          return;
+        }
+        if (userSeq.length === seq.length) {
+          if (level === 20) {
+            document.getElementById('simonStatus').textContent = "Təbriklər! Maksimum səviyyə!";
+            waiting = true;
+            return;
+          }
+          document.getElementById('simonStatus').textContent = "Əla! Növbəti səviyyə.";
+          setTimeout(addStep, 1000);
+        }
+      };
+    });
+  </script>
+</body>
+</html>
