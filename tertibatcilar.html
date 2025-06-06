@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Töhfə verənlər | Neon Sultan</title>
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
+  <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet" />
+  <style>
+    .contrib-main { max-width: 820px; margin: 56px auto 72px auto; background:rgba(24,25,36,.96); border-radius:22px; box-shadow:0 6px 44px #000c; padding:38px 24px 32px 24px;}
+    .contrib-title { font-size:2.2em; font-weight:800; color:#61dafb; margin-bottom:22px; letter-spacing:1.2px;}
+    .contrib-list {margin:0; padding:0; list-style:none;}
+    .contrib-list li {margin-bottom:22px; display:flex; align-items:center;}
+    .contrib-avatar {width:48px; height:48px; border-radius:50%; margin-right:18px; border:2.5px solid #fbbd23; background:#222;}
+    .contrib-name {font-size:1.18em; color:#fbbd23; font-weight:600;}
+    .contrib-role {color:#aaa; font-size:.97em; margin-left:8px;}
+    .contrib-link {color:#61dafb; margin-left:11px; font-size:.98em;}
+    @media(max-width:650px){.contrib-main{padding:16px 2vw;}}
+  </style>
+</head>
+<body id="top">
+  <nav class="navbar modern-navbar">
+    <div class="container">
+      <div class="logo">Neon Sultan</div>
+      <button class="menu-toggle" id="mobileMenuBtn"><span></span><span></span><span></span></button>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html">Ana Səhifə</a></li>
+        <li><a href="about.html">Haqqımda</a></li>
+        <li><a href="projects.html">Proyektlərim</a></li>
+        <li><a href="license.html">Lisenziya</a></li>
+        <li><a href="oyunlar.html">Oyunlar</a></li>
+        <li><a href="blog.html">Blog</a></li>
+        <li><a href="faq.html">FAQ</a></li>
+        <li><a href="changelog.html">Yeniliklər</a></li>
+        <li><a href="gallery.html">Qalereya</a></li>
+        <li><a href="tertibatcilar.html" class="active">Töhfə verənlər</a></li>
+        <li><a href="contact.html">Əlaqə</a></li>
+      </ul>
+      <button id="themeToggle" class="theme-toggle" title="Tema Dəyiş">
+        <span class="toggle-icon">
+          <svg class="icon-moon" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 1 0 9.79 9.79z"/></svg>
+          <svg class="icon-sun" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M16.36 16.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M16.36 7.64l1.42-1.42"/></svg>
+        </span>
+      </button>
+    </div>
+  </nav>
+  <main class="contrib-main" data-aos="fade-up">
+    <div class="contrib-title">Töhfə verənlər</div>
+    <ul class="contrib-list">
+      <li>
+        <img src="assets/img/avatar-abbasxan.png" alt="Abbasxan" class="contrib-avatar">
+        <span class="contrib-name">Abbas Sultanov</span>
+        <span class="contrib-role">— Müəllif və əsas developer</span>
+        <a href="https://github.com/Abbasxan" class="contrib-link" target="_blank">@Abbasxan</a>
+      </li>
+      <li>
+        <img src="assets/img/avatar-neonai.png" alt="NEON AI" class="contrib-avatar">
+        <span class="contrib-name">NEON AI</span>
+        <span class="contrib-role">— Süni intellekt və oyun rəqibi</span>
+      </li>
+      <li>
+        <img src="assets/img/avatar-fanart.png" alt="Topluluk" class="contrib-avatar">
+        <span class="contrib-name">Topluluk</span>
+        <span class="contrib-role">— İdeyalar, test və geribildirim</span>
+      </li>
+    </ul>
+    <div style="color:#aaa;font-size:1em;margin-top:22px;text-align:center;">Siz də ideya və ya kod töhfəsi vermək istəyirsinizsə, <a href="contact.html" style="color:#61dafb;">əlaqə saxlayın!</a></div>
+  </main>
+  <footer class="footer">
+    <p>© 2025 Sultan. Neon Group Azerbaijan | <a href="license.html">Lisenziya</a></p>
+  </footer>
+  <a href="#top" class="scroll-up" id="scrollUpBtn" title="Yuxarı">
+    <span class="scroll-icon">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+        <circle cx="14" cy="14" r="13" stroke="currentColor" stroke-width="2" opacity="0.14"/>
+        <circle class="scroll-progress" cx="14" cy="14" r="13" stroke="#fff" stroke-width="2"
+          fill="none" stroke-dasharray="81.68" stroke-dashoffset="81.68"/>
+        <path d="M14 20V10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <path d="M10 14L14 10L18 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </span>
+  </a>
+  <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+  <script src="assets/js/script.js"></script>
+</body>
+</html>
