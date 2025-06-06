@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sayı Tapma Oyunu | Neon Sultan</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+  <style>
+    .guess-container { display: flex; flex-direction: column; align-items: center; margin-top: 48px; }
+    .guess-status { margin-top: 20px; color: #61dafb; font-size: 1.1em; min-height: 32px; }
+    .guess-input { font-size: 1.3em; padding: 8px 14px; border-radius: 8px; border: 1.5px solid #aaa; outline: none; margin-top: 14px; }
+    .guess-btn { margin-top: 14px; padding: 10px 24px; font-size: 1em; border-radius: 8px; border: none; background: #61dafb; color: #222; font-weight: bold; cursor: pointer; }
+    .guess-btn:hover { background: #21a1f3; color: #fff; }
+  </style>
+</head>
+<body>
+  <nav class="navbar modern-navbar">
+    <div class="container">
+      <div class="logo">Neon Sultan</div>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="../index.html">Ana Səhifə</a></li>
+        <li><a href="../about.html">Haqqımda</a></li>
+        <li><a href="../projects.html">Proyektlərim</a></li>
+        <li><a href="../license.html">Lisenziya</a></li>
+        <li><a href="../contact.html">Əlaqə</a></li>
+        <li><a href="../oyunlar.html" class="active">Oyunlar</a></li>
+      </ul>
+    </div>
+  </nav>
+  <main class="container guess-container">
+    <h1>Sayı Tapma Oyunu</h1>
+    <div class="guess-status" id="guessStatus">1-100 arası bir sayı tutuldu, tapmağa çalış!</div>
+    <input type="number" id="guessInput" class="guess-input" min="1" max="100" placeholder="Sayı yaz">
+    <button class="guess-btn" onclick="guessCheck()">Təxmin et</button>
+    <button class="guess-btn" onclick="guessStart()" style="background:#222; color:#fff; margin-top:12px;">Yenidən başla</button>
+    <a href="../oyunlar.html" class="guess-btn" style="background:#222; color:#fff; margin-top:12px;">← Oyunlara qayıt</a>
+  </main>
+  <footer class="footer">
+    <p>© 2025 Sultan. Neon Group Azerbaijan | <a href="../license.html">Lisenziya</a></p>
+  </footer>
+  <script>
+    let number, tries;
+    function guessStart() {
+      number = Math.floor(Math.random()*100)+1;
+      tries = 0;
+      document.getElementById('guessInput').value = "";
+      document.getElementById('guessStatus').textContent = "1-100 arası bir sayı tutuldu, tapmağa çalış!";
+    }
+    function guessCheck() {
+      const val = Number(document.getElementById('guessInput').value);
+      if(!val || val < 1 || val > 100) {
+        document.getElementById('guessStatus').textContent = "1-100 arası bir tam ədəd yaz!";
+        return;
+      }
+      tries++;
+      if(val === number) {
+        document.getElementById('guessStatus').textContent = "Təbriklər! " + tries + " cəhdə tapdın! (Sayı: " + number + ")";
+      } else if(val < number) {
+        document.getElementById('guessStatus').textContent = "Daha böyük bir ədəd cəhd et!";
+      } else {
+        document.getElementById('guessStatus').textContent = "Daha kiçik bir ədəd cəhd et!";
+      }
+    }
+    guessStart();
+  </script>
+</body>
+</html>
