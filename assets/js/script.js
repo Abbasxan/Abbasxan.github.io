@@ -35,7 +35,7 @@ function updateThemeIcon() {
 }
 if (themeToggle) {
   themeToggle.addEventListener("click", () => {
-    document.body.classList.toggle("light-mode");
+    document.body.classList.toggle("dark");
     updateThemeIcon();
   });
   updateThemeIcon();
