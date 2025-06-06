@@ -196,6 +196,7 @@ body.dark .hero p, body.dark .about-section p, body.dark .projects-section p {
   flex-wrap: wrap;
   gap: 2rem;
   margin: 1.5rem 0;
+  justify-content: center;
 }
 
 .project-card {
@@ -203,12 +204,13 @@ body.dark .hero p, body.dark .about-section p, body.dark .projects-section p {
   border-radius: var(--border-radius);
   box-shadow: 0 4px 32px rgba(44,44,44,0.08);
   transition: box-shadow var(--transition), background var(--transition);
-  padding: 1rem;
-  width: 280px;
+  padding: 1.2rem 1.2rem 1.2rem 1.2rem;
+  width: 340px; /* Стало шире */
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
+  min-height: 390px; 
 }
 
 body.dark .project-card {
@@ -216,20 +218,23 @@ body.dark .project-card {
 }
 
 .project-card img.project-image {
-  width: 70px;
-  height: 70px;
-  object-fit: contain;
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 12px;
   margin-bottom: 1rem;
+  box-shadow: 0 2px 12px rgba(44,44,44,0.09);
 }
 
 .project-card h3 {
   margin: 0.5rem 0 0.7rem 0;
-  font-size: 1.1rem;
+  font-size: 1.17rem;
+  font-weight: 700;
 }
 
 .project-card p {
-  font-size: 0.98rem;
-  color: #666;
+  font-size: 1.08rem;
+  color: #555;
   margin: 0 0 0.8rem 0;
 }
 
@@ -238,7 +243,7 @@ body.dark .project-card p {
 }
 
 .project-card a {
-  font-size: 0.97rem;
+  font-size: 1rem;
   color: var(--primary);
   text-decoration: underline;
   margin-top: auto;
