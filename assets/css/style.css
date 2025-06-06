@@ -42,18 +42,18 @@ body.dark .theme-toggle .icon-sun {
   display: none !important;
 }
 
-/* ====== NAVBAR ====== */
+/* ====== NAVBAR (КОМПАКТНЫЙ) ====== */
 .navbar {
+  padding: 0.1rem 0;
+  min-height: 44px;
   background: var(--nav-bg);
   color: var(--text);
-  padding: 0.5rem 0;
   position: sticky;
   top: 0;
   z-index: 99;
   box-shadow: 0 2px 8px rgba(44,44,44,0.03);
   transition: background var(--transition), color var(--transition);
 }
-
 body.dark .navbar {
   background: var(--nav-bg-dark);
   color: var(--text-light);
@@ -64,18 +64,21 @@ body.dark .navbar {
   align-items: center;
   justify-content: space-between;
   position: relative;
+  padding: 0.1rem 0.7rem;
+  min-height: 44px;
 }
 
 .logo {
   font-weight: 800;
-  font-size: 1.4rem;
+  font-size: 1.05rem;
   letter-spacing: 1px;
+  padding: 0.1rem 0.2rem;
 }
 
 .nav-links {
   display: flex;
   align-items: center;
-  gap: 1.7rem;
+  gap: 1.2rem;
   list-style: none;
   margin: 0;
   padding: 0;
@@ -85,7 +88,8 @@ body.dark .navbar {
   text-decoration: none;
   color: inherit;
   font-weight: 600;
-  padding: 0.3rem 1rem;
+  font-size: 0.97rem;
+  padding: 0.18rem 0.6rem;
   border-radius: var(--border-radius);
   transition: background var(--transition), color var(--transition);
   position: relative;
@@ -104,14 +108,13 @@ body.dark .navbar {
   background: none;
   border: none;
   cursor: pointer;
-  margin-left: 1rem;
+  margin-left: 0.5rem;
   z-index: 1001;
 }
-
 .menu-toggle span {
   display: block;
-  width: 28px;
-  height: 3px;
+  width: 22px;
+  height: 2px;
   background: var(--primary);
   border-radius: 3px;
   transition: 0.3s;
@@ -122,7 +125,7 @@ body.dark .navbar {
   border: none;
   cursor: pointer;
   margin-left: 1rem;
-  padding: 2px 4px;
+  padding: 1px 2px;
   border-radius: 50%;
   transition: background 0.2s;
   position: relative;
@@ -205,12 +208,12 @@ body.dark .hero p, body.dark .about-section p, body.dark .projects-section p {
   box-shadow: 0 4px 32px rgba(44,44,44,0.08);
   transition: box-shadow var(--transition), background var(--transition);
   padding: 1.2rem 1.2rem 1.2rem 1.2rem;
-  width: 340px; /* Стало шире */
+  width: 340px;
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-height: 390px; 
+  min-height: 390px;
 }
 
 body.dark .project-card {
@@ -490,6 +493,8 @@ body.dark .footer {
 }
 @media (max-width: 768px) {
   .navbar .container {
+    padding: 0.1rem 0.4rem;
+    min-height: 38px;
     flex-wrap: wrap;
     position: relative;
   }
@@ -527,13 +532,13 @@ body.dark .footer {
   .menu-toggle {
     display: flex;
     position: absolute;
-    right: 50px;
-    top: 12px;
+    right: 38px;
+    top: 8px;
   }
   .theme-toggle {
     position: absolute;
-    right: 8px;
-    top: 10px;
+    right: 4px;
+    top: 8px;
     margin-left: 0;
   }
   .footer {
@@ -555,10 +560,10 @@ body.dark .footer {
     padding: 0 0.4rem;
   }
   .logo {
-    font-size: 1.1rem;
+    font-size: 1rem;
   }
   .category-title, .projects-section h2, .hero h1, .about-section h2, .tech h2 {
-    font-size: 1.15rem;
+    font-size: 1.05rem;
   }
   .hero, .about-section, .projects-section, .license-generator, .contact-section {
     padding: 1.2rem 0 1rem 0;
