@@ -4,43 +4,22 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sultan | Python Developer</title>
-
   <!-- CSS -->
   <link rel="stylesheet" href="assets/css/style.css" />
-
   <!-- Fonts və İkonlar -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
-
   <!-- AOS CSS -->
   <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet" />
-
   <!-- Typed.js -->
   <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
 </head>
 <body id="top">
-  <!-- Theme Toggle Button (UI/UX) -->
-  <button id="themeToggle" class="theme-toggle" title="Tema Dəyiş">
-    <span class="toggle-icon">
-      <svg class="icon-moon" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 1 0 9.79 9.79z"/>
-      </svg>
-      <svg class="icon-sun" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
-        <circle cx="12" cy="12" r="5"/>
-        <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M16.36 16.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M16.36 7.64l1.42-1.42"/>
-      </svg>
-    </span>
-  </button>
-
-  <!-- Navbar -->
+  <!-- Navbar with Theme Toggle -->
   <nav class="navbar modern-navbar">
     <div class="container">
       <div class="logo">Neon Sultan</div>
-      <button class="menu-toggle" id="mobileMenuBtn">
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
+      <button class="menu-toggle" id="mobileMenuBtn"><span></span><span></span><span></span></button>
       <ul class="nav-links" id="navLinks">
         <li><a href="index.html" class="active">Ana Səhifə</a></li>
         <li><a href="about.html">Haqqımda</a></li>
@@ -48,6 +27,12 @@
         <li><a href="license.html">Lisenziya</a></li>
         <li><a href="contact.html">Əlaqə</a></li>
       </ul>
+      <button id="themeToggle" class="theme-toggle" title="Tema Dəyiş">
+        <span class="toggle-icon">
+          <svg class="icon-moon" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 1 0 9.79 9.79z"/></svg>
+          <svg class="icon-sun" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M16.36 16.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M16.36 7.64l1.42-1.42"/></svg>
+        </span>
+      </button>
     </div>
   </nav>
 
@@ -69,7 +54,7 @@
         <div class="about-text">
           <h2 data-aos="fade-right">Qısa tanıtım</h2>
           <p data-aos="fade-up" data-aos-delay="100">
-            Mən Python dili ilə müxtəlif avtomatlaşdırma və Telegram bot layihələri üzərində çalışan bir proqramçiyam. Məqsədim texnologiya ilə gündəlik həyatı daha asan və məhsuldar etməkdir.
+            Mən Python dili ilə müxtəlif avtomatlaşdırma və Telegram bot layihələri üzərində çalışan bir proqramçıyam. Məqsədim texnologiya ilə gündəlik həyatı daha asan və məhsuldar etməkdir.
           </p>
           <a href="about.html" class="btn secondary-btn" data-aos="fade-up" data-aos-delay="200">Daha ətraflı →</a>
         </div>
@@ -137,8 +122,6 @@
       </svg>
     </span>
   </a>
-
-  <!-- AOS JS -->
   <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
   <script src="assets/js/script.js"></script>
 </body>
