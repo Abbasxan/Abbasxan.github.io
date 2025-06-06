@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reversi / Othello | Neon Sultan</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+  <style>
+    body {background: radial-gradient(circle at 60% 20%, #495082 0%, #181924 100%);}
+    .reversi-container {
+      display: flex; flex-direction: column; align-items: center; margin-top: 48px;
+      background: rgba(24,25,36,0.98); border-radius: 19px; padding: 36px 24px 30px 24px;
+      box-shadow: 0 10px 44px #000c; max-width: 450px; margin: auto;
+    }
+    .reversi-title {font-size: 2em; color: #61dafb; margin-bottom: 8px; text-shadow: 0 2px 16px #222c;}
+    .reversi-mode-row {margin-bottom: 12px; display: flex; gap: 15px;}
+    .reversi-mode-btn {
+      background: linear-gradient(90deg,#61dafb,#fbbd23); color: #222; border: none; border-radius: 10px;
+      font-weight: bold; font-size: 1em; padding: 7px 22px; cursor: pointer;
+      box-shadow: 0 2px 12px #0006, 0 0 0 2px #61dafb33; transition: .18s;
+    }
+    .reversi-mode-btn.active, .reversi-mode-btn:focus {
+      background: linear-gradient(90deg,#fbbd23,#61dafb); color: #fff; outline: 2.5px solid #fbbd23;
+      box-shadow: 0 2px 15px #fbbd2380, 0 0 0 3px #61dafb80;
+    }
+    .reversi-status {
+      color: #fff; font-size: 1.13em; min-height: 32px; margin-bottom: 10px; text-shadow: 0 2px 10px #222b;
+      text-align: center; letter-spacing:.2px;
+    }
+    .reversi-board {
+      display: grid; grid-template-columns: repeat(8, 40px); grid-template-rows: repeat(8, 40px); gap: 3px;
+      background: linear-gradient(90deg,#23233a 75%,#26394d 100%);
+      border-radius: 15px; box-shadow: 0 7px 28px #0008; padding: 10px;
+      margin-bottom: 14px;
+    }
+    .reversi-cell {
+      width: 40px; height: 40px; border-radius: 8px;
+      background: linear-gradient(140deg,#252540 55%,#61dafb22 100%);
+      box-shadow: 0 1px 6px #232a, 0 0 0 2.5px #222d;
+      display: flex; align-items: center; justify-content: center; cursor: pointer;
+      transition: background .14s, box-shadow .12s, transform .15s;
+      position: relative;
+    }
+    .reversi-cell.playable {
+      background: linear-gradient(120deg,#18181a 60%,#fbbd2355 100%);
+      box-shadow: 0 0 0 4px #00e676bb, 0 8px 24px #61dafb55;
+      transform: scale(1.06);
+    }
+    .reversi-piece {
+      width: 28px; height: 28px; border-radius: 50%; background: #fff; box-shadow: 0 2px 10px #000a, 0 0 24px #61dafb66;
+      transition: background .2s, box-shadow .2s, filter .2s;
+      filter: drop-shadow(0 0 10px #fff5);
+      position: relative; z-index: 1;
+    }
+    .reversi-piece.black {
+      background: linear-gradient(135deg,#37474f 60%,#23232b 100%);
+      box-shadow: 0 0 12px #18181a88, 0 4px 17px #61dafb22;
+      filter: drop-shadow(0 0 10px #23232b88);
+    }
+    .reversi-piece.white {
+      background: linear-gradient(135deg,#fff 60%,#fbbd23 100%);
+      box-shadow: 0 0 15px #fbbd23cc, 0 4px 17px #61dafb22;
+    }
+    .reversi-cell.lastmove::after {
+      content: "";
+      display: block; position: absolute; left: 50%; top: 50%;
+      width: 13px; height: 13px; border-radius: 50%; background: #00e676;
+      transform: translate(-50%,-50%);
+      opacity:.44;
+      box-shadow: 0 0 10px #00e676a0;
+    }
+    .reversi-scoreboard {
+      margin-bottom: 6px; color: #fbbd23; font-size: 1.11em; text-shadow: 0 2px 8px #2228;
+      display: flex; gap: 9px; align-items: center; justify-content: center;
+    }
+    .reversi-btn {
+      margin-top: 13px; padding: 11px 26px; font-size: 1em; border-radius: 10px; border: none;
+      background: linear-gradient(90deg,#61dafb,#fbbd23); color: #222; font-weight: bold; cursor: pointer;
+      box-shadow: 0 2px 10px #0007; transition: background .2s, color .2s, transform .13s;
+    }
+    .reversi-btn.secondary {background: #222; color: #fff; margin-top: 10px;}
+    .reversi-btn:hover {
+      background: linear-gradient(90deg,#fbbd23,#61dafb);
+      color: #fff;
+      transform: translateY(-2px) scale(1.07);
+    }
+    @media (max-width: 600px) {
+      .reversi-container { padding: 10px 2vw;}
+      .reversi-board { grid-template-columns: repeat(8, 8vw); grid-template-rows: repeat(8, 8vw);}
+      .reversi-cell { width: 8vw; height: 8vw;}
+      .reversi-piece { width: 5vw; height: 5vw;}
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar modern-navbar"><div class="container"><div class="logo">Neon Sultan</div></div></nav>
+  <main class="reversi-container">
+    <div class="reversi-title">Reversi / Othello</div>
+    <div class="reversi-mode-row">
+      <button id="revPVP" class="reversi-mode-btn active" onclick="revSetMode('pvp')">2 nəfər</button>
+      <button id="revAI" class="reversi-mode-btn" onclick="revSetMode('ai')">NEON AI</button>
+    </div>
+    <div class="reversi-scoreboard" id="revScore"></div>
+    <div class="reversi-status" id="revStatus"></div>
+    <div class="reversi-board" id="revBoard"></div>
+    <button class="reversi-btn" onclick="revReset()">Yenidən başla</button>
+    <a href="../oyunlar.html" class="reversi-btn secondary">← Oyunlara qayıt</a>
+  </main>
+  <footer class="footer"><p>© 2025 Sultan. Neon Group Azerbaijan</p></footer>
+  <script>
+    // --- Reversi / Othello ---
+    let revArr, revTurn, revPlayable, revMode='pvp', revAIThinking=false, revFinished=false, revLastMove=null;
+    function revSetMode(m){
+      revMode=m;
+      document.getElementById('revPVP').classList.toggle('active',m==='pvp');
+      document.getElementById('revAI').classList.toggle('active',m==='ai');
+      revReset();
+    }
+    function revReset(){
+      revArr = Array(8).fill().map(_=>Array(8).fill(null));
+      revArr[3][3]=revArr[4][4]='w';
+      revArr[3][4]=revArr[4][3]='b';
+      revTurn='b'; revPlayable=revFindMoves(revArr,revTurn); revAIThinking=false; revFinished=false; revLastMove=null;
+      revRender(); revStatus();
+      if(revMode==='ai'&&revTurn==='w') setTimeout(revAIMove,650);
+    }
+    function revRender(){
+      let html='';
+      for(let y=0;y<8;y++)for(let x=0;x<8;x++){
+        let cellClass='reversi-cell';
+        if(revPlayable.some(([yy,xx])=>yy===y&&xx===x)) cellClass+=' playable';
+        if(revLastMove && revLastMove[0]===y && revLastMove[1]===x) cellClass+=' lastmove';
+        html+=`<div class="${cellClass}" onclick="revCellClick(${y},${x})">`;
+        if(revArr[y][x]) html+=`<div class="reversi-piece ${revArr[y][x]==='b'?'black':'white'}"></div>`;
+        html+='</div>';
+      }
+      document.getElementById('revBoard').innerHTML = html;
+      // Scoreboard
+      let count = {b:0,w:0};
+      for(let y=0;y<8;y++)for(let x=0;x<8;x++)if(revArr[y][x]) count[revArr[y][x]]++;
+      document.getElementById('revScore').innerHTML =
+        `<span style="color:#61dafb">Qara:</span> <b>${count.b}</b> &nbsp; <span style="color:#fbbd23;">Ağ:</span> <b>${count.w}</b>`;
+    }
+    function revStatus(){
+      if(revFinished){
+        let count = {b:0,w:0};
+        for(let y=0;y<8;y++)for(let x=0;x<8;x++)if(revArr[y][x]) count[revArr[y][x]]++;
+        let msg = count.b===count.w ? "Heç-heçə!" : (count.b>count.w?"Qara qalib oldu!":"Ağ qalib oldu!");
+        document.getElementById('revStatus').innerHTML = `<b>${msg}</b>`;
+        return;
+      }
+      if(!revPlayable.length){
+        let otherMoves = revFindMoves(revArr,revTurn==='b'?'w':'b');
+        if(otherMoves.length)
+          document.getElementById('revStatus').textContent = (revTurn==='b'?"Qara":"Ağ")+" ötürür!";
+        else
+          document.getElementById('revStatus').textContent = "Oyun bitdi!";
+      } else if(revMode==='ai')
+        document.getElementById('revStatus').textContent = revTurn==='b'?"Sənin növbən":"NEON AI düşünür...";
+      else
+        document.getElementById('revStatus').textContent = (revTurn==='b'?"Qara":"Ağ")+" növbədə";
+    }
+    function revCellClick(y,x){
+      if(revFinished||revAIThinking||(revMode==='ai'&&revTurn==='w'))return;
+      if(!revPlayable.some(([yy,xx])=>yy===y&&xx===x))return;
+      revMove(y,x);
+    }
+    function revFindMoves(arr,side){
+      let moves=[], enemy=side==='b'?'w':'b';
+      for(let y=0;y<8;y++)for(let x=0;x<8;x++){
+        if(arr[y][x])continue;
+        for(let [dy,dx] of [[-1,0],[1,0],[0,-1],[0,1],[-1,-1],[1,1],[-1,1],[1,-1]]){
+          let ny=y+dy,nx=x+dx, found=0;
+          while(ny>=0&&ny<8&&nx>=0&&nx<8&&arr[ny][nx]===enemy){found++;ny+=dy;nx+=dx;}
+          if(found&&ny>=0&&ny<8&&nx>=0&&nx<8&&arr[ny][nx]===side){moves.push([y,x]);break;}
+        }
+      }
+      return moves;
+    }
+    function revMove(y,x){
+      let arr=revArr, side=revTurn, enemy=side==='b'?'w':'b';
+      arr[y][x]=side;
+      for(let [dy,dx] of [[-1,0],[1,0],[0,-1],[0,1],[-1,-1],[1,1],[-1,1],[1,-1]]){
+        let ny=y+dy,nx=x+dx, path=[];
+        while(ny>=0&&ny<8&&nx>=0&&nx<8&&arr[ny][nx]===enemy){path.push([ny,nx]);ny+=dy;nx+=dx;}
+        if(path.length&&ny>=0&&ny<8&&nx>=0&&nx<8&&arr[ny][nx]===side)
+          for(let [yy,xx] of path) arr[yy][xx]=side;
+      }
+      revLastMove = [y,x];
+      revTurn = revTurn==='b'?'w':'b';
+      revPlayable = revFindMoves(arr,revTurn);
+      // Pass if no moves, else end
+      if(!revPlayable.length){
+        let otherMoves = revFindMoves(arr,revTurn==='b'?'w':'b');
+        if(otherMoves.length){ revTurn=revTurn==='b'?'w':'b'; revPlayable=otherMoves; }
+        else revFinished=true;
+      }
+      revRender(); revStatus();
+      if(revMode==='ai'&&revTurn==='w'&&!revFinished) setTimeout(revAIMove,750);
+    }
+    // --- NEON AI: ищет ход, который переворачивает максимум фишек (жадный)
+    function revAIMove(){
+      revAIThinking=true; revStatus();
+      setTimeout(()=>{
+        let best=null, max=0;
+        for(let [y,x] of revPlayable){
+          let cnt = revCountFlips(revArr,y,x,'w');
+          if(cnt>max){max=cnt;best=[y,x];}
+        }
+        if(!best) best=revPlayable[0];
+        revMove(best[0],best[1]); revAIThinking=false;
+      },450+Math.random()*400);
+    }
+    function revCountFlips(arr,y,x,side){
+      let enemy=side==='b'?'w':'b', flips=0;
+      for(let [dy,dx] of [[-1,0],[1,0],[0,-1],[0,1],[-1,-1],[1,1],[-1,1],[1,-1]]){
+        let ny=y+dy,nx=x+dx, path=[];
+        while(ny>=0&&ny<8&&nx>=0&&nx<8&&arr[ny][nx]===enemy){path.push([ny,nx]);ny+=dy;nx+=dx;}
+        if(path.length&&ny>=0&&ny<8&&nx>=0&&nx<8&&arr[ny][nx]===side) flips+=path.length;
+      }
+      return flips;
+    }
+    revReset();
+  </script>
+</body>
+</html>
