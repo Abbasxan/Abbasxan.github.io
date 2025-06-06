@@ -3,58 +3,44 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>NPPL Lisenziya Generatoru</title>
+  <title>NPPL Lisenziya Generatoru | Sultan</title>
   <link rel="stylesheet" href="assets/css/style.css" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
   <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet" />
 </head>
 <body id="top">
-  <!-- Theme Toggle Button (UI/UX) -->
-  <button id="themeToggle" class="theme-toggle" title="Tema Dəyiş">
-    <span class="toggle-icon">
-      <svg class="icon-moon" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 1 0 9.79 9.79z"/>
-      </svg>
-      <svg class="icon-sun" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
-        <circle cx="12" cy="12" r="5"/>
-        <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M16.36 16.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M16.36 7.64l1.42-1.42"/>
-      </svg>
-    </span>
-  </button>
-
-  <!-- Navbar -->
   <nav class="navbar">
     <div class="container">
       <div class="logo">Sultan</div>
-      <ul class="nav-links">
+      <button class="menu-toggle" id="mobileMenuBtn"><span></span><span></span><span></span></button>
+      <ul class="nav-links" id="navLinks">
         <li><a href="index.html">Ana Səhifə</a></li>
         <li><a href="about.html">Haqqımda</a></li>
         <li><a href="projects.html">Proyektlər</a></li>
         <li><a href="license.html" class="active">Lisenziya</a></li>
         <li><a href="contact.html">Əlaqə</a></li>
       </ul>
+      <button id="themeToggle" class="theme-toggle" title="Tema Dəyiş">
+        <span class="toggle-icon">
+          <svg class="icon-moon" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 1 0 9.79 9.79z"/></svg>
+          <svg class="icon-sun" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M16.36 16.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M16.36 7.64l1.42-1.42"/></svg>
+        </span>
+      </button>
     </div>
   </nav>
-
-  <!-- License Section -->
   <section class="hero">
     <div class="container">
       <h1 data-aos="fade-up">NPPL Lisenziya Generatoru</h1>
-      <p data-aos="fade-up" data-aos-delay="150">
-        Layihən üçün Neon Public Project License (NPPL) yaradın.
-      </p>
+      <p data-aos="fade-up" data-aos-delay="150">Layihən üçün Neon Public Project License (NPPL) yaradın.</p>
     </div>
   </section>
-
   <section class="license-generator">
     <div class="container">
       <div class="generator-form" data-aos="fade-right" data-aos-delay="100">
         <label for="nameInput">Ad və Soyad</label>
         <input type="text" id="nameInput" placeholder="məs: Sultan Əhməd" />
-
         <label for="yearInput">İl</label>
         <input type="number" id="yearInput" placeholder="məs: 2025" />
-
         <button onclick="generateLicense()" class="btn primary-btn">✅ Lisenziya Yarat</button>
       </div>
       <div class="license-result" data-aos="fade-left" data-aos-delay="200">
@@ -67,12 +53,9 @@
       </div>
     </div>
   </section>
-
   <footer class="footer">
     <p>© 2025 Sultan. Neon Group Azerbaijan | <a href="license.html">Lisenziya</a></p>
   </footer>
-
-  <!-- Scroll-up düyməsi (UI/UX) -->
   <a href="#top" class="scroll-up" id="scrollUpBtn" title="Yuxarı">
     <span class="scroll-icon">
       <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
@@ -84,7 +67,6 @@
       </svg>
     </span>
   </a>
-
   <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
   <script src="assets/js/script.js"></script>
 </body>
