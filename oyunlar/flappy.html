@@ -6,11 +6,65 @@
   <title>Flappy Bird | Neon Sultan</title>
   <link rel="stylesheet" href="../assets/css/style.css" />
   <style>
-    .flappy-container { display:flex; flex-direction:column; align-items:center; margin-top:48px;}
-    #flappyCanvas { background:#b3e5fc; border:3px solid #eee; border-radius:14px; margin-top:24px; max-width:100vw;}
-    .flappy-score { color:#61dafb; font-size:1.2em; margin-top:16px;}
-    .flappy-btn { margin-top:18px; padding:10px 24px; font-size:1em; border-radius:8px; border:none; background:#61dafb; color:#222; font-weight:bold; cursor:pointer;}
-    .flappy-btn:hover { background:#21a1f3; color:#fff;}
+    body {
+      background: radial-gradient(ellipse at 80% 8%, #5ee9fa 0%, #181924 100%);
+      min-height: 100vh;
+    }
+    .flappy-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 48px;
+      background: rgba(24, 25, 36, .94);
+      border-radius: 18px;
+      padding: 36px 24px 28px 24px;
+      box-shadow: 0 10px 44px #000b;
+      max-width: 420px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .flappy-title {
+      font-size: 2em;
+      color: #61dafb;
+      margin-bottom: 8px;
+      text-shadow: 0 2px 12px #222b;
+    }
+    #flappyCanvas {
+      background: linear-gradient(180deg, #b3e5fc 65%, #5ee9fa 100%);
+      border-radius: 14px;
+      margin-top: 24px;
+      max-width: 100vw;
+      box-shadow: 0 10px 36px #0007, 0 1.5px 0.5px #61dafb44;
+      display: block;
+    }
+    .flappy-score {
+      color: #fbbd23;
+      font-size: 1.3em;
+      margin-top: 18px;
+      text-shadow: 0 2px 8px #222b;
+    }
+    .flappy-btn {
+      margin-top: 18px;
+      padding: 10px 24px;
+      font-size: 1em;
+      border-radius: 11px;
+      border: none;
+      background: linear-gradient(90deg,#61dafb,#fbbd23);
+      color: #222;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 2px 8px #0004;
+      transition: .2s;
+    }
+    .flappy-btn:hover {
+      background: linear-gradient(90deg,#fbbd23,#61dafb);
+      color: #fff;
+      transform: translateY(-2px) scale(1.055);
+    }
+    @media (max-width: 600px) {
+      .flappy-container { padding: 16px 5vw 18px 5vw;}
+      .flappy-title { font-size: 1.5em;}
+    }
   </style>
 </head>
 <body>
@@ -27,8 +81,8 @@
       </ul>
     </div>
   </nav>
-  <main class="container flappy-container">
-    <h1>Flappy Bird</h1>
+  <main class="flappy-container">
+    <div class="flappy-title">Flappy Bird</div>
     <canvas id="flappyCanvas" width="320" height="480"></canvas>
     <div class="flappy-score" id="flappyScore">Xal: 0</div>
     <button class="flappy-btn" onclick="flappyStart()">Yenidən başla</button>
@@ -38,49 +92,236 @@
     <p>© 2025 Sultan. Neon Group Azerbaijan | <a href="../license.html">Lisenziya</a></p>
   </footer>
   <script>
-    // Simple Flappy Bird
+    // --- Flappy Bird Modernized ---
     const canvas = document.getElementById('flappyCanvas');
     const ctx = canvas.getContext('2d');
-    let bird, pipes, score, running, timer;
+
+    let bird, pipes, score, best, running, timer, gravity, paused, flashAlpha;
+    const G = 0.38;
+    const BIRD_COLOR = "#fbbd23";
+    const BIRD_SHDW = "#61dafb";
+    const PIPE_COLOR = "#61dafb";
+    const PIPE_SHDW = "#21a1f3";
+    const PIPE_WIDTH = 44;
+    const GAP = 120;
+    const PIPE_SPEED = 2.2;
+
     function flappyStart() {
-      bird = {x:60, y:240, vy:0};
+      bird = {x: 68, y: 240, vy: 0, r: 16, rot: 0};
       pipes = [];
-      score = 0; running = true;
-      if(timer) cancelAnimationFrame(timer);
+      score = 0;
+      gravity = G;
+      paused = false;
+      flashAlpha = 0;
+      running = true;
+      document.getElementById('flappyScore').innerHTML = "Xal: 0";
+      if (timer) cancelAnimationFrame(timer);
       loop();
     }
-    function flap() { if(running) bird.vy = -6; }
-    document.addEventListener("keydown", e=>{if(e.key===" "||e.key==="ArrowUp")flap();});
+
+    function flap() {
+      if (!running) return flappyStart();
+      if(paused) return;
+      bird.vy = -6.6;
+      bird.rot = -0.6;
+    }
+
+    document.addEventListener("keydown", e=>{
+      if (e.key===" "||e.key==="ArrowUp") flap();
+      if (e.key==="p") paused = !paused;
+    });
     canvas.addEventListener("mousedown", flap);
+    canvas.addEventListener("touchstart", function(e){e.preventDefault();flap();});
+
     function addPipe() {
-      let gap = 110, top = Math.random()*220+40;
-      pipes.push({x:320, top:top, bot:top+gap});
+      let top = Math.random()*220+40;
+      pipes.push({x:canvas.width, top:top, bot:top+GAP, scored:false, col:randomColor()});
     }
+
+    function randomColor() {
+      // pastel blue-green range
+      const h = 180+Math.random()*100;
+      return `hsl(${h},75%,70%)`;
+    }
+
     function loop() {
-      ctx.clearRect(0,0,320,480);
-      // Bird
-      bird.vy += 0.5; bird.y += bird.vy;
-      ctx.fillStyle="#fbbd23";
-      ctx.beginPath(); ctx.arc(bird.x,bird.y,14,0,2*Math.PI); ctx.fill();
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+
+      // --- Draw background gradient clouds
+      for(let i=0;i<4;i++){
+        ctx.save();
+        ctx.globalAlpha = 0.15 + 0.06 * i;
+        ctx.beginPath();
+        ctx.ellipse(60+i*70, 60+Math.sin(Date.now()/700+i)*10, 45+18*i, 24+8*i, 0, 0, 2*Math.PI);
+        ctx.fillStyle = "#fff";
+        ctx.fill();
+        ctx.restore();
+      }
+
+      // --- Pipes ---
+      if (pipes.length === 0 || pipes[pipes.length-1].x < 160)
+        addPipe();
+      pipes.forEach(p=>{
+        // 3D effect: shadow
+        ctx.save();
+        ctx.shadowColor = PIPE_SHDW;
+        ctx.shadowBlur = 18;
+        ctx.fillStyle = p.col;
+        // Top pipe
+        ctx.fillRect(p.x, 0, PIPE_WIDTH, p.top-35);
+        // Bottom pipe
+        ctx.fillRect(p.x, p.bot, PIPE_WIDTH, canvas.height-p.bot);
+        // Glossy highlight
+        ctx.globalAlpha = 0.17;
+        ctx.fillStyle = "#fff";
+        ctx.fillRect(p.x+5, 6, PIPE_WIDTH-18, p.top-45);
+        ctx.globalAlpha = 1;
+        ctx.restore();
+        p.x -= PIPE_SPEED;
+      });
+
+      // Remove pipes offscreen & calculate score
+      if (pipes.length && pipes[0].x < -PIPE_WIDTH) pipes.shift();
+      pipes.forEach(p=>{
+        if (!p.scored && p.x+PIPE_WIDTH<bird.x-bird.r) {
+          score++;
+          document.getElementById('flappyScore').innerHTML = "Xal: " + score + (best ? " | Rekord: " + best : "");
+          p.scored = true;
+          flashAlpha = 0.45;
+          if (!best || score > best) {
+            best = score;
+            localStorage.setItem("flappyBest", best);
+          }
+        }
+      });
+
+      // --- Bird ---
+      if (!paused) {
+        bird.vy += gravity;
+        bird.y += bird.vy;
+        bird.rot += 0.04;
+        if (bird.rot > 1.05) bird.rot = 1.05;
+      }
+
+      // 3D Shadow
+      ctx.save();
+      ctx.globalAlpha = 0.28;
+      ctx.beginPath();
+      ctx.ellipse(bird.x+13, bird.y+bird.r+8, bird.r*1.05, bird.r*0.45, 0, 0, 2*Math.PI);
+      ctx.fillStyle = "#222";
+      ctx.fill();
+      ctx.restore();
+
+      // Bird body
+      ctx.save();
+      ctx.translate(bird.x, bird.y);
+      ctx.rotate(bird.rot);
+      ctx.shadowColor = BIRD_SHDW;
+      ctx.shadowBlur = 17;
+      ctx.beginPath();
+      ctx.arc(0,0, bird.r, 0, 2*Math.PI);
+      ctx.fillStyle = BIRD_COLOR;
+      ctx.fill();
+      // Wing (drawn as a lighter arc)
+      ctx.globalAlpha = 0.7;
+      ctx.beginPath();
+      ctx.arc(-6,3, bird.r*0.65, Math.PI*0.45, Math.PI*1.5);
+      ctx.fillStyle = "#fffbe7";
+      ctx.fill();
+      ctx.globalAlpha = 1;
+      // Eye
+      ctx.beginPath();
+      ctx.arc(7,-6,4,0,2*Math.PI);
+      ctx.fillStyle = "#fff";
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(8,-7,1.5,0,2*Math.PI);
+      ctx.fillStyle = "#222";
+      ctx.fill();
+      // Beak
+      ctx.beginPath();
+      ctx.moveTo(bird.r-2,2);
+      ctx.lineTo(bird.r+9,0);
+      ctx.lineTo(bird.r-2,-2);
+      ctx.closePath();
+      ctx.fillStyle = "#f78e1e";
+      ctx.shadowBlur = 0;
+      ctx.fill();
+      ctx.restore();
+
+      // Flash effect for score
+      if(flashAlpha>0){
+        ctx.save();
+        ctx.globalAlpha = flashAlpha;
+        ctx.fillStyle = "#fff";
+        ctx.fillRect(0,0,canvas.width,canvas.height);
+        ctx.restore();
+        flashAlpha -= 0.025;
+      }
+
+      // --- Collision ---
+      let hit = false;
+      // Ground or ceiling
+      if (bird.y > canvas.height-bird.r || bird.y < bird.r) hit = true;
       // Pipes
-      if(pipes.length===0||pipes[pipes.length-1].x<160) addPipe();
       pipes.forEach(p=>{
-        ctx.fillStyle="#61dafb";
-        ctx.fillRect(p.x,0,48,p.top-40);
-        ctx.fillRect(p.x,p.bot,48,480-p.bot);
-        p.x-=2;
+        if (
+          bird.x + bird.r > p.x && bird.x - bird.r < p.x + PIPE_WIDTH &&
+          (bird.y - bird.r < p.top || bird.y + bird.r > p.bot)
+        ) hit = true;
       });
-      // Remove passed pipes
-      if(pipes[0].x<-48) { pipes.shift(); score++; }
-      // Collision
-      if(bird.y<14||bird.y>480-14) running=false;
-      pipes.forEach(p=>{
-        if(bird.x+14>p.x&&bird.x-14<p.x+48&&(bird.y-14<p.top||bird.y+14>p.bot)) running=false;
-      });
-      document.getElementById('flappyScore').textContent = "Xal: "+score;
-      if(running) timer=requestAnimationFrame(loop);
-      else document.getElementById('flappyScore').textContent += " | Oyun bitdi!";
+
+      // --- Game Over ---
+      if (hit && running) {
+        running = false;
+        document.getElementById('flappyScore').innerHTML = `Oyun bitdi! Xal: ${score}` + (best ? ` | Rekord: ${best}` : "");
+        // Show a semi-transparent overlay
+        ctx.save();
+        ctx.globalAlpha = 0.75;
+        ctx.fillStyle = "#181924";
+        ctx.fillRect(0, canvas.height/2-60, canvas.width, 120);
+        ctx.globalAlpha = 1;
+        ctx.fillStyle = "#fff";
+        ctx.font = "bold 26px 'Inter', Arial";
+        ctx.textAlign = "center";
+        ctx.shadowColor = "#61dafb";
+        ctx.shadowBlur = 15;
+        ctx.fillText("Oyun bitdi!", canvas.width/2, canvas.height/2-10);
+        ctx.font = "18px 'Inter', Arial";
+        ctx.fillStyle = "#fbbd23";
+        ctx.shadowColor = "#fbbd23";
+        ctx.fillText(`Xal: ${score}  |  Rekord: ${best||score}`, canvas.width/2, canvas.height/2+24);
+        ctx.font = "bold 17px 'Inter', Arial";
+        ctx.fillStyle = "#fff";
+        ctx.shadowBlur = 0;
+        ctx.fillText("Təkrar başlamaq üçün kliklə və ya boşluq bas", canvas.width/2, canvas.height/2+52);
+        ctx.restore();
+        return;
+      }
+
+      // --- Pause ---
+      if (paused && running) {
+        ctx.save();
+        ctx.globalAlpha = 0.82;
+        ctx.fillStyle = "#181924";
+        ctx.fillRect(0, canvas.height/2-45, canvas.width, 90);
+        ctx.globalAlpha = 1;
+        ctx.fillStyle = "#fff";
+        ctx.font = "bold 24px 'Inter', Arial";
+        ctx.textAlign = "center";
+        ctx.shadowColor = "#61dafb";
+        ctx.shadowBlur = 15;
+        ctx.fillText("PAUZA", canvas.width/2, canvas.height/2+8);
+        ctx.restore();
+        timer = requestAnimationFrame(loop);
+        return;
+      }
+
+      timer = requestAnimationFrame(loop);
     }
+
+    // Rekord (best score) in localStorage
+    try { best = +localStorage.getItem("flappyBest") || 0; } catch {}
     flappyStart();
   </script>
 </body>
