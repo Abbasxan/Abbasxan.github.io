@@ -7,18 +7,51 @@
   <link rel="stylesheet" href="../assets/css/style.css" />
   <style>
     body {background: radial-gradient(ellipse at 60% 15%, #495082 0%, #181924 100%);}
-    .tetris-container { display:flex; flex-direction:column; align-items:center; margin-top:48px; background:rgba(24,25,36,.96); border-radius:18px; padding:36px 32px 32px 32px; box-shadow:0 10px 44px #000b; max-width:410px; margin:auto;}
+    .tetris-container {
+      display:flex; flex-direction:column; align-items:center; margin-top:48px;
+      background:rgba(24,25,36,.96); border-radius:18px; padding:36px 24px 32px 24px;
+      box-shadow:0 10px 44px #000a; max-width: 410px; margin-left:auto; margin-right:auto;
+    }
     .tetris-title { font-size:2em; color:#61dafb; margin-bottom:8px; text-shadow:0 2px 12px #222b;}
-    #tetrisCanvas { background:linear-gradient(160deg, #191924 0%, #23304f 100%); border-radius:16px; margin-top:24px; box-shadow:0 10px 40px #000a, 0 1.5px 0.5px #61dafb44;}
+    #tetrisCanvas { background:linear-gradient(160deg, #191924 0%, #23304f 100%); border-radius:16px; margin-top:24px; box-shadow:0 10px 40px #000a, 0 1.5px 0.5px #61dafb44; width:100%; max-width:320px; height:auto; }
     .tetris-score { color:#fbbd23; font-size:1.2em; margin-top:16px; text-shadow:0 2px 8px #222b;}
-    .tetris-btn { margin-top:18px; padding:10px 24px; font-size:1em; border-radius:11px; border:none; background:linear-gradient(90deg,#61dafb,#fbbd23); color:#222; font-weight:bold; cursor:pointer; box-shadow:0 2px 8px #0004; transition:.2s;}
+    .tetris-btn { margin-top:18px; padding:10px 24px; font-size:1em; border-radius:11px; border:none; background:linear-gradient(90deg,#61dafb,#fbbd23); color:#222; font-weight:bold; cursor:pointer; box-shadow:0 2px 10px #0006;}
     .tetris-btn:hover { background:linear-gradient(90deg,#fbbd23,#61dafb); color:#fff; transform: translateY(-2px) scale(1.055);}
     .tetris-next-box {margin-top:16px; margin-bottom:8px;}
-    #tetrisNext {background: #18181a; border-radius:9px; box-shadow: 0 3px 14px #000a;}
+    #tetrisNext {background: #18181a; border-radius:9px; box-shadow: 0 3px 14px #000a; width:64px;height:64px;}
     .tetris-controls {margin-top:8px; color:#61dafb; font-size:.98em;}
+    .mobile-controls {
+      display: none;
+      margin-top: 18px;
+      gap: 14px;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .mobile-btn {
+      background: #23233b;
+      color: #fbbd23;
+      font-size: 2em;
+      border: none;
+      border-radius: 14px;
+      width: 56px; height: 56px;
+      margin: 2px 7px;
+      box-shadow: 0 2px 10px #0007;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+      touch-action: manipulation;
+      transition: background .13s, color .13s;
+    }
+    .mobile-btn:active { background: #fbbd23; color: #23233b; }
     @media (max-width:600px){
-      .tetris-container{padding:10px 2vw;}
+      .tetris-container{padding:10px 2vw; max-width: 99vw;}
       #tetrisCanvas{width:98vw;max-width:98vw;}
+      .mobile-controls{display:flex;}
+      .tetris-title {font-size:1.4em;}
+      .tetris-score {font-size:1em;}
+      .tetris-btn {font-size:0.98em;}
     }
   </style>
 </head>
@@ -27,23 +60,39 @@
   <main class="tetris-container">
     <div class="tetris-title">Tetris</div>
     <div class="tetris-next-box">
-      <canvas id="tetrisNext" width="96" height="96"></canvas>
+      <canvas id="tetrisNext" width="64" height="64"></canvas>
     </div>
-    <canvas id="tetrisCanvas" width="240" height="420"></canvas>
+    <!-- Размер canvas динамичен -->
+    <canvas id="tetrisCanvas"></canvas>
     <div class="tetris-score" id="tetrisScore">Xal: 0</div>
     <div class="tetris-controls">⬅️ ➡️ — hərəkət | 🔼 — döndər | 🔽/Space — sürətli düşüş</div>
+    <!-- Управление для мобильных -->
+    <div class="mobile-controls" id="mobileControls">
+      <button class="mobile-btn" id="btnLeft">⬅️</button>
+      <button class="mobile-btn" id="btnRotate">🔼</button>
+      <button class="mobile-btn" id="btnRight">➡️</button>
+      <button class="mobile-btn" id="btnDown">🔽</button>
+      <button class="mobile-btn" id="btnDrop">⏬</button>
+    </div>
     <button class="tetris-btn" onclick="tetrisStart()">Yenidən başla</button>
     <a href="../oyunlar.html" class="tetris-btn" style="background:#222; color:#fff; margin-top:12px;">← Oyunlara qayıt</a>
   </main>
   <footer class="footer"><p>© 2025 Sultan. Neon Group Azerbaijan</p></footer>
   <script>
-    // --- Neon Tetris v2 ---
-    const canvas = document.getElementById('tetrisCanvas');
-    const ctx = canvas.getContext('2d');
-    const nextCanvas = document.getElementById('tetrisNext');
-    const nctx = nextCanvas.getContext('2d');
-    const COLS=10, ROWS=21, SIZE=24;
-    const COLORS = [
+    // --- Neon Tetris v3 (адаптив) ---
+    // Responsive sizes
+    function getCanvasSize() {
+      let w = Math.min(window.innerWidth * 0.95, 320);
+      let size = Math.floor(w / 10);
+      let width = size * 10, height = size * 21;
+      return { width, height, size };
+    }
+    let canvas = document.getElementById('tetrisCanvas');
+    let ctx = canvas.getContext('2d');
+    let nextCanvas = document.getElementById('tetrisNext');
+    let nctx = nextCanvas.getContext('2d');
+    let COLS=10, ROWS=21, SIZE=24;
+    let COLORS = [
       "#61dafb", // I
       "#fbbd23", // Z
       "#e74c3c", // S
@@ -52,8 +101,7 @@
       "#ffd600", // L
       "#ff73c5"  // J
     ];
-    // prettier block layouts for preview
-    const SHAPES = [
+    let SHAPES = [
       [[1,1,1,1]],              // I
       [[1,1,0],[0,1,1]],        // Z
       [[0,1,1],[1,1,0]],        // S
@@ -64,6 +112,14 @@
     ];
     let board, piece, px, py, color, timer, score, running, dropSpeed=420;
     let nextShape, nextColor;
+    function resizeCanvas(){
+      let {width, height, size} = getCanvasSize();
+      canvas.width = width;
+      canvas.height = height;
+      SIZE = size;
+      draw();
+    }
+    window.addEventListener('resize', resizeCanvas);
 
     function tetrisStart(){
       board = Array(ROWS).fill().map(()=>Array(COLS).fill(0));
@@ -72,7 +128,7 @@
       spawn();
       clearInterval(timer);
       timer = setInterval(loop, dropSpeed);
-      draw();
+      resizeCanvas();
       drawNext();
       document.getElementById('tetrisScore').textContent = "Xal: 0";
     }
@@ -147,19 +203,29 @@
       }
       if(e.key===" "){drop();}
     });
+    // TOUCH/Мобильное управление
+    function mobileControlsSetup(){
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      if(isMobile) document.getElementById('mobileControls').style.display = 'flex';
+      document.getElementById('btnLeft').ontouchstart = document.getElementById('btnLeft').onmousedown = ()=>move(-1);
+      document.getElementById('btnRight').ontouchstart = document.getElementById('btnRight').onmousedown = ()=>move(1);
+      document.getElementById('btnDown').ontouchstart = document.getElementById('btnDown').onmousedown = ()=>loop();
+      document.getElementById('btnRotate').ontouchstart = document.getElementById('btnRotate').onmousedown = ()=>{
+        let rot=rotate(piece);if(!collide(px,py,rot))piece=rot; draw();
+      };
+      document.getElementById('btnDrop').ontouchstart = document.getElementById('btnDrop').onmousedown = ()=>drop();
+    }
+    // draw/отрисовка
     function draw(){
       ctx.clearRect(0,0,canvas.width,canvas.height);
-      // board
       for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++)
         if(board[r][c]){
           drawBlock(ctx, c, r, COLORS[board[r][c]-1]);
         }
-      // piece
       for(let r=0;r<piece.length;r++)for(let c=0;c<piece[0].length;c++)
         if(piece[r][c]){
           drawBlock(ctx, px+c, py+r, COLORS[color-1], true);
         }
-      // grid
       ctx.save();
       ctx.globalAlpha = .13;
       ctx.strokeStyle = "#fff";
@@ -183,20 +249,31 @@
       }
       ctx.fillStyle = color;
       ctx.fillRect(x*SIZE+1, y*SIZE+1, SIZE-2, SIZE-2);
-      // 3D highlight
       ctx.globalAlpha = 0.23;
       ctx.fillStyle = "#fff";
-      ctx.fillRect(x*SIZE+3, y*SIZE+3, SIZE-6, 8);
+      ctx.fillRect(x*SIZE+3, y*SIZE+3, SIZE-6, Math.max(6, SIZE/3));
       ctx.globalAlpha = 1;
       ctx.restore();
     }
     function drawNext(){
       nctx.clearRect(0,0,nextCanvas.width,nextCanvas.height);
       let shape = nextShape||SHAPES[0], col = nextColor?COLORS[nextColor-1]:COLORS[0];
-      let offsetX = (5-shape[0].length)*SIZE/2, offsetY = (5-shape.length)*SIZE/2;
+      let s = 14;
+      let offsetX = (64-shape[0].length*s)/2, offsetY = (64-shape.length*s)/2;
       for(let r=0;r<shape.length;r++)
         for(let c=0;c<shape[0].length;c++)
-          if(shape[r][c]) drawBlock(nctx, c, r, col, true);
+          if(shape[r][c]) {
+            nctx.save();
+            nctx.shadowColor = col;
+            nctx.shadowBlur = 13;
+            nctx.fillStyle = col;
+            nctx.fillRect(offsetX+c*s+2, offsetY+r*s+2, s-4, s-4);
+            nctx.globalAlpha = 0.22;
+            nctx.fillStyle = "#fff";
+            nctx.fillRect(offsetX+c*s+4, offsetY+r*s+4, s-8, 6);
+            nctx.globalAlpha = 1;
+            nctx.restore();
+          }
     }
     function gameOver(){
       document.getElementById('tetrisScore').textContent = "Oyun bitdi! Xal: "+score;
@@ -214,7 +291,9 @@
       ctx.fillText("Oyun bitdi!", canvas.width/2, canvas.height/2+10);
       ctx.restore();
     }
+    // INIT
     tetrisStart();
+    mobileControlsSetup();
   </script>
 </body>
 </html>
