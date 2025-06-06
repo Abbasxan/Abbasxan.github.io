@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Yaddaş Oyunu | Neon Sultan</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+  <style>
+    .mem-container { display: flex; flex-direction: column; align-items: center; margin-top: 48px; }
+    .mem-board { display: grid; grid-template-columns: repeat(4, 64px); gap: 10px; margin-top: 24px; }
+    .mem-card { width: 64px; height: 64px; background: #18181a; color: #fff; font-size: 2em; display: flex; align-items: center; justify-content: center; border-radius: 9px; cursor: pointer; box-shadow: 0 2px 8px #0002; user-select: none; transition: background .2s; }
+    .mem-card.revealed, .mem-card.solved { background: #61dafb; color: #222; cursor: default; }
+    .mem-card.solved { background: #fbbd23; color: #222; }
+    .mem-status { margin-top: 18px; color: #61dafb; font-size: 1.1em; }
+    .mem-btn { margin-top:18px; padding:9px 24px; font-size:1em; border-radius:8px; border:none; background:#61dafb; color:#222; font-weight:bold; cursor:pointer; }
+    .mem-btn:hover { background:#21a1f3; color:#fff; }
+  </style>
+</head>
+<body>
+  <nav class="navbar modern-navbar">
+    <div class="container">
+      <div class="logo">Neon Sultan</div>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="../index.html">Ana Səhifə</a></li>
+        <li><a href="../about.html">Haqqımda</a></li>
+        <li><a href="../projects.html">Proyektlərim</a></li>
+        <li><a href="../license.html">Lisenziya</a></li>
+        <li><a href="../contact.html">Əlaqə</a></li>
+        <li><a href="../oyunlar.html" class="active">Oyunlar</a></li>
+      </ul>
+    </div>
+  </nav>
+  <main class="container mem-container">
+    <h1>Yaddaş Oyunu</h1>
+    <div class="mem-status" id="memStatus">Cütlükləri tap!</div>
+    <div class="mem-board" id="memBoard"></div>
+    <button class="mem-btn" onclick="memStart()">Yenidən başla</button>
+    <a href="../oyunlar.html" class="mem-btn" style="background:#222; color:#fff; margin-top:12px;">← Oyunlara qayıt</a>
+  </main>
+  <footer class="footer">
+    <p>© 2025 Sultan. Neon Group Azerbaijan | <a href="../license.html">Lisenziya</a></p>
+  </footer>
+  <script>
+    const symbols = ["🐶","🐱","🦊","🦄","🐸","🐲","🦉","🦆"];
+    let memCards = [], revealed = [], solved = 0, busy = false, moves = 0;
+    function memStart() {
+      let deck = symbols.concat(symbols).sort(()=>Math.random()-0.5);
+      memCards = deck.map((sym,i)=>({id:i, sym, show:false, solved:false}));
+      revealed = []; solved = 0; moves = 0; busy = false;
+      document.getElementById("memStatus").textContent = "Cütlükləri tap!";
+      memRender();
+    }
+    function memRender() {
+      const board = document.getElementById("memBoard");
+      board.innerHTML = "";
+      memCards.forEach((card,i) => {
+        const d = document.createElement("div");
+        d.className = "mem-card" + (card.solved ? " solved" : card.show ? " revealed" : "");
+        d.textContent = card.show || card.solved ? card.sym : "❓";
+        d.onclick = () => memFlip(i);
+        board.appendChild(d);
+      });
+    }
+    function memFlip(i) {
+      if (busy || memCards[i].show || memCards[i].solved) return;
+      memCards[i].show = true;
+      revealed.push(i);
+      memRender();
+      if(revealed.length === 2) {
+        moves++;
+        let [a,b] = revealed;
+        if(memCards[a].sym === memCards[b].sym) {
+          memCards[a].solved=memCards[b].solved=true; solved++;
+          revealed = [];
+          memRender();
+          if(solved === symbols.length) document.getElementById("memStatus").textContent = "Təbriklər! Hamısını tapdın. Cəmi hərəkət: " + moves;
+        } else {
+          busy = true;
+          setTimeout(()=>{
+            memCards[a].show=memCards[b].show=false;
+            revealed = []; busy = false;
+            memRender();
+          }, 900);
+        }
+      }
+    }
+    memStart();
+  </script>
+</body>
+</html>
