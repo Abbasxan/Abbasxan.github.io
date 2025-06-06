@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Platformer Mini | Neon Sultan</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+  <style>
+    body {background: radial-gradient(circle at 50% 20%, #495082 0%, #181924 100%);}
+    .plat-container {display:flex;flex-direction:column;align-items:center;margin-top:40px;background:rgba(24,25,36,.98);border-radius:18px;padding:30px 15px 20px 15px;box-shadow:0 10px 44px #000c;max-width:440px;margin:auto;}
+    .plat-title {font-size:2em;color:#61dafb;margin-bottom:8px;text-shadow:0 2px 16px #222c;}
+    .plat-btn {margin-top:14px;padding:10px 26px;font-size:1em;border-radius:10px;border:none;background:linear-gradient(90deg,#61dafb,#fbbd23);color:#222;font-weight:bold;cursor:pointer;box-shadow:0 2px 10px #0007;transition:background .2s, color .2s, transform .13s;}
+    .plat-btn:hover {background:linear-gradient(90deg,#fbbd23,#61dafb);color:#fff;transform:translateY(-2px) scale(1.07);}
+    .plat-status {margin-top:7px;color:#fff;min-height:22px;font-size:1.07em;text-shadow:0 2px 8px #222a;}
+    #platGame {background:linear-gradient(160deg,#23233b 60%,#26394d 100%);margin-top:20px;border-radius:18px;box-shadow:0 8px 30px #000b,0 0 0 4px #61dafb22;}
+    @media (max-width:600px){.plat-container{padding:8px 2vw;}#platGame{width:96vw !important;max-width:96vw !important;height:52vw !important;}}
+  </style>
+</head>
+<body>
+<nav class="navbar modern-navbar"><div class="container"><div class="logo">Neon Sultan</div></div></nav>
+<main class="plat-container">
+  <div class="plat-title">Platformer Mini</div>
+  <canvas id="platGame" width="340" height="180"></canvas>
+  <div class="plat-status" id="platStatus"></div>
+  <button class="plat-btn" onclick="platStart()">Yenidən başla</button>
+  <a href="../oyunlar.html" class="plat-btn" style="background:#222;color:#fff;margin-top:10px;">← Oyunlara qayıt</a>
+</main>
+<footer class="footer"><p>© 2025 Sultan. Neon Group Azerbaijan</p></footer>
+<script>
+const platcv=document.getElementById('platGame'),pctx=platcv.getContext('2d');
+let platW=platcv.width,platH=platcv.height,player,velX,velY,onGround,level,playing;
+function platStart(){
+  player={x:30,y:platH-30};velX=0;velY=0;onGround=false;playing=true;
+  level=[
+    {x:0,y:platH-12,w:platW,h:12},
+    {x:70,y:platH-45,w:50,h:12},
+    {x:170,y:platH-70,w:60,h:12},
+    {x:250,y:platH-110,w:60,h:12},
+    {x:platW-50,y:platH-150,w:36,h:12}
+  ];
+  requestAnimationFrame(platLoop);
+  document.getElementById('platStatus').textContent='Çıxışa çat: sağ üst platforma!';
+}
+function platLoop(){
+  pctx.clearRect(0,0,platW,platH);
+  // Platforms
+  for(let pf of level){
+    pctx.save();pctx.shadowColor="#fbbd23";pctx.shadowBlur=13;
+    pctx.fillStyle="#23233b";pctx.fillRect(pf.x,pf.y,pf.w,pf.h);
+    pctx.strokeStyle="#fbbd23";pctx.lineWidth=2.5;pctx.strokeRect(pf.x,pf.y,pf.w,pf.h);
+    pctx.restore();
+  }
+  // Player
+  pctx.save();pctx.shadowColor="#61dafb";pctx.shadowBlur=8;
+  pctx.beginPath();pctx.arc(player.x,player.y,11,0,2*Math.PI);
+  pctx.fillStyle="#61dafb";pctx.fill();
+  pctx.strokeStyle="#fff";pctx.lineWidth=1.5;pctx.stroke();
+  pctx.restore();
+  // Physics
+  velY+=0.6;if(velY>7)velY=7;
+  player.x+=velX;player.y+=velY;
+  // Collisions
+  onGround=false;
+  for(let pf of level){
+    if(player.x>pf.x-10&&player.x<pf.x+pf.w+10&&player.y+11>=pf.y&&player.y+11<=pf.y+velY+15){
+      player.y=pf.y-11;velY=0;onGround=true;
+    }
+  }
+  // Walls
+  if(player.x<11)player.x=11;if(player.x>platW-11)player.x=platW-11;
+  // Win
+  let pf=level[level.length-1];
+  if(player.x>pf.x&&player.x<pf.x+pf.w&&player.y>pf.y-19&&player.y<pf.y+9){
+    playing=false;
+    document.getElementById('platStatus').innerHTML='<b style="color:#00e676;">Təbriklər, qalib oldun!</b>';return;
+  }
+  if(playing)requestAnimationFrame(platLoop);
+}
+document.addEventListener('keydown',e=>{
+  if(!playing)return;
+  if(e.key=="ArrowLeft"||e.key=="a")velX=-2.2;
+  if(e.key=="ArrowRight"||e.key=="d")velX=2.2;
+  if((e.key=="ArrowUp"||e.key=="w"||e.key==" "||e.key=="z")&&onGround)velY=-7.5;
+});
+document.addEventListener('keyup',e=>{
+  if(e.key=="ArrowLeft"||e.key=="a")velX=0;
+  if(e.key=="ArrowRight"||e.key=="d")velX=0;
+});
+platStart();
+</script>
+</body>
+</html>
