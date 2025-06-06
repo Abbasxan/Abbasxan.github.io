@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Asteroids | Neon Sultan</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+  <style>
+    body {background: radial-gradient(circle at 50% 20%, #495082 0%, #181924 100%);}
+    .as-container {display:flex;flex-direction:column;align-items:center;margin-top:40px;background:rgba(24,25,36,.98);border-radius:18px;padding:30px 15px 20px 15px;box-shadow:0 10px 44px #000c;max-width:440px;margin:auto;}
+    .as-title {font-size:2em;color:#61dafb;margin-bottom:8px;text-shadow:0 2px 16px #222c;}
+    .as-btn {margin-top:14px;padding:10px 26px;font-size:1em;border-radius:10px;border:none;background:linear-gradient(90deg,#61dafb,#fbbd23);color:#222;font-weight:bold;cursor:pointer;box-shadow:0 2px 10px #0007;transition:background .2s, color .2s, transform .13s;}
+    .as-btn:hover {background:linear-gradient(90deg,#fbbd23,#61dafb);color:#fff;transform:translateY(-2px) scale(1.07);}
+    .as-status {margin-top:7px;color:#fff;min-height:22px;font-size:1.07em;text-shadow:0 2px 8px #222a;}
+    #asGame {background:linear-gradient(160deg,#23233b 60%,#26394d 100%);margin-top:20px;border-radius:18px;box-shadow:0 8px 30px #000b,0 0 0 4px #61dafb22;}
+    @media (max-width:600px){.as-container{padding:8px 2vw;}#asGame{width:96vw !important;max-width:96vw !important;height:66vw !important;}}
+  </style>
+</head>
+<body>
+<nav class="navbar modern-navbar"><div class="container"><div class="logo">Neon Sultan</div></div></nav>
+<main class="as-container">
+  <div class="as-title">Asteroids</div>
+  <canvas id="asGame" width="340" height="220"></canvas>
+  <div class="as-status" id="asStatus"></div>
+  <button class="as-btn" onclick="astStart()">Yenidən başla</button>
+  <a href="../oyunlar.html" class="as-btn" style="background:#222;color:#fff;margin-top:10px;">← Oyunlara qayıt</a>
+</main>
+<footer class="footer"><p>© 2025 Sultan. Neon Group Azerbaijan</p></footer>
+<script>
+const canvas=document.getElementById('asGame'),ctx=canvas.getContext('2d');
+let W=canvas.width,H=canvas.height,ship,vel,rot,bullets,asteroids,alive,score,fireCD=0;
+function astStart(){
+  ship={x:W/2,y:H/2,a:0,vx:0,vy:0};
+  rot=0;vel=0;bullets=[];asteroids=[];alive=true;score=0;fireCD=0;
+  for(let i=0;i<4;i++)spawnAst();
+  document.getElementById('asStatus').textContent = "Xal: 0";
+  requestAnimationFrame(astLoop);
+}
+function spawnAst(){
+  let r=20+Math.random()*22, a={x:0,y:0,vx:0,vy:0,r};
+  if(Math.random()<.5){
+    a.x=Math.random()<.5?0:W; a.y=Math.random()*H;
+  }else{
+    a.x=Math.random()*W; a.y=Math.random()<.5?0:H;
+  }
+  let angle=Math.random()*2*Math.PI, spd=1+Math.random()*1.5;
+  a.vx=Math.cos(angle)*spd;a.vy=Math.sin(angle)*spd;
+  asteroids.push(a);
+}
+function astLoop(){
+  ctx.clearRect(0,0,W,H);
+  // Move ship
+  ship.x+=ship.vx;ship.y+=ship.vy;ship.a+=rot;
+  ship.vx*=.992;ship.vy*=.992;
+  if(ship.x<0)ship.x+=W;if(ship.x>W)ship.x-=W;
+  if(ship.y<0)ship.y+=H;if(ship.y>H)ship.y-=H;
+  // Draw ship
+  ctx.save();ctx.translate(ship.x,ship.y);ctx.rotate(ship.a);
+  ctx.shadowColor="#61dafb";ctx.shadowBlur=16;
+  ctx.beginPath();ctx.moveTo(14,0);ctx.lineTo(-10,-8);ctx.lineTo(-7,0);ctx.lineTo(-10,8);ctx.closePath();
+  ctx.fillStyle="#23233b";ctx.strokeStyle="#61dafb";ctx.lineWidth=2.5;ctx.fill();ctx.stroke();
+  ctx.restore();
+  ctx.shadowBlur=0;
+  // Thrust effect
+  if(vel>0) {
+    ctx.save();ctx.translate(ship.x,ship.y);ctx.rotate(ship.a);
+    ctx.beginPath();ctx.moveTo(-10,0);ctx.lineTo(-16,-4);ctx.lineTo(-14,0);ctx.lineTo(-16,4);ctx.closePath();
+    ctx.fillStyle="#fbbd23";ctx.globalAlpha=0.7+Math.random()*0.3;ctx.fill();
+    ctx.restore();
+  }
+  // Bullets
+  for(let b of bullets){b.x+=b.vx;b.y+=b.vy;}
+  bullets=bullets.filter(b=>b.x>=0&&b.x<=W&&b.y>=0&&b.y<=H&&b.l>0);
+  for(let b of bullets){
+    ctx.save();
+    ctx.shadowColor="#fff";ctx.shadowBlur=7;
+    ctx.beginPath();ctx.arc(b.x,b.y,2.7,0,2*Math.PI);
+    ctx.fillStyle="#fbbd23";ctx.fill();
+    ctx.restore();
+    b.l--;
+  }
+  // Asteroids
+  for(let a of asteroids){a.x+=a.vx;a.y+=a.vy;
+    if(a.x<0)a.x+=W;if(a.x>W)a.x-=W;
+    if(a.y<0)a.y+=H;if(a.y>H)a.y-=H;
+  }
+  for(let a of asteroids){
+    ctx.save();ctx.shadowColor="#e74c3c";ctx.shadowBlur=12;
+    ctx.beginPath();
+    let pts=8+Math.floor(Math.random()*2),r=a.r*0.9;
+    for(let i=0;i<pts;i++){
+      let ang=2*Math.PI*i/pts,rr=r+Math.sin(a.x*a.y+i*3)*3;
+      ctx[i==0?'moveTo':'lineTo'](a.x+Math.cos(ang)*rr,a.y+Math.sin(ang)*rr);
+    }
+    ctx.closePath();ctx.fillStyle="#20202b";ctx.strokeStyle="#fbbd23";ctx.lineWidth=2.2;ctx.fill();ctx.stroke();
+    ctx.restore();
+  }
+  // Collisions: bullets-asteroids
+  for(let b of bullets)for(let a of asteroids){
+    if(Math.hypot(b.x-a.x,b.y-a.y)<a.r){
+      a.r-=8; b.l=0; score+=5;
+      if(a.r<13){ a.x=-9999; }
+    }
+  }
+  asteroids=asteroids.filter(a=>a.x>=-10);
+  while(asteroids.length<4)spawnAst();
+  // Collisions: ship-asteroid
+  for(let a of asteroids)if(Math.hypot(ship.x-a.x,ship.y-a.y)<a.r+4){
+    alive=false;document.getElementById('asStatus').innerHTML=`<b style="color:#e74c3c;">Oyun bitdi! Xal: ${score}</b>`;return;
+  }
+  document.getElementById('asStatus').textContent = "Xal: " + score;
+  if(alive)requestAnimationFrame(astLoop);
+}
+document.addEventListener('keydown',e=>{
+  if(!alive)return;
+  if(e.key=="ArrowLeft")rot=-.12;
+  if(e.key=="ArrowRight")rot=.12;
+  if(e.key=="ArrowUp"||e.key=="w"){vel=.22;ship.vx+=Math.cos(ship.a)*vel;ship.vy+=Math.sin(ship.a)*vel;}
+  if(e.key==" "&&fireCD<=0){
+    bullets.push({x:ship.x+Math.cos(ship.a)*16,y:ship.y+Math.sin(ship.a)*16,vx:Math.cos(ship.a)*5.8,vy:Math.sin(ship.a)*5.8,l:40});
+    fireCD=8;
+  }
+});
+document.addEventListener('keyup',e=>{if(e.key=="ArrowLeft"||e.key=="ArrowRight")rot=0;if(e.key==" "){fireCD=0;}});
+setInterval(()=>{if(fireCD>0)fireCD--},16);
+astStart();
+</script>
+</body>
+</html>
