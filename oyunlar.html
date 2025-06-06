@@ -7,6 +7,38 @@
   <link rel="stylesheet" href="assets/css/style.css" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
   <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet" />
+  <style>
+    .games-list { display: flex; flex-wrap: wrap; gap: 32px; margin: 36px 0 80px 0; justify-content: flex-start;}
+    .game-card {
+      display: flex; flex-direction: column; align-items: center;
+      width: 240px; padding: 32px 20px 24px 20px; border-radius: 18px;
+      background: var(--card-bg, #18181a); color: var(--main-text, #fff);
+      box-shadow: 0 2px 16px #0002; border: 1.5px solid #262637;
+      text-align: center; transition: box-shadow .2s, background .2s, color .2s, border .2s;
+      position: relative; min-height: 265px;
+    }
+    .game-card:hover { background: #23232b; color: #61dafb; box-shadow: 0 4px 24px #0004; border-color: #61dafb; }
+    .game-logo { margin-bottom: 18px; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; }
+    .game-title { font-size: 1.2em; font-weight: bold; margin-bottom: 7px; }
+    .game-desc { color: #aaa; font-size: 0.95em; margin-bottom: 18px; }
+    .game-btn { display: inline-block; padding: 9px 30px; font-size: 1em; background: #61dafb; color: #222; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; text-decoration: none; transition: background .2s, color .2s; }
+    .game-btn:hover { background: #21a1f3; color: #fff; }
+    .ai-badge {
+      position: absolute; top: 14px; right: 12px; background: linear-gradient(90deg, #61dafb 60%, #fbbd23 100%);
+      color: #23232b; font-size: 0.88em; font-weight: bold; padding: 3.5px 9px; border-radius: 7px;
+      box-shadow: 0 2px 8px #0004; letter-spacing: 0.5px;
+      display: flex; align-items: center; gap: 4px;
+      z-index: 2;
+    }
+    .genre-label {
+      font-size: .90em; color: #fbbd23; margin-bottom: 10px; font-weight: bold; letter-spacing: 0.7px;
+      background: #23233b; border-radius: 7px; padding: 2px 10px;
+      box-shadow: 0 1px 4px #61dafb22;
+      display: inline-block;
+    }
+    .games-section { margin-top:32px; }
+    @media (max-width: 900px) { .games-list { justify-content: center; } .game-card { width: 90vw; max-width: 340px; } }
+  </style>
 </head>
 <body id="top">
   <nav class="navbar modern-navbar">
@@ -21,246 +53,257 @@
         <li><a href="contact.html">Əlaqə</a></li>
         <li><a href="oyunlar.html" class="active">Oyunlar</a></li>
       </ul>
-      <button id="themeToggle" class="theme-toggle" title="Tema Dəyiş">
-        <span class="toggle-icon">
-          <!-- SVG icons as before -->
-        </span>
-      </button>
+      <button id="themeToggle" class="theme-toggle" title="Tema Dəyiş"><span class="toggle-icon"></span></button>
     </div>
   </nav>
 
   <main class="container">
     <h1 data-aos="fade-up" style="margin-top:48px;">Oyunlar</h1>
-    <p data-aos="fade-up" data-aos-delay="100">Aşağıdakı oyunlardan birini seç və əylən!</p>
-    <div class="games-list" data-aos="fade-up" data-aos-delay="200">
-      <!-- Pong -->
-      <div class="game-card">
-        <div class="game-logo">
-          <!-- Pong SVG -->
-          <svg width="40" height="40" viewBox="0 0 40 40"><rect x="5" y="5" width="6" height="30" fill="#61dafb"/><rect x="29" y="5" width="6" height="30" fill="#61dafb"/><circle cx="20" cy="20" r="4" fill="#fff"/><rect x="19" y="0" width="2" height="40" fill="#444" opacity=".4"/></svg>
-        </div>
-        <div class="game-info">
-          <div class="game-title">Pong</div>
-          <div class="game-desc">Sadə klassik Pong oyunu – brauzerinizdə birbaşa oynayın!</div>
-        </div>
-        <a href="oyunlar/pong.html" class="game-btn">Oyna</a>
-      </div>
-      <!-- TicTacToe -->
-      <div class="game-card">
-        <div class="game-logo">
-          <!-- TicTacToe SVG -->
-          <svg width="40" height="40" viewBox="0 0 40 40"><rect x="12" y="5" width="4" height="30" fill="#61dafb"/><rect x="24" y="5" width="4" height="30" fill="#61dafb"/><rect x="5" y="12" width="30" height="4" fill="#61dafb"/><rect x="5" y="24" width="30" height="4" fill="#61dafb"/><circle cx="10" cy="10" r="4" fill="none" stroke="#fff" stroke-width="2"/><line x1="30" y1="30" x2="36" y2="36" stroke="#fff" stroke-width="2"/><line x1="36" y1="30" x2="30" y2="36" stroke="#fff" stroke-width="2"/></svg>
-        </div>
-        <div class="game-info">
-          <div class="game-title">X və 0 (Tic-Tac-Toe)</div>
-          <div class="game-desc">2 nəfərlik və ya kompüterə qarşı.</div>
-        </div>
-        <a href="oyunlar/tictactoe.html" class="game-btn">Oyna</a>
-      </div>
-      <!-- Snake -->
-      <div class="game-card">
-        <div class="game-logo">
-          <!-- Snake SVG -->
-          <svg width="40" height="40" viewBox="0 0 40 40"><rect x="8" y="32" width="24" height="4" rx="2" fill="#61dafb"/><rect x="28" y="16" width="4" height="20" rx="2" fill="#61dafb"/><circle cx="30" cy="16" r="4" fill="#fff"/><circle cx="28" cy="16" r="1" fill="#222"/><circle cx="32" cy="16" r="1" fill="#222"/></svg>
-        </div>
-        <div class="game-info">
-          <div class="game-title">İlan (Snake)</div>
-          <div class="game-desc">İlanı böyüt, rekord qazan!</div>
-        </div>
-        <a href="oyunlar/snake.html" class="game-btn">Oyna</a>
-      </div>
-      <!-- 2048 -->
-      <div class="game-card">
-        <div class="game-logo">
-          <!-- 2048 SVG -->
-          <rect width="40" height="40" rx="8" fill="#f9d06a"/>
-          <text x="20" y="28" text-anchor="middle" font-size="18" fill="#222" font-family="Arial" font-weight="bold">2048</text>
-          <svg width="40" height="40" viewBox="0 0 40 40"><rect width="40" height="40" rx="8" fill="#f9d06a"/><text x="20" y="28" text-anchor="middle" font-size="18" fill="#222" font-family="Arial" font-weight="bold">2048</text></svg>
-        </div>
-        <div class="game-info">
+    <div data-aos="fade-up" data-aos-delay="80" style="font-size:1.13em;color:#fbbd23;max-width:640px;margin-bottom:22px;">
+      🎮 Neon Sultan – Müasir və klassik mini oyunlar kolleksiyası. <br>
+      <span style="color:#61dafb;">Bəzi oyunlarda <b>NEON AI</b> (intellektual rəqib) mövcuddur!</span><br>
+      <span style="color:#aaa;font-size:.97em;display:inline-block;margin-top:5px;">Yeni oyunlar əlavə olunur. Seç, oyna, dostlarını çağır!</span>
+    </div>
+
+    <!-- Классика -->
+    <div class="games-section">
+      <span class="genre-label">Klassik və Puzzle</span>
+      <div class="games-list" data-aos="fade-up" data-aos-delay="200">
+        <!-- 2048 -->
+        <div class="game-card">
+          <div class="game-logo"><svg width="40" height="40"><rect width="40" height="40" rx="8" fill="#f9d06a"/><text x="20" y="28" text-anchor="middle" font-size="18" fill="#222" font-family="Arial" font-weight="bold">2048</text></svg></div>
           <div class="game-title">2048</div>
-          <div class="game-desc">Rəqəmləri birləşdir və 2048-ə çat.</div>
+          <div class="game-desc">Rəqəmləri birləşdir, 2048-ə çat.</div>
+          <a href="oyunlar/2048.html" class="game-btn">Oyna</a>
         </div>
-        <a href="oyunlar/2048.html" class="game-btn">Oyna</a>
+        <!-- Fifteen -->
+        <div class="game-card">
+          <div class="game-logo"><svg width="40" height="40"><rect width="40" height="40" rx="8" fill="#eee"/><text x="20" y="28" text-anchor="middle" font-size="18" fill="#222" font-family="Arial" font-weight="bold">15</text></svg></div>
+          <div class="game-title">15 Puzzle</div>
+          <div class="game-desc">Düzgün sıralama üçün fişləri sürüşdür.</div>
+          <a href="oyunlar/fifteen.html" class="game-btn">Oyna</a>
+        </div>
+        <!-- Sudoku -->
+        <div class="game-card">
+          <div class="game-logo"><svg width="40" height="40"><rect width="40" height="40" rx="8" fill="#fff"/><text x="20" y="28" text-anchor="middle" font-size="18" fill="#222" font-family="Arial" font-weight="bold">9×9</text></svg></div>
+          <div class="game-title">Sudoku</div>
+          <div class="game-desc">Boş xanaları doldur, məntiqini yoxla.</div>
+          <a href="oyunlar/sudoku.html" class="game-btn">Oyna</a>
+        </div>
+        <!-- Tetris -->
+        <div class="game-card">
+          <div class="game-logo"><svg width="40" height="40"><rect x="6" y="6" width="28" height="28" rx="6" fill="#374151"/><rect x="10" y="26" width="8" height="8" fill="#61dafb"/><rect x="18" y="26" width="8" height="8" fill="#fbbd23"/><rect x="10" y="18" width="8" height="8" fill="#f00"/><rect x="18" y="18" width="8" height="8" fill="#fff"/></svg></div>
+          <div class="game-title">Tetris</div>
+          <div class="game-desc">Blokları yerləşdir və sətri tam doldur!</div>
+          <a href="oyunlar/tetris.html" class="game-btn">Oyna</a>
+        </div>
+        <!-- Domino -->
+        <div class="game-card">
+          <div class="game-logo"><svg width="40" height="40"><rect x="10" y="8" width="20" height="24" rx="5" fill="#fff" stroke="#222" stroke-width="2"/><circle cx="20" cy="15" r="2" fill="#222"/><circle cx="20" cy="25" r="2" fill="#222"/></svg></div>
+          <div class="game-title">Domino</div>
+          <div class="game-desc">Əsl domino oyunu rəqibə qarşı.</div>
+          <a href="oyunlar/domino.html" class="game-btn">Oyna</a>
+        </div>
+        <!-- Hangman -->
+        <div class="game-card">
+          <div class="game-logo"><svg width="40" height="40"><line x1="5" y1="35" x2="35" y2="35" stroke="#444" stroke-width="3"/><line x1="15" y1="35" x2="15" y2="7" stroke="#444" stroke-width="3"/><line x1="15" y1="7" x2="28" y2="7" stroke="#444" stroke-width="3"/><line x1="28" y1="7" x2="28" y2="13" stroke="#444" stroke-width="3"/><circle cx="28" cy="17" r="4" fill="none" stroke="#e74c3c" stroke-width="2"/><line x1="28" y1="21" x2="28" y2="27" stroke="#e74c3c" stroke-width="2"/></svg></div>
+          <div class="game-title">Adam Asmaca</div>
+          <div class="game-desc">Sözü tap, adamı xilas et!</div>
+          <a href="oyunlar/hangman.html" class="game-btn">Oyna</a>
+        </div>
       </div>
-      <!-- Memory -->
-      <div class="game-card">
-        <div class="game-logo">
-          <!-- Memory SVG -->
-          <svg width="40" height="40" viewBox="0 0 40 40"><rect x="6" y="6" width="12" height="12" rx="2" fill="#61dafb"/><rect x="22" y="6" width="12" height="12" rx="2" fill="#fff"/><rect x="6" y="22" width="12" height="12" rx="2" fill="#fff"/><rect x="22" y="22" width="12" height="12" rx="2" fill="#61dafb"/></svg>
+    </div>
+
+    <!-- Arcade və Action -->
+    <div class="games-section">
+      <span class="genre-label">Arcade və Action</span>
+      <div class="games-list" data-aos="fade-up" data-aos-delay="210">
+        <!-- Pong -->
+        <div class="game-card">
+          <div class="game-logo"><svg width="40" height="40"><rect x="5" y="5" width="6" height="30" fill="#61dafb"/><rect x="29" y="5" width="6" height="30" fill="#61dafb"/><circle cx="20" cy="20" r="4" fill="#fff"/><rect x="19" y="0" width="2" height="40" fill="#444" opacity=".4"/></svg></div>
+          <div class="game-title">Pong</div>
+          <div class="game-desc">Klassik Pong – dostla və ya AI ilə.</div>
+          <a href="oyunlar/pong.html" class="game-btn">Oyna</a>
         </div>
-        <div class="game-info">
-          <div class="game-title">Yaddaş Oyunu</div>
-          <div class="game-desc">Eyni kartları tap.</div>
+        <!-- Arkanoid -->
+        <div class="game-card">
+          <div class="game-logo"><svg width="40" height="40"><rect x="8" y="32" width="24" height="4" rx="2" fill="#61dafb"/><rect x="10" y="10" width="20" height="4" rx="2" fill="#fff"/><circle cx="20" cy="26" r="3" fill="#f78e1e"/></svg></div>
+          <div class="game-title">Arkanoid</div>
+          <div class="game-desc">Top və kərpic – refleksini yoxla!</div>
+          <a href="oyunlar/arkanoid.html" class="game-btn">Oyna</a>
         </div>
-        <a href="oyunlar/memory.html" class="game-btn">Oyna</a>
-      </div>
-      <!-- Flappy Bird -->
-      <div class="game-card">
-        <div class="game-logo">
-          <!-- Flappy Bird SVG -->
-          <svg width="40" height="40" viewBox="0 0 40 40"><ellipse cx="20" cy="20" rx="12" ry="8" fill="#fbbd23"/><circle cx="28" cy="20" r="4" fill="#fff"/><circle cx="29" cy="20" r="1" fill="#111"/><polygon points="32,20 39,18 32,24" fill="#f78e1e"/></svg>
-        </div>
-        <div class="game-info">
+        <!-- Flappy Bird -->
+        <div class="game-card">
+          <div class="game-logo"><svg width="40" height="40"><ellipse cx="20" cy="20" rx="12" ry="8" fill="#fbbd23"/><circle cx="28" cy="20" r="4" fill="#fff"/><circle cx="29" cy="20" r="1" fill="#111"/><polygon points="32,20 39,18 32,24" fill="#f78e1e"/></svg></div>
           <div class="game-title">Flappy Bird</div>
           <div class="game-desc">Maneləri keç, quşu ucur!</div>
+          <a href="oyunlar/flappy.html" class="game-btn">Oyna</a>
         </div>
-        <a href="oyunlar/flappy.html" class="game-btn">Oyna</a>
+        <!-- Platformer Mini -->
+        <div class="game-card">
+          <div class="game-logo"><svg width="40" height="40"><rect x="8" y="32" width="24" height="7" rx="2" fill="#fbbd23"/><circle cx="16" cy="28" r="7" fill="#61dafb"/></svg></div>
+          <div class="game-title">Platformer Mini</div>
+          <div class="game-desc">Tullan, topla, səviyyələri keç!</div>
+          <a href="oyunlar/platformer.html" class="game-btn">Oyna</a>
+        </div>
+        <!-- Snake -->
+        <div class="game-card">
+          <div class="game-logo"><svg width="40" height="40"><rect x="8" y="32" width="24" height="4" rx="2" fill="#61dafb"/><rect x="28" y="16" width="4" height="20" rx="2" fill="#61dafb"/><circle cx="30" cy="16" r="4" fill="#fff"/><circle cx="28" cy="16" r="1" fill="#222"/><circle cx="32" cy="16" r="1" fill="#222"/></svg></div>
+          <div class="game-title">İlan (Snake)</div>
+          <div class="game-desc">İlanı böyüt, rekord qazan!</div>
+          <a href="oyunlar/snake.html" class="game-btn">Oyna</a>
+        </div>
+        <!-- Snake VS Blocks -->
+        <div class="game-card">
+          <div class="game-logo"><svg width="40" height="40"><rect x="3" y="24" width="34" height="12" rx="4" fill="#23233b" stroke="#61dafb" stroke-width="2"/><circle cx="13" cy="32" r="6" fill="#61dafb"/><rect x="24" y="17" width="12" height="11" rx="3" fill="#fbbd23"/></svg></div>
+          <div class="game-title">Snake VS Blocks</div>
+          <div class="game-desc">İlanı bloklardan keçir, xalları topla!</div>
+          <a href="oyunlar/snakevsblocks.html" class="game-btn">Oyna</a>
+        </div>
+        <!-- Asteroids -->
+        <div class="game-card">
+          <div class="game-logo"><svg width="40" height="40"><circle cx="22" cy="22" r="15" fill="#23233b" stroke="#fbbd23" stroke-width="2"/><circle cx="16" cy="26" r="4" fill="#fff"/><circle cx="28" cy="20" r="4" fill="#61dafb"/></svg></div>
+          <div class="game-title">Asteroids</div>
+          <div class="game-desc">Kosmik gəmi ilə asteroidlərdən qaç və vur!</div>
+          <a href="oyunlar/asteroids.html" class="game-btn">Oyna</a>
+        </div>
+        <!-- Geometry Dash Mini -->
+        <div class="game-card">
+          <div class="game-logo"><svg width="40" height="40"><rect x="8" y="24" width="24" height="8" fill="#61dafb"/><rect x="8" y="8" width="12" height="8" fill="#fbbd23"/><rect x="20" y="8" width="12" height="8" fill="#e74c3c"/></svg></div>
+          <div class="game-title">Geometry Dash Mini</div>
+          <div class="game-desc">Sürətli platformer – tullan və sağ qal!</div>
+          <a href="oyunlar/geomini.html" class="game-btn">Oyna</a>
+        </div>
       </div>
-      <!-- Arkanoid -->
-      <div class="game-card">
-        <div class="game-logo">
-          <!-- Arkanoid SVG -->
-          <svg width="40" height="40" viewBox="0 0 40 40"><rect x="8" y="32" width="24" height="4" rx="2" fill="#61dafb"/><rect x="10" y="10" width="20" height="4" rx="2" fill="#fff"/><circle cx="20" cy="26" r="3" fill="#f78e1e"/></svg>
+    </div>
+
+    <!-- Məntiq, Yaddaş və Tapmaca -->
+    <div class="games-section">
+      <span class="genre-label">Məntiq, Yaddaş və Tapmaca</span>
+      <div class="games-list" data-aos="fade-up" data-aos-delay="220">
+        <!-- Memory -->
+        <div class="game-card">
+          <div class="game-logo"><svg width="40" height="40"><rect x="6" y="6" width="12" height="12" rx="2" fill="#61dafb"/><rect x="22" y="6" width="12" height="12" rx="2" fill="#fff"/><rect x="6" y="22" width="12" height="12" rx="2" fill="#fff"/><rect x="22" y="22" width="12" height="12" rx="2" fill="#61dafb"/></svg></div>
+          <div class="game-title">Yaddaş Oyunu</div>
+          <div class="game-desc">Eyni kartları tap, yaddaşını yoxla.</div>
+          <a href="oyunlar/memory.html" class="game-btn">Oyna</a>
         </div>
-        <div class="game-info">
-          <div class="game-title">Arkanoid</div>
-          <div class="game-desc">Topla kərpicləri qır.</div>
-        </div>
-        <a href="oyunlar/arkanoid.html" class="game-btn">Oyna</a>
-      </div>
-      <!-- Minesweeper -->
-      <div class="game-card">
-        <div class="game-logo">
-          <!-- Minesweeper SVG -->
-          <svg width="40" height="40" viewBox="0 0 40 40"><circle cx="20" cy="20" r="12" fill="#fff"/><circle cx="20" cy="20" r="8" fill="#f00"/><rect x="19" y="7" width="2" height="6" fill="#444"/><rect x="19" y="27" width="2" height="6" fill="#444"/><rect x="7" y="19" width="6" height="2" fill="#444"/><rect x="27" y="19" width="6" height="2" fill="#444"/></svg>
-        </div>
-        <div class="game-info">
-          <div class="game-title">Saper</div>
-          <div class="game-desc">Minalardan yayın.</div>
-        </div>
-        <a href="oyunlar/minesweeper.html" class="game-btn">Oyna</a>
-      </div>
-      <!-- Simon -->
-      <div class="game-card">
-        <div class="game-logo">
-          <!-- Simon SVG -->
-          <svg width="40" height="40" viewBox="0 0 40 40">
-            <circle cx="20" cy="20" r="18" fill="#222"/>
+        <!-- Simon -->
+        <div class="game-card">
+          <div class="game-logo"><svg width="40" height="40"><circle cx="20" cy="20" r="18" fill="#222"/>
             <path d="M20 2 A18 18 0 0 1 38 20 L20 20Z" fill="#61dafb"/>
             <path d="M20 2 A18 18 0 0 0 2 20 L20 20Z" fill="#fbbd23"/>
             <path d="M20 38 A18 18 0 0 1 2 20 L20 20Z" fill="#f00"/>
             <path d="M20 38 A18 18 0 0 0 38 20 L20 20Z" fill="#fff"/>
-          </svg>
-        </div>
-        <div class="game-info">
+          </svg></div>
           <div class="game-title">Simon Game</div>
           <div class="game-desc">Rəngləri yadda saxla və təkrarla.</div>
+          <a href="oyunlar/simon.html" class="game-btn">Oyna</a>
         </div>
-        <a href="oyunlar/simon.html" class="game-btn">Oyna</a>
-      </div>
-      <!-- Rock Paper Scissors -->
-      <div class="game-card">
-        <div class="game-logo">
-          <!-- RPS SVG -->
-          <svg width="40" height="40" viewBox="0 0 40 40">
-            <circle cx="12" cy="20" r="7" fill="#fff"/>
-            <rect x="21" y="14" width="13" height="6" rx="3" fill="#61dafb"/>
-            <rect x="21" y="22" width="13" height="6" rx="3" fill="#fbbd23"/>
-            <rect x="21" y="30" width="13" height="6" rx="3" fill="#f00"/>
-          </svg>
+        <!-- Lines -->
+        <div class="game-card">
+          <div class="game-logo"><svg width="40" height="40"><circle cx="13" cy="14" r="8" fill="#fbbd23"/><circle cx="27" cy="26" r="8" fill="#61dafb"/><circle cx="27" cy="14" r="8" fill="#e74c3c"/></svg></div>
+          <div class="game-title">Lines (Şarıklar)</div>
+          <div class="game-desc">Bir rəngdə 5 top düz, xal yığ!</div>
+          <a href="oyunlar/lines.html" class="game-btn">Oyna</a>
         </div>
-        <div class="game-info">
-          <div class="game-title">Daş, Kağız, Qayçı</div>
-          <div class="game-desc">Kompüterə qarşı oyna.</div>
+        <!-- Wordle -->
+        <div class="game-card">
+          <div class="game-logo"><svg width="40" height="40"><rect x="8" y="8" width="24" height="24" rx="6" fill="#fff"/><text x="20" y="28" text-anchor="middle" font-size="18" fill="#23232b" font-family="Arial" font-weight="bold">WORD</text></svg></div>
+          <div class="game-title">Wordle</div>
+          <div class="game-desc">İngilis sözünü 6 cəhddə tap!</div>
+          <a href="oyunlar/wordle.html" class="game-btn">Oyna</a>
         </div>
-        <a href="oyunlar/rps.html" class="game-btn">Oyna</a>
-      </div>
-      <!-- Number Guess -->
-      <div class="game-card">
-        <div class="game-logo">
-          <!-- Guess SVG -->
-          <svg width="40" height="40" viewBox="0 0 40 40">
-            <rect width="40" height="40" rx="8" fill="#61dafb"/>
-            <text x="20" y="28" text-anchor="middle" font-size="18" fill="#fff" font-family="Arial" font-weight="bold">?</text>
-          </svg>
+        <!-- Flags -->
+        <div class="game-card">
+          <div class="game-logo"><svg width="40" height="40"><rect x="12" y="10" width="16" height="12" rx="2" fill="#fff"/><rect x="12" y="16" width="16" height="6" fill="#fbbd23"/><rect x="12" y="10" width="16" height="3" fill="#61dafb"/></svg></div>
+          <div class="game-title">Bayrağı Tap</div>
+          <div class="game-desc">Dünyanın ölkələrinin bayraqlarını tanı!</div>
+          <a href="oyunlar/flags.html" class="game-btn">Oyna</a>
         </div>
-        <div class="game-info">
+        <!-- Guess -->
+        <div class="game-card">
+          <div class="game-logo"><svg width="40" height="40"><rect width="40" height="40" rx="8" fill="#61dafb"/><text x="20" y="28" text-anchor="middle" font-size="18" fill="#fff" font-family="Arial" font-weight="bold">?</text></svg></div>
           <div class="game-title">Sayı Tapma Oyunu</div>
-          <div class="game-desc">Sayı tap və qalib ol!</div>
+          <div class="game-desc">Sayı tap, qalib ol!</div>
+          <a href="oyunlar/guess.html" class="game-btn">Oyna</a>
         </div>
-        <a href="oyunlar/guess.html" class="game-btn">Oyna</a>
+        <!-- Color Match -->
+        <div class="game-card">
+          <div class="game-logo"><svg width="40" height="40"><circle cx="20" cy="20" r="18" fill="#fff"/><circle cx="20" cy="20" r="12" fill="#61dafb"/><circle cx="25" cy="25" r="5" fill="#fbbd23"/></svg></div>
+          <div class="game-title">Color Match</div>
+          <div class="game-desc">Rəngləri uyğunlaşdır, xal topla!</div>
+          <a href="oyunlar/color-match.html" class="game-btn">Oyna</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Strategiya və NEON AI -->
+    <div class="games-section">
+      <span class="genre-label">Strategiya və NEON AI</span>
+      <div class="games-list" data-aos="fade-up" data-aos-delay="230">
+        <!-- TicTacToe (NEON AI) -->
+        <div class="game-card">
+          <span class="ai-badge">NEON AI</span>
+          <div class="game-logo"><svg width="40" height="40"><rect x="12" y="5" width="4" height="30" fill="#61dafb"/><rect x="24" y="5" width="4" height="30" fill="#61dafb"/><rect x="5" y="12" width="30" height="4" fill="#61dafb"/><rect x="5" y="24" width="30" height="4" fill="#61dafb"/><circle cx="10" cy="10" r="4" fill="none" stroke="#fff" stroke-width="2"/><line x1="30" y1="30" x2="36" y2="36" stroke="#fff" stroke-width="2"/><line x1="36" y1="30" x2="30" y2="36" stroke="#fff" stroke-width="2"/></svg></div>
+          <div class="game-title">X və 0 (Tic-Tac-Toe)</div>
+          <div class="game-desc">2 nəfərlik və ya NEON AI rəqib.</div>
+          <a href="oyunlar/tictactoe.html" class="game-btn">Oyna</a>
+        </div>
+        <!-- Connect Four (NEON AI) -->
+        <div class="game-card">
+          <span class="ai-badge">NEON AI</span>
+          <div class="game-logo"><svg width="40" height="40"><rect x="8" y="8" width="24" height="24" rx="6" fill="#374151"/><circle cx="18" cy="18" r="4" fill="#61dafb"/><circle cx="26" cy="26" r="4" fill="#fbbd23"/><circle cx="26" cy="18" r="4" fill="#e74c3c"/></svg></div>
+          <div class="game-title">Connect Four</div>
+          <div class="game-desc">4 daş düz – dostuna və ya NEON AI-a qarşı oyna!</div>
+          <a href="oyunlar/connect4.html" class="game-btn">Oyna</a>
+        </div>
+        <!-- Chess (NEON AI) -->
+        <div class="game-card">
+          <span class="ai-badge">NEON AI</span>
+          <div class="game-logo"><svg width="40" height="40"><rect width="40" height="40" rx="8" fill="#fff"/><circle cx="20" cy="24" r="11" fill="#23233b"/><rect x="16" y="8" width="8" height="16" rx="3" fill="#fbbd23"/></svg></div>
+          <div class="game-title">Şahmat</div>
+          <div class="game-desc">Klassik şahmat – dostunla və ya NEON AI ilə!</div>
+          <a href="oyunlar/chess.html" class="game-btn">Oyna</a>
+        </div>
+        <!-- Checkers (NEON AI) -->
+        <div class="game-card">
+          <span class="ai-badge">NEON AI</span>
+          <div class="game-logo"><svg width="40" height="40"><rect x="8" y="8" width="24" height="24" rx="6" fill="#374151"/><circle cx="20" cy="20" r="8" fill="#fbbd23"/><circle cx="20" cy="20" r="4" fill="#fff"/></svg></div>
+          <div class="game-title">Dama</div>
+          <div class="game-desc">Dama – NEON AI və ya dostuna qarşı.</div>
+          <a href="oyunlar/checkers.html" class="game-btn">Oyna</a>
+        </div>
+        <!-- Reversi (NEON AI) -->
+        <div class="game-card">
+          <span class="ai-badge">NEON AI</span>
+          <div class="game-logo"><svg width="40" height="40"><rect x="7" y="7" width="26" height="26" rx="8" fill="#23233b"/><circle cx="20" cy="20" r="8" fill="#fff"/><circle cx="26" cy="20" r="8" fill="#61dafb"/></svg></div>
+          <div class="game-title">Reversi / Othello</div>
+          <div class="game-desc">AI və ya dostuna qarşı məntiq savaşı.</div>
+          <a href="oyunlar/reversi.html" class="game-btn">Oyna</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Digər -->
+    <div class="games-section">
+      <span class="genre-label">Digər və Əyləncə</span>
+      <div class="games-list" data-aos="fade-up" data-aos-delay="240">
+        <!-- RPS -->
+        <div class="game-card">
+          <div class="game-logo"><svg width="40" height="40"><circle cx="12" cy="20" r="7" fill="#fff"/><rect x="21" y="14" width="13" height="6" rx="3" fill="#61dafb"/><rect x="21" y="22" width="13" height="6" rx="3" fill="#fbbd23"/><rect x="21" y="30" width="13" height="6" rx="3" fill="#f00"/></svg></div>
+          <div class="game-title">Daş, Kağız, Qayçı</div>
+          <div class="game-desc">Kompüterlə və ya dostunla oyna.</div>
+          <a href="oyunlar/rps.html" class="game-btn">Oyna</a>
+        </div>
       </div>
     </div>
   </main>
-
   <footer class="footer">
     <p>© 2025 Sultan. Neon Group Azerbaijan | <a href="license.html">Lisenziya</a></p>
   </footer>
-
-  <a href="#top" class="scroll-up" id="scrollUpBtn" title="Yuxarı">
-    <span class="scroll-icon"></span>
-  </a>
+  <a href="#top" class="scroll-up" id="scrollUpBtn" title="Yuxarı"><span class="scroll-icon"></span></a>
   <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
   <script src="assets/js/script.js"></script>
-  <style>
-    .games-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 32px;
-      margin: 40px 0 80px 0;
-      justify-content: flex-start;
-    }
-    .game-card {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      width: 240px;
-      padding: 32px 20px 24px 20px;
-      border-radius: 18px;
-      background: var(--card-bg, #18181a);
-      color: var(--main-text, #fff);
-      box-shadow: 0 2px 16px #0002;
-      border: 1.5px solid #262637;
-      text-align: center;
-      transition: box-shadow .2s, background .2s, color .2s, border .2s;
-      position: relative;
-    }
-    .game-card:hover {
-      background: #23232b;
-      color: #61dafb;
-      box-shadow: 0 4px 24px #0004;
-      border-color: #61dafb;
-    }
-    .game-logo {
-      margin-bottom: 18px;
-      width: 40px;
-      height: 40px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .game-title {
-      font-size: 1.2em;
-      font-weight: bold;
-      margin-bottom: 7px;
-    }
-    .game-desc {
-      color: #aaa;
-      font-size: 0.95em;
-      margin-bottom: 18px;
-    }
-    .game-btn {
-      display: inline-block;
-      padding: 9px 30px;
-      font-size: 1em;
-      background: #61dafb;
-      color: #222;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: bold;
-      text-decoration: none;
-      transition: background .2s, color .2s;
-    }
-    .game-btn:hover {
-      background: #21a1f3;
-      color: #fff;
-    }
-    @media (max-width: 900px) {
-      .games-list { justify-content: center; }
-      .game-card { width: 90vw; max-width: 340px; }
-    }
-  </style>
 </body>
 </html>
