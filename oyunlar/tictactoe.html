@@ -6,13 +6,144 @@
   <title>X və 0 (Tic-Tac-Toe) | Neon Sultan</title>
   <link rel="stylesheet" href="../assets/css/style.css" />
   <style>
-    .ttt-container { display: flex; flex-direction: column; align-items: center; margin-top: 48px; }
-    .ttt-board { display: grid; grid-template-columns: repeat(3,80px); grid-template-rows: repeat(3,80px); gap: 12px; margin-top: 24px; }
-    .ttt-cell { width: 80px; height: 80px; font-size: 2.5em; background: #18181a; color: #61dafb; display: flex; align-items: center; justify-content: center; cursor: pointer; border-radius: 12px; box-shadow: 0 2px 8px #0002; user-select: none; }
-    .ttt-cell:hover { background: #23232b; }
-    .ttt-status { margin-top: 24px; font-size: 1.2em; }
-    .ttt-btn { margin-top: 18px; padding: 10px 24px; font-size: 1em; border-radius: 8px; border: none; background: #61dafb; color: #222; font-weight: bold; cursor: pointer; }
-    .ttt-btn:hover { background: #21a1f3; color: #fff; }
+    body {
+      background: radial-gradient(ellipse at 60% 15%, #495082 0%, #181924 100%);
+      min-height: 100vh;
+    }
+    .ttt-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 48px;
+      background: rgba(24,25,36,0.96);
+      border-radius: 18px;
+      padding: 36px 32px 32px 32px;
+      box-shadow: 0 10px 44px #000b;
+      max-width: 410px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .ttt-title {
+      font-size: 2em;
+      color: #61dafb;
+      margin-bottom: 8px;
+      text-shadow: 0 2px 12px #222b;
+    }
+    .ttt-mode-row {
+      margin-bottom: 16px;
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+    }
+    .ttt-mode-btn {
+      background: linear-gradient(90deg,#61dafb,#fbbd23);
+      color: #222;
+      border: none;
+      border-radius: 9px;
+      font-weight: bold;
+      font-size: 1em;
+      padding: 7px 20px;
+      cursor: pointer;
+      box-shadow: 0 2px 8px #0004;
+      transition: .16s;
+    }
+    .ttt-mode-btn.active, .ttt-mode-btn:focus {
+      background: linear-gradient(90deg,#fbbd23,#61dafb);
+      color: #fff;
+      outline: 2px solid #fbbd23;
+    }
+    .ttt-board {
+      display: grid;
+      grid-template-columns: repeat(3,80px);
+      grid-template-rows: repeat(3,80px);
+      gap: 12px;
+      margin-top: 24px;
+      margin-bottom: 14px;
+    }
+    .ttt-cell {
+      width: 80px;
+      height: 80px;
+      font-size: 2.5em;
+      background: #18181a;
+      color: #61dafb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border-radius: 13px;
+      box-shadow: 0 2px 8px #0003;
+      user-select: none;
+      transition: background .2s, color .2s, box-shadow .2s;
+      border: 2.2px solid #23232b;
+      font-family: 'Inter', Arial, sans-serif;
+      font-weight: bold;
+    }
+    .ttt-cell:hover:not(.disabled):not(.won) {
+      background: #23232b;
+      outline: 2.5px solid #61dafb;
+    }
+    .ttt-cell.disabled {
+      cursor: default;
+      opacity: 0.7;
+    }
+    .ttt-cell.won {
+      background: #fbbd23;
+      color: #222;
+      box-shadow: 0 0 18px #fbbd2377;
+      border-color: #fbbd23;
+      animation: blink 1s infinite alternate;
+    }
+    @keyframes blink {
+      from { box-shadow: 0 0 18px #fbbd2377; }
+      to { box-shadow: 0 0 24px #61dafb99; }
+    }
+    .ttt-status {
+      margin-top: 14px;
+      font-size: 1.18em;
+      color: #fff;
+      min-height: 32px;
+      text-shadow: 0 2px 8px #2229;
+      text-align: center;
+    }
+    .ttt-btn {
+      margin-top: 17px;
+      padding: 10px 24px;
+      font-size: 1em;
+      border-radius: 9px;
+      border: none;
+      background: linear-gradient(90deg,#61dafb,#fbbd23);
+      color: #222;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 2px 8px #0004;
+      transition: background .2s, color .2s, transform .12s;
+    }
+    .ttt-btn:hover {
+      background: linear-gradient(90deg,#fbbd23,#61dafb);
+      color: #fff;
+      transform: translateY(-2px) scale(1.07);
+    }
+    .ttt-btn.secondary {
+      background: #222;
+      color: #fff;
+      margin-top: 10px;
+    }
+    .ttt-names {
+      margin: 0 0 8px 0;
+      font-size: 1.1em;
+      color: #fbbd23;
+      text-shadow: 0 2px 8px #2227;
+      display: flex;
+      justify-content: space-between;
+      width: 270px;
+      max-width: 93vw;
+    }
+    @media (max-width: 600px) {
+      .ttt-container { padding: 14px 5vw 14px 5vw;}
+      .ttt-title { font-size: 1.35em;}
+      .ttt-board { grid-template-columns: repeat(3,23vw); grid-template-rows: repeat(3,23vw);}
+      .ttt-names { width: 99vw;}
+    }
   </style>
 </head>
 <body>
@@ -29,58 +160,229 @@
       </ul>
     </div>
   </nav>
-  <main class="container ttt-container">
-    <h1>X və 0 (Tic-Tac-Toe)</h1>
-    <div class="ttt-status" id="tttStatus">Sıra: X</div>
+  <main class="ttt-container">
+    <div class="ttt-title">X və 0 (Tic-Tac-Toe)</div>
+    <div class="ttt-mode-row">
+      <button id="modePVP" class="ttt-mode-btn active" onclick="setMode('pvp')">2 nəfər</button>
+      <button id="modeAI" class="ttt-mode-btn" onclick="setMode('ai')">NEON AI</button>
+    </div>
+    <div class="ttt-names" id="tttNames">
+      <span id="p1Name">Oyunçu 1 (X)</span>
+      <span id="p2Name">Oyunçu 2 (O)</span>
+    </div>
     <div class="ttt-board" id="tttBoard"></div>
+    <div class="ttt-status" id="tttStatus"></div>
     <button class="ttt-btn" onclick="tttReset()">Yenidən başla</button>
-    <a href="../oyunlar.html" class="ttt-btn" style="background:#222; color:#fff; margin-top:12px;">← Oyunlara qayıt</a>
+    <a href="../oyunlar.html" class="ttt-btn secondary">← Oyunlara qayıt</a>
   </main>
   <footer class="footer">
     <p>© 2025 Sultan. Neon Group Azerbaijan | <a href="../license.html">Lisenziya</a></p>
   </footer>
   <script>
-    const board = Array(9).fill('');
-    let current = "X", playing = true;
+    // --- GAME STATE ---
+    let mode = 'pvp'; // 'pvp' or 'ai'
+    let board = Array(9).fill('');
+    let current = 'X';
+    let playing = true;
+    let winLine = [];
+    let aiThinking = false;
+
+    // --- UI INIT ---
     const tttBoard = document.getElementById("tttBoard");
     const tttStatus = document.getElementById("tttStatus");
+    const tttNames = document.getElementById("tttNames");
+    const p1Name = document.getElementById("p1Name");
+    const p2Name = document.getElementById("p2Name");
+    const modePVP = document.getElementById("modePVP");
+    const modeAI = document.getElementById("modeAI");
+
+    function setMode(newMode) {
+      mode = newMode;
+      modePVP.classList.toggle('active', mode==='pvp');
+      modeAI.classList.toggle('active', mode==='ai');
+      if (mode==='pvp') {
+        p1Name.textContent = "Oyunçu 1 (X)";
+        p2Name.textContent = "Oyunçu 2 (O)";
+      } else {
+        p1Name.textContent = "Sən (X)";
+        p2Name.innerHTML = '<span style="color:#61dafb;">NEON AI (O)</span>';
+      }
+      tttReset();
+    }
+
+    // --- BOARD RENDER ---
     function render() {
       tttBoard.innerHTML = '';
-      board.forEach((cell,i) => {
+      for (let i=0; i<9; i++) {
         const d = document.createElement('div');
         d.className = "ttt-cell";
-        d.textContent = cell;
+        d.textContent = board[i];
+        if (board[i] || !playing || aiThinking) d.classList.add('disabled');
+        if (winLine.includes(i)) d.classList.add('won');
         d.onclick = () => tttMove(i);
         tttBoard.appendChild(d);
-      });
-    }
-    function tttMove(i) {
-      if(!playing || board[i]) return;
-      board[i] = current;
-      if(tttCheck(current)) {
-        tttStatus.textContent = (current === "X" ? "X" : "O") + " qalib oldu!";
-        playing = false;
-      } else if(board.every(cell=>cell)) {
-        tttStatus.textContent = "Heç-heçə!";
-        playing = false;
-      } else {
-        current = current === "X" ? "O" : "X";
-        tttStatus.textContent = "Sıra: "+current;
       }
-      render();
+      // Status
+      if (!playing) {
+        if (winLine.length > 0) {
+          const winner = board[winLine[0]];
+          if (mode === 'ai' && winner === 'O') {
+            tttStatus.innerHTML = `<b>NEON AI qalib oldu!</b> 🤖`;
+          } else if (mode === 'ai' && winner === 'X') {
+            tttStatus.innerHTML = `<b>Sən qalib oldun!</b> 🎉`;
+          } else {
+            tttStatus.innerHTML = `<b>${winner} qalib oldu!</b>`;
+          }
+        } else {
+          tttStatus.textContent = "Heç-heçə!";
+        }
+      } else {
+        if (mode === 'ai') {
+          tttStatus.innerHTML = current === 'X'
+            ? '<b>Sənin növbən (X)</b>'
+            : '<span style="color:#61dafb;">NEON AI düşünür...</span>';
+        } else {
+          tttStatus.textContent = `Sıra: ${current === 'X' ? "Oyunçu 1 (X)" : "Oyunçu 2 (O)"}`;
+        }
+      }
     }
+
+    // --- GAME LOGIC ---
+    function tttMove(i) {
+      if (!playing || board[i] || (mode==='ai' && current==='O') || aiThinking) return;
+      board[i] = current;
+      if (tttCheck(current)) {
+        playing = false;
+        render();
+        return;
+      }
+      if (board.every(cell=>cell)) {
+        playing = false;
+        render();
+        return;
+      }
+      current = current === 'X' ? 'O' : 'X';
+      render();
+      if (mode==='ai' && current==='O' && playing) {
+        aiThinking = true;
+        tttStatus.innerHTML = '<span style="color:#61dafb;">NEON AI düşünür...</span>';
+        setTimeout(aiMove, 500 + Math.random()*350); // Simulate "thinking"
+      }
+    }
+
     function tttCheck(p) {
-      const w = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
-      return w.some(line => line.every(i => board[i]===p));
+      const w = [
+        [0,1,2],[3,4,5],[6,7,8], // rows
+        [0,3,6],[1,4,7],[2,5,8], // cols
+        [0,4,8],[2,4,6]          // diags
+      ];
+      for (let line of w) {
+        if (line.every(i=>board[i]===p)) {
+          winLine = line;
+          return true;
+        }
+      }
+      return false;
     }
+
     function tttReset() {
-      board.fill('');
-      current = "X";
+      board = Array(9).fill('');
+      current = 'X';
       playing = true;
-      tttStatus.textContent = "Sıra: X";
+      winLine = [];
+      aiThinking = false;
+      render();
+      if (mode==='ai' && current==='O') {
+        aiThinking = true;
+        setTimeout(aiMove, 450);
+      }
+    }
+
+    // --- NEON AI (Minimax with random for fun) ---
+    function aiMove() {
+      if (!playing) return;
+      let move;
+      // 25% случайно, 75% — минимакс (сложнее)
+      if (Math.random() < 0.25) {
+        // random free
+        const free = board.map((v,i)=>v==''?i:null).filter(i=>i!==null);
+        move = free[Math.floor(Math.random()*free.length)];
+      } else {
+        move = bestMove();
+      }
+      board[move] = 'O';
+      if (tttCheck('O')) {
+        playing = false;
+        aiThinking = false;
+        render();
+        return;
+      }
+      if (board.every(cell=>cell)) {
+        playing = false;
+        aiThinking = false;
+        render();
+        return;
+      }
+      current = 'X';
+      aiThinking = false;
       render();
     }
-    render();
+
+    // Minimax AI
+    function bestMove() {
+      let bestScore = -Infinity;
+      let move;
+      for (let i=0;i<9;i++) {
+        if (board[i]==='') {
+          board[i]='O';
+          let score = minimax(board, 0, false);
+          board[i]='';
+          if (score > bestScore) {
+            bestScore = score;
+            move = i;
+          }
+        }
+      }
+      return move;
+    }
+    function minimax(b, depth, isMax) {
+      if (win(b,'O')) return 10-depth;
+      if (win(b,'X')) return depth-10;
+      if (b.every(cell=>cell)) return 0;
+      if (isMax) {
+        let best = -Infinity;
+        for(let i=0;i<9;i++){
+          if(b[i]===''){
+            b[i]='O';
+            best = Math.max(best, minimax(b, depth+1, false));
+            b[i]='';
+          }
+        }
+        return best;
+      } else {
+        let best = Infinity;
+        for(let i=0;i<9;i++){
+          if(b[i]===''){
+            b[i]='X';
+            best = Math.min(best, minimax(b, depth+1, true));
+            b[i]='';
+          }
+        }
+        return best;
+      }
+    }
+    function win(b, p) {
+      const w = [
+        [0,1,2],[3,4,5],[6,7,8],
+        [0,3,6],[1,4,7],[2,5,8],
+        [0,4,8],[2,4,6]
+      ];
+      for (let line of w) if (line.every(i=>b[i]===p)) return true;
+      return false;
+    }
+
+    // --- INIT ---
+    setMode(mode);
   </script>
 </body>
 </html>
