@@ -37,7 +37,7 @@ if (themeToggle) {
   themeToggle.addEventListener("click", () => {
     document.body.classList.toggle("dark");
     updateThemeIcon();
-    // (Optional) Save theme to localStorage
+    // save theme to localStorage
     localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
   });
   // On load, set theme from localStorage if exists
@@ -71,6 +71,7 @@ if (document.getElementById("typed") && typeof Typed !== "undefined") {
   });
 }
 
+// --- Логика лицензии (НЕ ТРОГАТЬ, как просил пользователь) ---
 const nameInput = document.getElementById("nameInput");
 const yearInput = document.getElementById("yearInput");
 const licenseText = document.getElementById("licenseText");
