@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NPPL Lisenziya Generatoru</title>
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <link rel="icon" href="assets/img/favicon.png" type="image/x-icon" />
+</head>
+<body>
+
+  <!-- 🌐 Navigasiya -->
+  <header>
+    <div class="navbar container">
+      <a href="index.html" class="logo">NPPL</a>
+      <nav>
+        <ul class="nav-links">
+          <li><a href="index.html">Əsas</a></li>
+          <li><a href="license.html" class="active">Lisenziya</a></li>
+          <li><a href="about.html">Haqqında</a></li>
+          <li><a href="contact.html">Əlaqə</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- 📜 Generator bölməsi -->
+  <main>
+    <section class="license-generator">
+      <div class="container">
+        <h1>📜 NPPL Lisenziya Generatoru</h1>
+        <p>Layihən üçün Neon Public Project License (NPPL) yaradın.</p>
+
+        <div class="generator-form">
+          <label for="nameInput">Ad və Soyad</label>
+          <input type="text" id="nameInput" placeholder="məs: Sultan Əhməd" />
+
+          <label for="yearInput">İl</label>
+          <input type="number" id="yearInput" placeholder="məs: 2025" />
+
+          <button onclick="generateLicense()">✅ Lisenziya Yarat</button>
+        </div>
+
+        <div class="license-result">
+          <label for="licenseText">📄 Lisenziya Mətni:</label>
+          <textarea id="licenseText" rows="12" readonly placeholder="Burada nəticə göstəriləcək..."></textarea>
+
+          <div class="license-actions">
+            <button onclick="copyLicense()">📋 Kopyala</button>
+            <button onclick="downloadLicense()">⬇️ Yüklə (.txt)</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- 🧾 Footer -->
+  <footer>
+    <div class="container">
+      <p>&copy; 2025 <strong>NPPL</strong>. Bütün hüquqlar qorunur.</p>
+    </div>
+  </footer>
+
+  <script src="assets/js/script.js"></script>
+</body>
+</html>
