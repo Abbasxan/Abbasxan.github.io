@@ -9,77 +9,58 @@
   <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet" />
 </head>
 <body id="top">
-  <!-- Theme Toggle Button -->
-  <button id="themeToggle" class="theme-toggle" title="Tema Dəyiş">
-    <span class="toggle-icon">
-      <svg class="icon-moon" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 1 0 9.79 9.79z"/>
-      </svg>
-      <svg class="icon-sun" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
-        <circle cx="12" cy="12" r="5"/>
-        <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M16.36 16.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M16.36 7.64l1.42-1.42"/>
-      </svg>
-    </span>
-  </button>
-
   <nav class="navbar">
     <div class="container">
       <div class="logo">Sultan</div>
-      <ul class="nav-links">
+      <button class="menu-toggle" id="mobileMenuBtn"><span></span><span></span><span></span></button>
+      <ul class="nav-links" id="navLinks">
         <li><a href="index.html">Ana Səhifə</a></li>
         <li><a href="about.html">Haqqımda</a></li>
         <li><a href="projects.html" class="active">Proyektlər</a></li>
         <li><a href="license.html">Lisenziya</a></li>
         <li><a href="contact.html">Əlaqə</a></li>
       </ul>
+      <button id="themeToggle" class="theme-toggle" title="Tema Dəyiş">
+        <span class="toggle-icon">
+          <svg class="icon-moon" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 1 0 9.79 9.79z"/></svg>
+          <svg class="icon-sun" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M16.36 16.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M16.36 7.64l1.42-1.42"/></svg>
+        </span>
+      </button>
     </div>
   </nav>
-
   <section class="hero">
     <div class="container">
       <h1 data-aos="fade-up">Proyektlərim</h1>
       <p data-aos="fade-up" data-aos-delay="200">Aşağıda müxtəlif kateqoriyalara bölünmüş botlarımı görə bilərsiniz.</p>
     </div>
   </section>
-
   <section class="projects-section">
     <div class="container">
 
       <!-- INSTRUMENTAL BOTS -->
       <h2 class="category-title" data-aos="fade-right">🔧 İnstrumental Botlar</h2>
       <div class="projects-grid">
-        <!-- Bot 1 (MetaBase Bot) -->
         <div class="project-card" data-aos="fade-up" data-aos-delay="100">
           <img src="assets/images/metabase.png" alt="MetaBase Bot" class="project-image">
           <h3>MetaBase Bot</h3>
           <p>Telegram istifadəçilərinin ad və tag dəyişikliklərini izləyən bot.</p>
           <a href="https://t.me/MetaBaseRoBot" target="_blank">Telegramda bax →</a>
         </div>
-        <!-- Bot 2 (String Sessiya) -->
         <div class="project-card" data-aos="fade-up" data-aos-delay="120">
           <img src="assets/images/stringsession.png" alt="String Sessiya" class="project-image">
           <h3>STRING SESSIYA</h3>
           <p>Telegram Mahnı Botunuzun Asistan hesabı və yaxud Userbot hesabınız üçün Strinq Sessiyası Tokeni Əldə Etməyin Ən Asan Yolu!</p>
           <a href="https://t.me/neonstringbot" target="_blank">Telegramda bax →</a>
         </div>
-        <!-- Bot 3 (TEMP) -->
         <div class="project-card" data-aos="fade-up" data-aos-delay="140">
           <img src="assets/images/bot-temp.png" alt="Instrumental Bot 3" class="project-image">
           <h3>Instrumental Bot 3</h3>
           <p>Bot haqqında qısa məlumat. Buraya təsviri yazın.</p>
           <a href="#" target="_blank">Telegramda bax →</a>
         </div>
-        <!-- Bot 4 (TEMP) -->
         <div class="project-card" data-aos="fade-up" data-aos-delay="160">
           <img src="assets/images/bot-temp.png" alt="Instrumental Bot 4" class="project-image">
           <h3>Instrumental Bot 4</h3>
-          <p>Bot haqqında qısa məlumat. Buraya təsviri yazın.</p>
-          <a href="#" target="_blank">Telegramda bax →</a>
-        </div>
-        <!-- Bot 5 (TEMP) -->
-        <div class="project-card" data-aos="fade-up" data-aos-delay="180">
-          <img src="assets/images/bot-temp.png" alt="Instrumental Bot 5" class="project-image">
-          <h3>Instrumental Bot 5</h3>
           <p>Bot haqqında qısa məlumat. Buraya təsviri yazın.</p>
           <a href="#" target="_blank">Telegramda bax →</a>
         </div>
@@ -88,38 +69,15 @@
       <!-- MODERATION BOTS -->
       <h2 class="category-title" data-aos="fade-right" style="margin-top: 38px;">🛡️ Moderasiya Botları</h2>
       <div class="projects-grid">
-        <!-- Bot 1 (StarConverter) -->
         <div class="project-card" data-aos="fade-up" data-aos-delay="200">
           <img src="assets/images/starconverter.png" alt="StarConverter" class="project-image">
           <h3>StarConverter</h3>
           <p>Telegram Stars (XTR) ilə ödəniş qəbul edən və VIP sistemli bot.</p>
           <a href="https://t.me/starconverterrobot" target="_blank">Telegramda bax →</a>
         </div>
-        <!-- Bot 2 (TEMP) -->
         <div class="project-card" data-aos="fade-up" data-aos-delay="220">
           <img src="assets/images/bot-temp.png" alt="Moderasiya Bot 2" class="project-image">
           <h3>Moderasiya Bot 2</h3>
-          <p>Bot haqqında qısa məlumat. Buraya təsviri yazın.</p>
-          <a href="#" target="_blank">Telegramda bax →</a>
-        </div>
-        <!-- Bot 3 (TEMP) -->
-        <div class="project-card" data-aos="fade-up" data-aos-delay="240">
-          <img src="assets/images/bot-temp.png" alt="Moderasiya Bot 3" class="project-image">
-          <h3>Moderasiya Bot 3</h3>
-          <p>Bot haqqında qısa məlumat. Buraya təsviri yazın.</p>
-          <a href="#" target="_blank">Telegramda bax →</a>
-        </div>
-        <!-- Bot 4 (TEMP) -->
-        <div class="project-card" data-aos="fade-up" data-aos-delay="260">
-          <img src="assets/images/bot-temp.png" alt="Moderasiya Bot 4" class="project-image">
-          <h3>Moderasiya Bot 4</h3>
-          <p>Bot haqqında qısa məlumat. Buraya təsviri yazın.</p>
-          <a href="#" target="_blank">Telegramda bax →</a>
-        </div>
-        <!-- Bot 5 (TEMP) -->
-        <div class="project-card" data-aos="fade-up" data-aos-delay="280">
-          <img src="assets/images/bot-temp.png" alt="Moderasiya Bot 5" class="project-image">
-          <h3>Moderasiya Bot 5</h3>
           <p>Bot haqqında qısa məlumat. Buraya təsviri yazın.</p>
           <a href="#" target="_blank">Telegramda bax →</a>
         </div>
@@ -128,50 +86,24 @@
       <!-- GAME BOTS -->
       <h2 class="category-title" data-aos="fade-right" style="margin-top: 38px;">🎮 Oyun Botları</h2>
       <div class="projects-grid">
-        <!-- Bot 1 (NEON Game) -->
         <div class="project-card" data-aos="fade-up" data-aos-delay="300">
           <img src="assets/images/neon_game.png" alt="NEON Game" class="project-image">
           <h3>NEON Game</h3>
           <p>İstifadəçilərin oyun oynayaraq NEON Coin qazandığı əyləncəli oyun botu.</p>
           <a href="https://t.me/neongameazbot" target="_blank">Telegramda bax →</a>
         </div>
-        <!-- Bot 2 (TEMP) -->
         <div class="project-card" data-aos="fade-up" data-aos-delay="320">
           <img src="assets/images/bot-temp.png" alt="Oyun Bot 2" class="project-image">
           <h3>Oyun Bot 2</h3>
           <p>Bot haqqında qısa məlumat. Buraya təsviri yazın.</p>
           <a href="#" target="_blank">Telegramda bax →</a>
         </div>
-        <!-- Bot 3 (TEMP) -->
-        <div class="project-card" data-aos="fade-up" data-aos-delay="340">
-          <img src="assets/images/bot-temp.png" alt="Oyun Bot 3" class="project-image">
-          <h3>Oyun Bot 3</h3>
-          <p>Bot haqqında qısa məlumat. Buraya təsviri yazın.</p>
-          <a href="#" target="_blank">Telegramda bax →</a>
-        </div>
-        <!-- Bot 4 (TEMP) -->
-        <div class="project-card" data-aos="fade-up" data-aos-delay="360">
-          <img src="assets/images/bot-temp.png" alt="Oyun Bot 4" class="project-image">
-          <h3>Oyun Bot 4</h3>
-          <p>Bot haqqında qısa məlumat. Buraya təsviri yazın.</p>
-          <a href="#" target="_blank">Telegramda bax →</a>
-        </div>
-        <!-- Bot 5 (TEMP) -->
-        <div class="project-card" data-aos="fade-up" data-aos-delay="380">
-          <img src="assets/images/bot-temp.png" alt="Oyun Bot 5" class="project-image">
-          <h3>Oyun Bot 5</h3>
-          <p>Bot haqqında qısa məlumat. Buraya təsviri yazın.</p>
-          <a href="#" target="_blank">Telegramda bax →</a>
-        </div>
       </div>
     </div>
   </section>
-
   <footer class="footer">
     <p>© 2025 Sultan. Neon Group Azerbaijan | <a href="license.html">Lisenziya</a></p>
   </footer>
-
-  <!-- Scroll-up düyməsi (UI/UX) -->
   <a href="#top" class="scroll-up" id="scrollUpBtn" title="Yuxarı">
     <span class="scroll-icon">
       <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
@@ -183,7 +115,6 @@
       </svg>
     </span>
   </a>
-
   <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
   <script src="assets/js/script.js"></script>
 </body>
