@@ -10,12 +10,12 @@
   --nav-bg: #fff;
   --nav-bg-dark: #232946;
   --transition: 0.3s;
-  --border-radius: 10px;
+  --border-radius: 14px;
 }
 
 body {
   font-family: 'Inter', sans-serif;
-  background: var(--bg);
+  background: #ececec;
   color: var(--text);
   margin: 0;
   padding: 0;
@@ -24,22 +24,25 @@ body {
 }
 
 body.dark {
-  background: var(--bg-dark);
+  background: #151726;
   color: var(--text-light);
 }
 
-/* ====== THEME TOGGLE ICONS FIX ====== */
-.theme-toggle .icon-moon {
-  display: none;
+/* ====== CONTAINER & PAGE LAYOUT ====== */
+.container {
+  max-width: 880px;
+  margin: 2rem auto;
+  padding: 0 1.2rem;
+  background: #fff;
+  border-radius: var(--border-radius);
+  box-shadow: 0 2px 18px rgba(44,44,44,0.06);
+  border: 1px solid #eaeaea;
 }
-.theme-toggle .icon-sun {
-  display: inline;
-}
-body.dark .theme-toggle .icon-moon {
-  display: inline !important;
-}
-body.dark .theme-toggle .icon-sun {
-  display: none !important;
+
+body.dark .container {
+  background: #232946;
+  box-shadow: 0 2px 18px rgba(0,0,0,0.22);
+  border: 1px solid #282b4a;
 }
 
 /* ====== NAVBAR (КОМПАКТНЫЙ) ====== */
@@ -60,12 +63,17 @@ body.dark .navbar {
 }
 
 .navbar .container {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 0.1rem 1.2rem;
+  min-height: 44px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  position: relative;
-  padding: 0.1rem 0.7rem;
-  min-height: 44px;
+  gap: 0.7rem;
+  background: transparent;
+  box-shadow: none;
+  border-radius: 0;
 }
 
 .logo {
@@ -73,6 +81,7 @@ body.dark .navbar {
   font-size: 1.05rem;
   letter-spacing: 1px;
   padding: 0.1rem 0.2rem;
+  margin-right: 0.7rem;
 }
 
 .nav-links {
@@ -124,7 +133,7 @@ body.dark .navbar {
   background: none;
   border: none;
   cursor: pointer;
-  margin-left: 1rem;
+  margin-left: 0.5rem;
   padding: 1px 2px;
   border-radius: 50%;
   transition: background 0.2s;
@@ -142,6 +151,20 @@ body.dark .navbar {
   display: flex;
   align-items: center;
   gap: 2px;
+}
+
+/* ====== THEME TOGGLE ICONS FIX ====== */
+.theme-toggle .icon-moon {
+  display: none;
+}
+.theme-toggle .icon-sun {
+  display: inline;
+}
+body.dark .theme-toggle .icon-moon {
+  display: inline !important;
+}
+body.dark .theme-toggle .icon-sun {
+  display: none !important;
 }
 
 /* ====== HERO, SECTIONS ====== */
@@ -492,11 +515,22 @@ body.dark .footer {
   }
 }
 @media (max-width: 768px) {
+  .container {
+    margin: 0.5rem 0;
+    border-radius: 0;
+    box-shadow: none;
+    border: none;
+    padding: 0 0.3rem;
+  }
   .navbar .container {
     padding: 0.1rem 0.4rem;
     min-height: 38px;
     flex-wrap: wrap;
     position: relative;
+    border-radius: 0;
+    box-shadow: none;
+    border: none;
+    background: transparent;
   }
   .nav-links {
     display: none;
