@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Guess the Flag | Neon Sultan</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+  <style>
+    body {
+      background: radial-gradient(circle at 60% 20%, #495082 0%, #181924 100%);
+      min-height: 100vh;
+    }
+    .flag-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 40px;
+      background: rgba(24,25,36,0.98);
+      border-radius: 19px;
+      padding: 26px 18px 21px 18px;
+      box-shadow: 0 10px 44px #000c;
+      max-width: 450px;
+      margin: auto;
+      position: relative;
+    }
+    .flag-title {
+      font-size: 2em;
+      color: #61dafb;
+      margin-bottom: 8px;
+      text-shadow: 0 2px 16px #222c;
+      letter-spacing: 1px;
+    }
+    .flag-img-wrap {
+      margin: 18px auto 10px auto;
+      width: 120px;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(145deg,#61dafb33 60%,#181924 100%);
+      border-radius: 15px;
+      box-shadow: 0 0 18px #fbbd2380, 0 2px 14px #000c, 0 0 0 8px #61dafb11;
+      transition: box-shadow .18s;
+      position: relative;
+      overflow: hidden;
+    }
+    .flag-img {
+      width: 110px;
+      height: 72px;
+      border-radius: 10px;
+      box-shadow: 0 0 28px #fff6, 0 2px 8px #000b;
+      background: #23233b;
+      object-fit: cover;
+      transition: transform .17s;
+    }
+    .flag-img.correct { animation: flag-bounce 0.48s; }
+    .flag-img.wrong { animation: flag-shake 0.24s; }
+    @keyframes flag-bounce {
+      0% { transform: scale(1);}
+      20% { transform: scale(1.08);}
+      50% { transform: scale(0.98);}
+      100% { transform: scale(1);}
+    }
+    @keyframes flag-shake {
+      0% { transform: translateX(0);}
+      15% { transform: translateX(-7px);}
+      35% { transform: translateX(7px);}
+      55% { transform: translateX(-6px);}
+      75% { transform: translateX(6px);}
+      100% { transform: translateX(0);}
+    }
+    .flag-inp-row {
+      display: flex;
+      align-items: center;
+      margin-top: 5px;
+      gap: 6px;
+    }
+    .flag-inp {
+      font-size: 1.2em;
+      padding: 7px 16px;
+      border-radius: 9px;
+      border: 2.2px solid #61dafb;
+      color: #23232b;
+      background: #fff;
+      width: 175px;
+      text-align: center;
+      box-shadow: 0 2px 8px #61dafb33;
+      outline: none;
+      transition: border .18s;
+    }
+    .flag-inp:focus {
+      border-color: #fbbd23;
+      background: #f7f1e3;
+    }
+    .flag-btns {
+      display: flex;
+      gap: 10px;
+      margin-top: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .flag-btn {
+      padding: 9px 22px;
+      font-size: 1em;
+      border-radius: 10px;
+      border: none;
+      background: linear-gradient(90deg,#61dafb,#fbbd23);
+      color: #222;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 2px 10px #0007;
+      transition: background .2s, color .2s, transform .13s;
+      min-width: 60px;
+    }
+    .flag-btn.secondary {
+      background: #222;
+      color: #fff;
+    }
+    .flag-btn:active {
+      transform: scale(0.96);
+    }
+    .flag-btn:hover:not(.secondary) {
+      background: linear-gradient(90deg,#fbbd23,#61dafb);
+      color: #fff;
+      transform: translateY(-2px) scale(1.07);
+    }
+    .flag-status {
+      margin-top: 13px;
+      color: #fff;
+      min-height: 28px;
+      font-size: 1.13em;
+      text-shadow: 0 2px 8px #222a;
+      text-align: center;
+      letter-spacing: .2px;
+      font-weight: 600;
+    }
+    .flag-score {
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      color: #fbbd23;
+      font-size: 1.09em;
+      letter-spacing: .3px;
+      text-shadow: 0 2px 7px #222a;
+      background: #23233b99;
+      border-radius: 8px;
+      padding: 2px 11px;
+      font-weight: bold;
+      box-shadow: 0 0 6px #fbbd2322;
+    }
+    @media (max-width:600px) {
+      .flag-container {padding:8px 2vw;}
+      .flag-img-wrap {width:28vw;height:18vw;}
+      .flag-img {width:24vw;height:15vw;}
+    }
+  </style>
+</head>
+<body>
+<nav class="navbar modern-navbar"><div class="container"><div class="logo">Neon Sultan</div></div></nav>
+<main class="flag-container">
+  <div class="flag-title">Guess the Flag</div>
+  <div class="flag-score" id="flagScore"></div>
+  <div class="flag-img-wrap">
+    <img id="flagImg" class="flag-img" src="" alt="Flag">
+  </div>
+  <form class="flag-inp-row" onsubmit="flagGuess();return false;">
+    <input class="flag-inp" id="flagInp" autocomplete="off" placeholder="Ölkənin adını yaz">
+    <button type="submit" class="flag-btn">Yoxla</button>
+  </form>
+  <div class="flag-btns">
+    <button class="flag-btn" onclick="flagNext()">Növbəti</button>
+    <a href="../oyunlar.html" class="flag-btn secondary">← Oyunlara qayıt</a>
+  </div>
+  <div class="flag-status" id="flagStatus"></div>
+</main>
+<footer class="footer"><p>© 2025 Sultan. Neon Group Azerbaijan</p></footer>
+<script>
+const flags = [
+  {name:"Azərbaycan",img:"https://flagcdn.com/w320/az.png",syn:["azərbaycan","azerbaijan"]},
+  {name:"Türkiyə",img:"https://flagcdn.com/w320/tr.png",syn:["türkiyə","turkiye","turkey"]},
+  {name:"Almaniya",img:"https://flagcdn.com/w320/de.png",syn:["almaniya","germany","deutschland"]},
+  {name:"Fransa",img:"https://flagcdn.com/w320/fr.png",syn:["fransa","france"]},
+  {name:"ABŞ",img:"https://flagcdn.com/w320/us.png",syn:["abş","usa","amerika","amerika birleşmiş ştatları","united states"]},
+  {name:"İngiltərə",img:"https://flagcdn.com/w320/gb.png",syn:["ingiltərə","ingiltere","united kingdom","england","uk","britain"]},
+  {name:"Braziliya",img:"https://flagcdn.com/w320/br.png",syn:["braziliya","brazil"]},
+  {name:"İspaniya",img:"https://flagcdn.com/w320/es.png",syn:["ispaniya","spain"]},
+  {name:"Çin",img:"https://flagcdn.com/w320/cn.png",syn:["çin","china"]},
+  {name:"Rusiya",img:"https://flagcdn.com/w320/ru.png",syn:["rusiya","russia"]},
+  {name:"Yaponiya",img:"https://flagcdn.com/w320/jp.png",syn:["yaponiya","japan"]},
+  {name:"İtaliya",img:"https://flagcdn.com/w320/it.png",syn:["italiya","italy"]},
+  {name:"Hindistan",img:"https://flagcdn.com/w320/in.png",syn:["hindistan","india"]},
+  {name:"Kanada",img:"https://flagcdn.com/w320/ca.png",syn:["kanada","canada"]},
+  {name:"Misir",img:"https://flagcdn.com/w320/eg.png",syn:["misir","egypt"]},
+  {name:"Argentina",img:"https://flagcdn.com/w320/ar.png",syn:["argentina"]},
+  {name:"Avstraliya",img:"https://flagcdn.com/w320/au.png",syn:["avstraliya","australia"]},
+  {name:"Norveç",img:"https://flagcdn.com/w320/no.png",syn:["norveç","norway"]},
+  {name:"Danimarka",img:"https://flagcdn.com/w320/dk.png",syn:["danimarka","denmark"]},
+  {name:"İsveç",img:"https://flagcdn.com/w320/se.png",syn:["isveç","sweden"]},
+  {name:"Finlandiya",img:"https://flagcdn.com/w320/fi.png",syn:["finlandiya","finland"]},
+  {name:"Polşa",img:"https://flagcdn.com/w320/pl.png",syn:["polşa","poland"]},
+  {name:"Portuqaliya",img:"https://flagcdn.com/w320/pt.png",syn:["portuqaliya","portugal"]},
+  {name:"Yunanıstan",img:"https://flagcdn.com/w320/gr.png",syn:["yunanıstan","greece"]},
+  {name:"Meksika",img:"https://flagcdn.com/w320/mx.png",syn:["meksika","mexico"]},
+  {name:"Cənubi Koreya",img:"https://flagcdn.com/w320/kr.png",syn:["cənubi koreya","south korea","koreya"]},
+  {name:"İndoneziya",img:"https://flagcdn.com/w320/id.png",syn:["indoneziya","indonesia"]},
+  {name:"Pakistan",img:"https://flagcdn.com/w320/pk.png",syn:["pakistan"]},
+  {name:"Niderland",img:"https://flagcdn.com/w320/nl.png",syn:["niderland","hollandiya","netherlands"]},
+  {name:"Çexiya",img:"https://flagcdn.com/w320/cz.png",syn:["çexiya","czechia","czech republic"]},
+  {name:"Ukrayna",img:"https://flagcdn.com/w320/ua.png",syn:["ukrayna","ukraine"]},
+  {name:"Macarıstan",img:"https://flagcdn.com/w320/hu.png",syn:["macarıstan","hungary"]},
+  {name:"Avstriya",img:"https://flagcdn.com/w320/at.png",syn:["avstriya","austria"]},
+  {name:"Belçika",img:"https://flagcdn.com/w320/be.png",syn:["belçika","belgium"]},
+  {name:"İrlandiya",img:"https://flagcdn.com/w320/ie.png",syn:["irlandiya","ireland"]},
+  {name:"İsrail",img:"https://flagcdn.com/w320/il.png",syn:["israil","israel"]},
+  {name:"Yeni Zelandiya",img:"https://flagcdn.com/w320/nz.png",syn:["yeni zelandiya","new zealand"]},
+  {name:"Slovakiya",img:"https://flagcdn.com/w320/sk.png",syn:["slovakiya","slovakia"]},
+  {name:"Rumıniya",img:"https://flagcdn.com/w320/ro.png",syn:["rumıniya","romania"]},
+  {name:"Tayland",img:"https://flagcdn.com/w320/th.png",syn:["tayland","thailand"]},
+  {name:"Vyetnam",img:"https://flagcdn.com/w320/vn.png",syn:["vyetnam","vietnam"]},
+  {name:"İsveçrə",img:"https://flagcdn.com/w320/ch.png",syn:["isveçrə","switzerland"]},
+  {name:"Səudiyyə Ərəbistanı",img:"https://flagcdn.com/w320/sa.png",syn:["səudiyyə ərəbistanı","saudi arabia"]},
+  {name:"Qazaxıstan",img:"https://flagcdn.com/w320/kz.png",syn:["qazaxıstan","kazakhstan"]},
+  {name:"Özbəkistan",img:"https://flagcdn.com/w320/uz.png",syn:["özbəkistan","uzbekistan"]},
+  {name:"Qırğızıstan",img:"https://flagcdn.com/w320/kg.png",syn:["qırğızıstan","kyrgyzstan"]},
+  {name:"Türkmənistan",img:"https://flagcdn.com/w320/tm.png",syn:["türkmənistan","turkmenistan"]},
+  {name:"Tacikistan",img:"https://flagcdn.com/w320/tj.png",syn:["tacikistan","tajikistan"]},
+  {name:"Estoniya",img:"https://flagcdn.com/w320/ee.png",syn:["estoniya","estonia"]},
+  {name:"Latviya",img:"https://flagcdn.com/w320/lv.png",syn:["latviya","latvia"]},
+  {name:"Litva",img:"https://flagcdn.com/w320/lt.png",syn:["litva","lithuania"]},
+  {name:"Gürcüstan",img:"https://flagcdn.com/w320/ge.png",syn:["gürcüstan","georgia"]},
+  {name:"Belarus",img:"https://flagcdn.com/w320/by.png",syn:["belarus"]},
+  {name:"Moldova",img:"https://flagcdn.com/w320/md.png",syn:["moldova"]},
+  {name:"Qətər",img:"https://flagcdn.com/w320/qa.png",syn:["qətər","qatar"]},
+  {name:"BƏƏ",img:"https://flagcdn.com/w320/ae.png",syn:["bəə","uae","united arab emirates"]},
+  {name:"Küveyt",img:"https://flagcdn.com/w320/kw.png",syn:["küveyt","kuwait"]},
+  {name:"İraq",img:"https://flagcdn.com/w320/iq.png",syn:["iraq","iraq"]},
+  {name:"İran",img:"https://flagcdn.com/w320/ir.png",syn:["iran"]},
+  {name:"Suriya",img:"https://flagcdn.com/w320/sy.png",syn:["suriya","syria"]},
+  {name:"Əfqanıstan",img:"https://flagcdn.com/w320/af.png",syn:["əfqanıstan","afghanistan"]},
+  {name:"Əlcəzair",img:"https://flagcdn.com/w320/dz.png",syn:["əlcəzair","algeria"]},
+  {name:"Mərakeş",img:"https://flagcdn.com/w320/ma.png",syn:["mərakeş","morocco"]},
+  {name:"Cənubi Afrika",img:"https://flagcdn.com/w320/za.png",syn:["cənubi afrika","south africa"]},
+  {name:"Nigeriya",img:"https://flagcdn.com/w320/ng.png",syn:["nigeriya","nigeria"]},
+  {name:"Keniya",img:"https://flagcdn.com/w320/ke.png",syn:["keniya","kenya"]},
+  {name:"Tunis",img:"https://flagcdn.com/w320/tn.png",syn:["tunis","tunisia"]},
+  {name:"Sudan",img:"https://flagcdn.com/w320/sd.png",syn:["sudan"]},
+  {name:"Filippin",img:"https://flagcdn.com/w320/ph.png",syn:["filippin","philippines"]},
+  {name:"Malayziya",img:"https://flagcdn.com/w320/my.png",syn:["malayziya","malaysia"]},
+  {name:"Sinqapur",img:"https://flagcdn.com/w320/sg.png",syn:["sinqapur","singapore"]},
+  {name:"Şri Lanka",img:"https://flagcdn.com/w320/lk.png",syn:["şri lanka","sri lanka"]},
+  {name:"Yəmən",img:"https://flagcdn.com/w320/ye.png",syn:["yəmən","yemen"]},
+  {name:"Oman",img:"https://flagcdn.com/w320/om.png",syn:["oman"]},
+  {name:"İordaniya",img:"https://flagcdn.com/w320/jo.png",syn:["iordaniya","jordan"]},
+  {name:"Livan",img:"https://flagcdn.com/w320/lb.png",syn:["livan","lebanon"]},
+  {name:"Fələstin",img:"https://flagcdn.com/w320/ps.png",syn:["fələstin","palestine"]},
+  {name:"Qana",img:"https://flagcdn.com/w320/gh.png",syn:["qana","ghana"]},
+  {name:"Efiopiya",img:"https://flagcdn.com/w320/et.png",syn:["efiopiya","ethiopia"]},
+  {name:"Kuba",img:"https://flagcdn.com/w320/cu.png",syn:["kuba","cuba"]}
+];
+let flagIdx=0,flagOrder=[],flagScore=0,flagAnswered=false;
+function flagNext(){
+  if(flagOrder.length===0) flagOrder = shuffle([...Array(flags.length).keys()]);
+  flagIdx=flagOrder.pop();
+  document.getElementById('flagImg').src=flags[flagIdx].img;
+  document.getElementById('flagInp').value="";
+  document.getElementById('flagStatus').textContent="";
+  document.getElementById('flagImg').className = 'flag-img';
+  flagAnswered=false;
+  updateFlagScore();
+}
+function flagGuess(){
+  if(flagAnswered) return;
+  let val=document.getElementById('flagInp').value.trim().toLowerCase();
+  let ok=flags[flagIdx].syn.map(s=>s.toLowerCase());
+  let img = document.getElementById('flagImg');
+  if(ok.includes(val)){
+    document.getElementById('flagStatus').innerHTML='<b style="color:#00e676;">Doğrudur!</b>';
+    img.className = 'flag-img correct';
+    flagScore++;
+    flagAnswered=true;
+  } else {
+    document.getElementById('flagStatus').innerHTML='<span style="color:#e74c3c;">Səhv. Cavab: '+flags[flagIdx].name+'</span>';
+    img.className = 'flag-img wrong';
+    flagScore = Math.max(flagScore-1, 0);
+    flagAnswered=true;
+  }
+  updateFlagScore();
+}
+function updateFlagScore(){
+  document.getElementById('flagScore').textContent = "Xal: " + flagScore;
+}
+function shuffle(a){for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+flagNext();
+</script>
+</body>
+</html>
