@@ -421,7 +421,7 @@ body.light-mode .contact-form textarea { background: #eee; color: #181818; }
 body.light-mode .contact-form input:focus,
 body.light-mode .contact-form textarea:focus { background: #fff; border: 1.5px solid #f72ee2; }
 
-/* Адаптив */
+
 @media (max-width: 950px) {
   .container { max-width: 98vw; }
   .projects-grid,
@@ -442,4 +442,97 @@ body.light-mode .contact-form textarea:focus { background: #fff; border: 1.5px s
   .scroll-up { bottom: 7px; right: 7px; width: 33px; height: 33px; font-size: 16px;}
   .footer { font-size: 0.93rem; padding: 11px 0 7px 0;}
   .project-image { border-radius: 6px; }
+}
+
+/* License Page Styles */
+.license-container {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 20px 24px;
+  background: #1c1c1c;
+  border-radius: 16px;
+  box-shadow: 0 4px 25px rgba(247, 46, 226, 0.15);
+  color: #eee;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+body.light-mode .license-container {
+  background: #fff;
+  color: #222;
+  box-shadow: 0 4px 20px rgba(247, 46, 226, 0.1);
+}
+
+.license-container h1,
+.license-container h2 {
+  color: #f72ee2;
+  font-weight: 800;
+  margin-bottom: 16px;
+}
+
+.license-container p {
+  margin-bottom: 16px;
+  color: inherit;
+}
+
+.license-container code,
+.license-container pre {
+  background: #222;
+  color: #f72ee2;
+  padding: 10px;
+  border-radius: 10px;
+  font-family: 'Source Code Pro', monospace, monospace;
+  font-size: 0.95rem;
+  overflow-x: auto;
+  display: block;
+  margin-bottom: 20px;
+}
+
+body.light-mode .license-container code,
+body.light-mode .license-container pre {
+  background: #f3f3f3;
+  color: #a600a6;
+}
+
+.license-container a {
+  color: #0fa6ff;
+  text-decoration: underline;
+}
+
+.license-container a:hover {
+  color: #f72ee2;
+}
+
+.license-buttons {
+  margin-top: 30px;
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.license-btn {
+  padding: 12px 26px;
+  background: #f72ee2;
+  border-radius: 10px;
+  color: #fff;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background 0.25s ease;
+}
+
+.license-btn:hover {
+  background: #d11ccf;
+}
+
+@media (max-width: 600px) {
+  .license-container {
+    padding: 16px 14px;
+  }
+  .license-buttons {
+    flex-direction: column;
+  }
+  .license-btn {
+    width: 100%;
+    text-align: center;
+  }
 }
