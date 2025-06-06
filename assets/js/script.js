@@ -25,7 +25,7 @@ const iconMoon = document.querySelector('.icon-moon');
 const iconSun = document.querySelector('.icon-sun');
 function updateThemeIcon() {
   if (!iconMoon || !iconSun) return;
-  if (document.body.classList.contains("light-mode")) {
+  if (document.body.classList.contains("dark")) {
     iconMoon.style.display = "inline";
     iconSun.style.display = "none";
   } else {
@@ -37,7 +37,13 @@ if (themeToggle) {
   themeToggle.addEventListener("click", () => {
     document.body.classList.toggle("dark");
     updateThemeIcon();
+    // (Optional) Save theme to localStorage
+    localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
   });
+  // On load, set theme from localStorage if exists
+  if (localStorage.getItem('theme') === 'dark') {
+    document.body.classList.add('dark');
+  }
   updateThemeIcon();
 }
 
