@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Color Match | Neon Sultan</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+  <style>
+    body {
+      background: radial-gradient(ellipse at 80% 8%, #5ee9fa 0%, #181924 100%);
+      min-height: 100vh;
+    }
+    .cm-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 48px;
+      background: rgba(24, 25, 36, .96);
+      border-radius: 18px;
+      padding: 36px 24px 28px 24px;
+      box-shadow: 0 10px 44px #000b;
+      max-width: 380px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .cm-title {
+      font-size: 2em;
+      color: #61dafb;
+      margin-bottom: 8px;
+      text-shadow: 0 2px 12px #222b;
+    }
+    .cm-round {
+      color: #fbbd23;
+      font-size: 1.18em;
+      margin: 8px 0 18px 0;
+      text-shadow: 0 2px 8px #2229;
+    }
+    .cm-prompt {
+      font-size: 1.18em;
+      color: #fff;
+      margin-bottom: 18px;
+      text-shadow: 0 2px 6px #2229;
+    }
+    .cm-btns {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 18px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .cm-btn {
+      width: 86px;
+      height: 86px;
+      border-radius: 16px;
+      border: none;
+      outline: none;
+      font-size: 1.34em;
+      font-weight: bold;
+      background: #18181a;
+      box-shadow: 0 3px 18px #0009, 0 0 0 4px #222c;
+      color: #fff;
+      cursor: pointer;
+      transition: transform .15s, box-shadow .2s, background .2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .cm-btn:focus, .cm-btn:hover {
+      transform: scale(1.07);
+      background: #fbbd23;
+      color: #18181a;
+      box-shadow: 0 6px 24px #fbbd2344, 0 0 0 5px #61dafb99;
+      outline: 2.5px solid #61dafb;
+    }
+    .cm-score {
+      color: #61dafb;
+      font-size: 1.11em;
+      margin-bottom: 8px;
+      text-shadow: 0 2px 6px #2229;
+    }
+    .cm-status {
+      color: #fff;
+      min-height: 32px;
+      margin-bottom: 8px;
+      font-size: 1.13em;
+      text-shadow: 0 2px 8px #0008;
+      text-align: center;
+    }
+    .cm-btn-main {
+      margin-top: 11px;
+      padding: 10px 24px;
+      font-size: 1em;
+      border-radius: 11px;
+      border: none;
+      background: linear-gradient(90deg,#61dafb,#fbbd23);
+      color: #222;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 2px 8px #0004;
+      transition: .2s;
+    }
+    .cm-btn-main:hover {
+      background: linear-gradient(90deg,#fbbd23,#61dafb);
+      color: #fff;
+      transform: translateY(-2px) scale(1.055);
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar modern-navbar">
+    <div class="container">
+      <div class="logo">Neon Sultan</div>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="../index.html">Ana Səhifə</a></li>
+        <li><a href="../about.html">Haqqımda</a></li>
+        <li><a href="../projects.html">Proyektlərim</a></li>
+        <li><a href="../license.html">Lisenziya</a></li>
+        <li><a href="../contact.html">Əlaqə</a></li>
+        <li><a href="../oyunlar.html" class="active">Oyunlar</a></li>
+      </ul>
+    </div>
+  </nav>
+  <main class="cm-container">
+    <div class="cm-title">Color Match</div>
+    <div class="cm-round" id="cmRound">Səviyyə: 1</div>
+    <div class="cm-score" id="cmScore">Xal: 0</div>
+    <div class="cm-prompt" id="cmPrompt">Düzgün rəngi seç!</div>
+    <div class="cm-btns" id="cmBtns"></div>
+    <div class="cm-status" id="cmStatus"></div>
+    <button class="cm-btn-main" onclick="cmRestart()">Yenidən başla</button>
+    <a href="../oyunlar.html" class="cm-btn-main" style="background:#222; color:#fff; margin-top:12px;">← Oyunlara qayıt</a>
+  </main>
+  <footer class="footer">
+    <p>© 2025 Sultan. Neon Group Azerbaijan | <a href="../license.html">Lisenziya</a></p>
+  </footer>
+  <script>
+    // --- Color Match Game ---
+    const COLORS = [
+      {name: "Qırmızı", hex: "#e74c3c"},
+      {name: "Yaşıl", hex: "#00e676"},
+      {name: "Sarı", hex: "#fbbd23"},
+      {name: "Göy", hex: "#61dafb"},
+      {name: "Bənövşəyi", hex: "#a259e6"},
+      {name: "Narıncı", hex: "#f78e1e"},
+      {name: "Qara", hex: "#222"},
+      {name: "Ağ", hex: "#fff"},
+      {name: "Çəhrayı", hex: "#ff73c5"}
+    ];
+    let score = 0, round = 1, correct, options, locked = false, maxRounds = 10;
+
+    function cmRestart() {
+      score = 0; round = 1; locked = false;
+      document.getElementById('cmStatus').textContent = '';
+      nextRound();
+    }
+
+    function shuffle(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        let j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function nextRound() {
+      locked = false;
+      if (round > maxRounds) {
+        document.getElementById('cmPrompt').textContent = "Oyun bitdi!";
+        document.getElementById('cmBtns').innerHTML = '';
+        document.getElementById('cmStatus').innerHTML = `<b>Toplam xal: ${score} / ${maxRounds}</b>`;
+        document.getElementById('cmRound').textContent = `Səviyyə: ${maxRounds}`;
+        return;
+      }
+      document.getElementById('cmRound').textContent = `Səviyyə: ${round}`;
+      document.getElementById('cmScore').textContent = `Xal: ${score}`;
+      options = shuffle(COLORS.slice()).slice(0, 4);
+      correct = options[Math.floor(Math.random()*4)];
+      const showName = Math.random()<0.5;
+      document.getElementById('cmPrompt').innerHTML = showName
+        ? `Rəng: <b style="color:${correct.hex};text-shadow:0 2px 8px #0006;">${correct.name}</b>`
+        : `HEX: <b style="color:${correct.hex};">${correct.hex}</b>`;
+
+      document.getElementById('cmBtns').innerHTML = options.map(c=>
+        `<button class="cm-btn" style="background:linear-gradient(140deg,${c.hex} 80%,#18181a 120%);color:${c.hex==='#fff'?'#111':'#fff'};box-shadow:0 3px 20px ${c.hex}88,0 0 0 4px #2223;" onclick="cmPick('${c.hex}')">${showName?c.hex:c.name}</button>`
+      ).join('');
+    }
+
+    function cmPick(hex) {
+      if (locked) return;
+      locked = true;
+      if (hex === correct.hex) {
+        score++;
+        document.getElementById('cmStatus').innerHTML = `<span style="color:#00e676;">Düzdür! +1 xal</span>`;
+      } else {
+        document.getElementById('cmStatus').innerHTML = `<span style="color:#e74c3c;">Səhv! Düzgün cavab: <b style="color:${correct.hex}">${correct.name}</b></span>`;
+      }
+      round++;
+      setTimeout(nextRound, 1050);
+    }
+
+    cmRestart();
+  </script>
+</body>
+</html>
