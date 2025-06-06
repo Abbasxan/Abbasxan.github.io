@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Domino | Neon Sultan</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+  <style>
+    body {background: radial-gradient(circle at 60% 20%, #495082 0%, #181924 100%);}
+    .domino-container {
+      display: flex; flex-direction: column; align-items: center; margin-top: 48px;
+      background: rgba(24,25,36,0.98); border-radius: 20px; padding: 36px 28px 30px 28px;
+      box-shadow: 0 10px 44px #000c; max-width: 520px; margin: auto;
+    }
+    .domino-title {
+      font-size: 2em; color: #61dafb; margin-bottom: 8px; text-shadow: 0 2px 16px #222c;
+      letter-spacing: 1px;
+    }
+    .domino-mode-row { margin-bottom: 13px; display: flex; gap: 15px;}
+    .domino-mode-btn {
+      background: linear-gradient(90deg,#61dafb,#fbbd23); color: #222; border: none; border-radius: 10px;
+      font-weight: bold; font-size: 1em; padding: 8px 22px; cursor: pointer;
+      box-shadow: 0 2px 12px #0006, 0 0 0 2px #61dafb33; transition: .18s;
+    }
+    .domino-mode-btn.active, .domino-mode-btn:focus {
+      background: linear-gradient(90deg,#fbbd23,#61dafb); color: #fff; outline: 2.5px solid #fbbd23;
+      box-shadow: 0 2px 15px #fbbd2380, 0 0 0 3px #61dafb80;
+    }
+    .domino-status {
+      color: #fff; font-size: 1.13em; min-height: 32px; margin-bottom: 10px; text-shadow: 0 2px 10px #222b;
+      text-align: center; letter-spacing:.2px;
+    }
+    .domino-board {
+      display: flex; flex-wrap: wrap; justify-content: center; align-items: center;
+      margin: 14px 0 18px 0; min-height: 62px; gap:8px;
+      background: linear-gradient(90deg,#222b 75%,#26394d 100%);
+      border-radius: 13px; box-shadow: 0 7px 28px #0008;
+      padding: 14px 8px; width: 100%;
+      max-width: 420px; overflow-x: auto;
+    }
+
+    /* 3D Domino Tile */
+    .domino-tile {
+      width: 42px; height: 64px; background: linear-gradient(160deg,#23232b 60%,#35356b 100%);
+      border-radius: 12px; box-shadow:
+        0 4px 18px #000a,
+        0 0 0 2.5px #222d,
+        4px 10px 20px #61dafb27 inset;
+      margin: 0 2px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      position: relative; font-size: 1.13em; border: none; cursor: default;
+      transition: transform .14s, box-shadow .15s, background .2s;
+      perspective: 110px;
+    }
+    .domino-tile.domino-3d {
+      background: linear-gradient(160deg,#252540 65%,#3e4a7e 100%);
+      box-shadow:
+        0 10px 32px #61dafb44,
+        0 0 0 4px #fbbd2318,
+        0 0 0 2.5px #222d,
+        3px 6px 18px #61dafb27 inset;
+      border: 2.5px solid #61dafb44;
+      animation: dom3d 1.2s ease-in-out;
+    }
+    @keyframes dom3d {
+      0% {transform: scale(0.88) rotateY(16deg);}
+      80% {transform: scale(.99) rotateY(-3deg);}
+      100% {transform: scale(1) rotateY(0);}
+    }
+    .domino-tile.selected {
+      outline: 2.5px solid #fbbd23;
+      background: linear-gradient(140deg,#fbbd23 32%,#23232b 80%);
+      color: #222;
+      box-shadow: 0 7px 24px #fbbd2370,0 1px 0 #61dafb77 inset;
+      transform: scale(1.08) rotateY(3deg);
+      cursor: pointer;
+    }
+    .domino-tile.playable {
+      cursor: pointer;
+      filter: brightness(1.12);
+      box-shadow: 0 0 0 4px #00e676bb, 0 8px 24px #61dafb55;
+      background: linear-gradient(150deg,#23232b 60%,#fbbd2355 100%);
+      transition: .16s;
+    }
+    .domino-tile.disabled {
+      opacity: .55; filter: grayscale(.45);
+      cursor: not-allowed;
+      box-shadow: 0 0 0 0 #0000;
+      background: #23232b;
+    }
+    .domino-dotrow {display: flex; justify-content: center; width: 100%; gap: 2px;}
+    .domino-dot {
+      width: 11px; height: 11px; background: radial-gradient(circle, #fbbd23 35%, #ffe484 100%);
+      border-radius: 50%; margin: 1.5px;
+      box-shadow: 0 0 7px #fbbd23cc, 0 2px 8px #fff8;
+      border: 1.2px solid #ffe484aa;
+    }
+    .domino-hand {
+      display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; justify-content: center;
+      width: 100%; max-width: 420px;
+    }
+    .domino-hand .domino-tile { cursor: pointer; opacity: 0.98; }
+    .domino-btn {
+      margin-top: 13px; padding: 11px 26px; font-size: 1em; border-radius: 10px; border: none;
+      background: linear-gradient(90deg,#61dafb,#fbbd23); color: #222; font-weight: bold; cursor: pointer;
+      box-shadow: 0 2px 10px #0007; transition: background .2s, color .2s, transform .13s;
+    }
+    .domino-btn.secondary {background: #222; color: #fff; margin-top: 10px;}
+    .domino-btn:hover {
+      background: linear-gradient(90deg,#fbbd23,#61dafb);
+      color: #fff;
+      transform: translateY(-2px) scale(1.07);
+    }
+    @media (max-width: 600px) {
+      .domino-container { padding: 10px 2vw;}
+      .domino-board, .domino-hand { max-width: 96vw;}
+      .domino-tile { width: 32px; height: 48px; font-size: .97em;}
+      .domino-dot { width: 7px; height: 7px;}
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar modern-navbar"><div class="container"><div class="logo">Neon Sultan</div></div></nav>
+  <main class="domino-container">
+    <div class="domino-title">Domino</div>
+    <div class="domino-mode-row">
+      <button id="modePVP" class="domino-mode-btn active" onclick="setDominoMode('pvp')">2 nəfər</button>
+      <button id="modeAI" class="domino-mode-btn" onclick="setDominoMode('ai')">NEON AI</button>
+    </div>
+    <div class="domino-status" id="dominoStatus"></div>
+    <div class="domino-board" id="dominoBoard"></div>
+    <div class="domino-hand" id="dominoHand"></div>
+    <button class="domino-btn" onclick="dominoReset()">Yenidən başla</button>
+    <a href="../oyunlar.html" class="domino-btn secondary">← Oyunlara qayıt</a>
+  </main>
+  <footer class="footer"><p>© 2025 Sultan. Neon Group Azerbaijan</p></footer>
+  <script>
+    // --- State ---
+    let dominoMode = 'pvp', dominoPool, dominoBoardArr, dominoHands, dominoTurn, dominoSelected, dominoFinished=false, dominoAIThinking=false;
+
+    function setDominoMode(nm){
+      dominoMode = nm;
+      document.getElementById('modePVP').classList.toggle('active',dominoMode==='pvp');
+      document.getElementById('modeAI').classList.toggle('active',dominoMode==='ai');
+      dominoReset();
+    }
+
+    function dominoReset(){
+      dominoPool = [];
+      for(let i=0;i<=6;i++)for(let j=i;j<=6;j++)dominoPool.push([i,j]);
+      dominoPool = shuffle(dominoPool);
+      dominoHands = [dominoPool.splice(0,7), dominoPool.splice(0,7)];
+      dominoBoardArr = []; dominoTurn=0; dominoSelected=null; dominoFinished=false; dominoAIThinking=false;
+      updateDominoStatus();
+      dominoRender();
+      if(dominoMode==='ai'&&dominoTurn===1){setTimeout(dominoAITurn,750);}
+    }
+
+    function shuffle(a){for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+    function dominoRender(){
+      // Board
+      let brd = '';
+      for(let t of dominoBoardArr) brd += tileHTML(t, true);
+      document.getElementById('dominoBoard').innerHTML = brd;
+      // Hand
+      let handHTML = '';
+      let hand = dominoHands[dominoTurn];
+      let playable = [];
+      for (let i = 0; i < hand.length; i++) if (canPlace(hand[i])) playable.push(i);
+      hand.forEach((t,i)=>{
+        let classes = ["domino-tile", "domino-3d"];
+        if (dominoSelected===i) classes.push("selected");
+        if (playable.includes(i)) classes.push("playable");
+        else classes.push("disabled");
+        handHTML += `<div class="${classes.join(' ')}" onclick="dominoHandClick(${i})">${tileInner(t)}</div>`;
+      });
+      document.getElementById('dominoHand').innerHTML=handHTML;
+    }
+
+    function tileHTML(t, isBoard=false){
+      return `<div class="domino-tile domino-3d" style="margin:${isBoard?'0 2px':'0 4px'};">${tileInner(t)}</div>`;
+    }
+    function tileInner([a,b]){
+      let dots = n=>[...Array(n)].map(()=>'<div class="domino-dot"></div>').join('');
+      return `<div class="domino-dotrow">${dots(a)}</div><div class="domino-dotrow">${dots(b)}</div>`;
+    }
+
+    function updateDominoStatus(){
+      if(dominoFinished){
+        let winner = dominoTurn===0 ? (dominoMode==='ai'?"NEON AI qalib oldu!":"2-ci oyunçu qalib oldu!") : "1-ci oyunçu qalib oldu!";
+        document.getElementById('dominoStatus').innerHTML = `<b>${winner}</b>`;
+        return;
+      }
+      if(dominoMode==='ai') document.getElementById('dominoStatus').textContent = dominoTurn===0?"Sənin növbən":"NEON AI düşünür...";
+      else document.getElementById('dominoStatus').textContent = dominoTurn===0?"1-ci oyunçu növbədə":"2-ci oyunçu növbədə";
+    }
+
+    function dominoHandClick(i){
+      if(dominoFinished||dominoAIThinking||(dominoMode==='ai'&&dominoTurn===1))return;
+      let t = dominoHands[dominoTurn][i];
+      if (!canPlace(t)) return;
+      placeTile(i);
+    }
+
+    function canPlace([a,b]){
+      if(dominoBoardArr.length===0)return true;
+      let [l,r]=[dominoBoardArr[0][0],dominoBoardArr[dominoBoardArr.length-1][1]];
+      return a===l||b===l||a===r||b===r;
+    }
+
+    function placeTile(i){
+      let t = dominoHands[dominoTurn][i];
+      if(dominoBoardArr.length===0){
+        dominoBoardArr.push(t.slice());
+      } else {
+        let [l,r]=[dominoBoardArr[0][0],dominoBoardArr[dominoBoardArr.length-1][1]];
+        if(t[0]===l||t[1]===l){
+          t = t[0]===l?t.slice().reverse():t.slice();
+          dominoBoardArr.unshift(t);
+        } else if(t[0]===r||t[1]===r){
+          t = t[0]===r?t.slice():t.slice().reverse();
+          dominoBoardArr.push(t);
+        } else {
+          return; // invalid
+        }
+      }
+      dominoHands[dominoTurn].splice(i,1);
+      dominoSelected=null;
+      // Win?
+      if(dominoHands[dominoTurn].length===0){
+        dominoFinished=true; updateDominoStatus(); dominoRender(); return;
+      }
+      // Check for block
+      if(!canAnyoneMove()){
+        dominoFinished=true;
+        let winner;
+        let len0 = dominoHands[0].reduce((s,[a,b])=>s+a+b,0);
+        let len1 = dominoHands[1].reduce((s,[a,b])=>s+a+b,0);
+        if(len0===len1) winner = "Heç-heçə!";
+        else if(len0<len1) winner = (dominoMode==='ai'?"Sən qalib oldun!":"1-ci oyunçu qalib oldu!");
+        else winner = (dominoMode==='ai'?"NEON AI qalib oldu!":"2-ci oyunçu qalib oldu!");
+        document.getElementById('dominoStatus').innerHTML = `<b>${winner}</b>`;
+        dominoRender();
+        return;
+      }
+      dominoTurn = dominoTurn===0?1:0;
+      updateDominoStatus();
+      dominoRender();
+      if(dominoMode==='ai'&&dominoTurn===1&&!dominoFinished){setTimeout(dominoAITurn,820);}
+    }
+
+    function canAnyoneMove(){
+      for(let pl=0;pl<2;pl++){
+        for(let i=0;i<dominoHands[pl].length;i++)
+          if(canPlace(dominoHands[pl][i])) return true;
+      }
+      return false;
+    }
+
+    // --- NEON AI: ищет первый возможный ход ---
+    function dominoAITurn(){
+      dominoAIThinking=true; updateDominoStatus();
+      setTimeout(()=>{
+        let hand = dominoHands[1];
+        let moved = false;
+        for(let i=0;i<hand.length;i++)if(canPlace(hand[i])){placeTile(i); moved=true; break;}
+        if(!moved){ // AI не может походить, пасует
+          dominoTurn=0; dominoAIThinking=false; updateDominoStatus(); dominoRender();
+        } else {
+          dominoAIThinking=false;
+        }
+      },480+Math.random()*500);
+    }
+
+    dominoReset();
+  </script>
+</body>
+</html>
