@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Şaşki | Neon Sultan</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+  <style>
+    body {background: radial-gradient(circle at 60% 20%, #495082 0%, #181924 100%);}
+    .checkers-container {display:flex; flex-direction:column; align-items:center; margin-top:48px; background:rgba(24,25,36,.97); border-radius:18px; padding:36px 32px 32px 32px; box-shadow:0 10px 44px #000b; max-width:450px; margin:auto;}
+    .checkers-title { font-size:2em; color:#61dafb; margin-bottom:8px; text-shadow:0 2px 12px #222b;}
+    .checkers-mode-row { margin-bottom: 12px; display: flex; gap: 14px; }
+    .checkers-mode-btn { background:linear-gradient(90deg,#61dafb,#fbbd23); color:#222; border:none; border-radius:9px; font-weight:bold; font-size:1em; padding:7px 20px; cursor:pointer; box-shadow:0 2px 8px #0004; transition:.16s;}
+    .checkers-mode-btn.active, .checkers-mode-btn:focus { background:linear-gradient(90deg,#fbbd23,#61dafb); color:#fff; outline:2px solid #fbbd23;}
+    .checkers-board {display:grid; grid-template-columns:repeat(8,40px); grid-template-rows:repeat(8,40px); gap:2px; margin-top:16px; margin-bottom:18px;}
+    .checkers-cell {width:40px; height:40px; border-radius:7px; display:flex; align-items:center; justify-content:center; font-size:1.8em; cursor:pointer; transition:.15s;}
+    .checkers-cell.dark {background:#23233a; }
+    .checkers-cell.light {background:#61dafb33;}
+    .checkers-piece {width:28px; height:28px; border-radius:50%; box-shadow:0 2px 8px #0007; display:flex; align-items:center; justify-content:center;}
+    .checkers-piece.red {background:linear-gradient(135deg,#f06292,#e74c3c);}
+    .checkers-piece.black {background:linear-gradient(135deg,#37474f,#222);}
+    .checkers-piece.king {border:2px solid #fbbd23; box-shadow:0 0 10px #fbbd2388;}
+    .checkers-cell.selected {outline:2.5px solid #fbbd23;}
+    .checkers-cell.move {box-shadow:0 0 0 3px #00e67699;}
+    .checkers-status {color:#fff; font-size:1.12em; min-height:32px; margin-bottom:8px; text-shadow:0 2px 8px #2229;}
+    .checkers-btn {margin-top:13px; padding:10px 24px; font-size:1em; border-radius:9px; border:none; background:linear-gradient(90deg,#61dafb,#fbbd23); color:#222; font-weight:bold; cursor:pointer; box-shadow:0 2px 8px #0004; transition:background .2s, color .2s, transform .12s;}
+    .checkers-btn.secondary {background:#222; color:#fff; margin-top:10px;}
+    .checkers-btn:hover {background:linear-gradient(90deg,#fbbd23,#61dafb); color:#fff; transform:translateY(-2px) scale(1.07);}
+  </style>
+</head>
+<body>
+  <nav class="navbar modern-navbar"><div class="container"><div class="logo">Neon Sultan</div></div></nav>
+  <main class="checkers-container">
+    <div class="checkers-title">Şaşki (Checkers)</div>
+    <div class="checkers-mode-row">
+      <button id="modePVP" class="checkers-mode-btn active" onclick="setMode('pvp')">2 nəfər</button>
+      <button id="modeAI" class="checkers-mode-btn" onclick="setMode('ai')">NEON AI</button>
+    </div>
+    <div class="checkers-status" id="checkersStatus"></div>
+    <div class="checkers-board" id="checkersBoard"></div>
+    <button class="checkers-btn" onclick="checkersReset()">Yenidən başla</button>
+    <a href="../oyunlar.html" class="checkers-btn secondary">← Oyunlara qayıt</a>
+  </main>
+  <footer class="footer"><p>© 2025 Sultan. Neon Group Azerbaijan</p></footer>
+  <script>
+    // --- State ---
+    let mode = 'pvp', board, turn, selected, moves, mustJump, aiThinking=false, finished=false;
+    const EMPTY = null, RED = 'r', BLACK = 'b', RED_K='R', BLACK_K='B';
+    function setMode(nm){
+      mode = nm;
+      document.getElementById('modePVP').classList.toggle('active',mode==='pvp');
+      document.getElementById('modeAI').classList.toggle('active',mode==='ai');
+      checkersReset();
+    }
+    function checkersReset(){
+      // 8x8 board, only dark cells playable
+      board = Array(8).fill().map(()=>Array(8).fill(EMPTY));
+      for(let y=0;y<3;y++)for(let x=0;x<8;x++)if((x+y)%2)board[y][x]=BLACK;
+      for(let y=5;y<8;y++)for(let x=0;x<8;x++)if((x+y)%2)board[y][x]=RED;
+      turn = RED; selected = null; moves=[]; mustJump=false; aiThinking=false; finished=false;
+      updateStatus();
+      render();
+      if(mode==='ai'&&turn===BLACK){ aiTurn(); }
+    }
+    function render(){
+      let brd = '';
+      let legal = selected?getMoves(selected.y,selected.x,true):[];
+      for(let y=0;y<8;y++)for(let x=0;x<8;x++){
+        let dark = (x+y)%2;
+        let s = `class="checkers-cell ${dark?'dark':'light'}`;
+        if(selected&&selected.x===x&&selected.y===y)s+=" selected";
+        if(dark&&!board[y][x]&&legal.some(m=>m.x===x&&m.y===y))s+=" move";
+        s+='"';
+        brd += `<div ${s} onclick="cellClick(${y},${x})">`;
+        let v = board[y][x];
+        if(v){
+          let p = `class="checkers-piece ${(v===RED||v===RED_K)?'red':'black'}${/^[RB]$/.test(v)?' king':''}"`;
+          brd += `<div ${p}>${/^[RB]$/.test(v)?'👑':''}</div>`;
+        }
+        brd += '</div>';
+      }
+      document.getElementById('checkersBoard').innerHTML = brd;
+    }
+    function updateStatus(){
+      if(finished){document.getElementById('checkersStatus').textContent = (turn===RED?"Qara":"Qırmızı")+" qalib oldu!";return;}
+      if(mode==='ai') document.getElementById('checkersStatus').textContent = turn===RED ? "Sənin növbən (qırmızı)" : "NEON AI düşünür...";
+      else document.getElementById('checkersStatus').textContent = (turn===RED?"Qırmızı":"Qara")+" növbədə";
+    }
+    function cellClick(y,x){
+      if(finished||aiThinking||(mode==='ai'&&turn===BLACK))return;
+      if((turn===RED&&/^[rb]$/.test(board[y][x]))||(turn===BLACK&&/^[bB]$/.test(board[y][x]))||(turn===RED&&/^[R]$/.test(board[y][x]))||(turn===BLACK&&/^[R]$/.test(board[y][x]))) {
+        if(board[y][x]&&((turn===RED&&/^[rR]$/.test(board[y][x]))||(turn===BLACK&&/^[bB]$/.test(board[y][x])))) {
+          selected={y,x};
+          render();
+        }
+        return;
+      }
+      if(selected){
+        let legal = getMoves(selected.y,selected.x,true);
+        let found = legal.find(m=>m.x===x&&m.y===y);
+        if(found){ move(selected.y,selected.x,found.y,found.x,found.jump); }
+      }
+    }
+    function getMoves(y,x,markJumpsOnly){
+      let v = board[y][x];
+      if(!v)return [];
+      let dirs = [];
+      if(v===RED||v===RED_K){ dirs.push([-1,-1],[-1,1]); }
+      if(v===BLACK||v===BLACK_K){ dirs.push([1,-1],[1,1]); }
+      if(/[RB]/.test(v)) dirs=[[-1,-1],[-1,1],[1,-1],[1,1]];
+      let out = [];
+      for(let [dy,dx] of dirs){
+        let ny=y+dy, nx=x+dx;
+        if(ny>=0&&ny<8&&nx>=0&&nx<8&&!board[ny][nx]&&(!mustJump||!markJumpsOnly)) out.push({y:ny,x:nx,jump:false});
+        // jumps
+        let jy=y+2*dy, jx=x+2*dx;
+        if(jy>=0&&jy<8&&jx>=0&&jx<8&&board[ny][nx]&&((turn===RED&&/^[bB]$/.test(board[ny][nx]))||(turn===BLACK&&/^[rR]$/.test(board[ny][nx])))&&!board[jy][jx])
+          out.push({y:jy,x:jx,jump:{y:ny,x:nx}});
+      }
+      return out.filter(m=>!markJumpsOnly||m.jump||!mustJump);
+    }
+    function move(y1,x1,y2,x2,jump){
+      let v=board[y1][x1];
+      board[y1][x1]=EMPTY;
+      board[y2][x2]=v;
+      if(jump){ board[jump.y][jump.x]=EMPTY; }
+      // king
+      if(v===RED&&y2===0)board[y2][x2]=RED_K;
+      if(v===BLACK&&y2===7)board[y2][x2]=BLACK_K;
+      selected=null;
+      // Check for additional jumps
+      if(jump){
+        let moreJumps = getMoves(y2,x2,true).filter(m=>m.jump);
+        if(moreJumps.length){ selected={y:y2,x:x2}; mustJump=true; render(); return; }
+      }
+      mustJump=hasJump(turn==='RED'?BLACK:RED);
+      // Win check
+      if(!hasMoves(turn==='RED'?BLACK:RED)){
+        finished=true; updateStatus(); render(); return;
+      }
+      turn = turn===RED?BLACK:RED;
+      selected=null; mustJump=false;
+      updateStatus();
+      render();
+      if(mode==='ai'&&turn===BLACK){ aiTurn(); }
+    }
+    function hasMoves(side){
+      for(let y=0;y<8;y++)for(let x=0;x<8;x++)
+        if(board[y][x]&&((side===RED&&/^[rR]$/.test(board[y][x]))||(side===BLACK&&/^[bB]$/.test(board[y][x]))))
+          if(getMoves(y,x,false).length) return true;
+      return false;
+    }
+    function hasJump(side){
+      for(let y=0;y<8;y++)for(let x=0;x<8;x++)
+        if(board[y][x]&&((side===RED&&/^[rR]$/.test(board[y][x]))||(side===BLACK&&/^[bB]$/.test(board[y][x]))))
+          if(getMoves(y,x,true).some(m=>m.jump)) return true;
+      return false;
+    }
+    function aiTurn(){
+      aiThinking=true; updateStatus();
+      setTimeout(()=>{
+        let movesList=[];
+        for(let y=0;y<8;y++)for(let x=0;x<8;x++)
+          if(board[y][x]&&/^[bB]$/.test(board[y][x])){
+            let legal = getMoves(y,x,true);
+            for(let m of legal) movesList.push({from:{y,x},to:{y:m.y,x:m.x},jump:m.jump});
+          }
+        
+        let jumps = movesList.filter(m=>m.jump);
+        let pick = jumps.length?jumps[Math.floor(Math.random()*jumps.length)]:movesList[Math.floor(Math.random()*movesList.length)];
+        if(pick) move(pick.from.y,pick.from.x,pick.to.y,pick.to.x,pick.jump);
+        aiThinking=false;
+      }, 650+Math.random()*400);
+    }
+    checkersReset();
+  </script>
+</body>
+</html>
