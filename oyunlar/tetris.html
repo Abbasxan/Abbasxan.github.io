@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tetris | Neon Sultan</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+  <style>
+    body {background: radial-gradient(ellipse at 60% 15%, #495082 0%, #181924 100%);}
+    .tetris-container { display:flex; flex-direction:column; align-items:center; margin-top:48px; background:rgba(24,25,36,.96); border-radius:18px; padding:36px 32px 32px 32px; box-shadow:0 10px 44px #000b; max-width:410px; margin:auto;}
+    .tetris-title { font-size:2em; color:#61dafb; margin-bottom:8px; text-shadow:0 2px 12px #222b;}
+    #tetrisCanvas { background:linear-gradient(160deg, #191924 0%, #23304f 100%); border-radius:16px; margin-top:24px; box-shadow:0 10px 40px #000a, 0 1.5px 0.5px #61dafb44;}
+    .tetris-score { color:#fbbd23; font-size:1.2em; margin-top:16px; text-shadow:0 2px 8px #222b;}
+    .tetris-btn { margin-top:18px; padding:10px 24px; font-size:1em; border-radius:11px; border:none; background:linear-gradient(90deg,#61dafb,#fbbd23); color:#222; font-weight:bold; cursor:pointer; box-shadow:0 2px 8px #0004; transition:.2s;}
+    .tetris-btn:hover { background:linear-gradient(90deg,#fbbd23,#61dafb); color:#fff; transform: translateY(-2px) scale(1.055);}
+    .tetris-next-box {margin-top:16px; margin-bottom:8px;}
+    #tetrisNext {background: #18181a; border-radius:9px; box-shadow: 0 3px 14px #000a;}
+    .tetris-controls {margin-top:8px; color:#61dafb; font-size:.98em;}
+    @media (max-width:600px){
+      .tetris-container{padding:10px 2vw;}
+      #tetrisCanvas{width:98vw;max-width:98vw;}
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar modern-navbar"><div class="container"><div class="logo">Neon Sultan</div></div></nav>
+  <main class="tetris-container">
+    <div class="tetris-title">Tetris</div>
+    <div class="tetris-next-box">
+      <canvas id="tetrisNext" width="96" height="96"></canvas>
+    </div>
+    <canvas id="tetrisCanvas" width="240" height="420"></canvas>
+    <div class="tetris-score" id="tetrisScore">Xal: 0</div>
+    <div class="tetris-controls">⬅️ ➡️ — hərəkət | 🔼 — döndər | 🔽/Space — sürətli düşüş</div>
+    <button class="tetris-btn" onclick="tetrisStart()">Yenidən başla</button>
+    <a href="../oyunlar.html" class="tetris-btn" style="background:#222; color:#fff; margin-top:12px;">← Oyunlara qayıt</a>
+  </main>
+  <footer class="footer"><p>© 2025 Sultan. Neon Group Azerbaijan</p></footer>
+  <script>
+    // --- Neon Tetris v2 ---
+    const canvas = document.getElementById('tetrisCanvas');
+    const ctx = canvas.getContext('2d');
+    const nextCanvas = document.getElementById('tetrisNext');
+    const nctx = nextCanvas.getContext('2d');
+    const COLS=10, ROWS=21, SIZE=24;
+    const COLORS = [
+      "#61dafb", // I
+      "#fbbd23", // Z
+      "#e74c3c", // S
+      "#a259e6", // T
+      "#00e676", // O
+      "#ffd600", // L
+      "#ff73c5"  // J
+    ];
+    // prettier block layouts for preview
+    const SHAPES = [
+      [[1,1,1,1]],              // I
+      [[1,1,0],[0,1,1]],        // Z
+      [[0,1,1],[1,1,0]],        // S
+      [[1,1,1],[0,1,0]],        // T
+      [[1,1],[1,1]],            // O
+      [[1,1,1],[1,0,0]],        // L
+      [[1,1,1],[0,0,1]]         // J
+    ];
+    let board, piece, px, py, color, timer, score, running, dropSpeed=420;
+    let nextShape, nextColor;
+
+    function tetrisStart(){
+      board = Array(ROWS).fill().map(()=>Array(COLS).fill(0));
+      score = 0; running = true; dropSpeed = 420;
+      nextShape = null; nextColor = null;
+      spawn();
+      clearInterval(timer);
+      timer = setInterval(loop, dropSpeed);
+      draw();
+      drawNext();
+      document.getElementById('tetrisScore').textContent = "Xal: 0";
+    }
+    function pickNext(){
+      let i = Math.floor(Math.random()*SHAPES.length);
+      return [SHAPES[i], i+1];
+    }
+    function spawn(){
+      if(nextShape===null){
+        [piece, color] = pickNext();
+        [nextShape, nextColor] = pickNext();
+      } else {
+        piece = nextShape;
+        color = nextColor;
+        [nextShape, nextColor] = pickNext();
+      }
+      px=3; py=0;
+      if(collide(px,py,piece)){ running=false; gameOver();}
+      drawNext();
+    }
+    function rotate(shape){
+      let out=[]; for(let x=0;x<shape[0].length;x++){out[x]=[];for(let y=0;y<shape.length;y++)out[x][y]=shape[shape.length-1-y][x];}
+      return out;
+    }
+    function collide(x,y,shape){
+      for(let r=0;r<shape.length;r++)for(let c=0;c<shape[0].length;c++)
+        if(shape[r][c]&&(board[y+r]?.[x+c]!==0||x+c<0||x+c>=COLS||y+r>=ROWS))return true;
+      return false;
+    }
+    function merge(){
+      for(let r=0;r<piece.length;r++)for(let c=0;c<piece[0].length;c++)
+        if(piece[r][c])board[py+r][px+c]=color;
+    }
+    function clearLines(){
+      let cleared=0;
+      for(let r=ROWS-1;r>=0;r--){
+        if(board[r].every(x=>x)){
+          board.splice(r,1);
+          board.unshift(Array(COLS).fill(0));
+          cleared++; r++;
+        }
+      }
+      if(cleared){
+        score+=cleared*100;
+        dropSpeed=Math.max(90,dropSpeed-8*cleared);
+        clearInterval(timer);
+        timer=setInterval(loop,dropSpeed);
+      }
+    }
+    function loop(){
+      if(!running)return;
+      if(!collide(px,py+1,piece)){py++;}else{merge();clearLines();spawn();}
+      draw();
+      document.getElementById('tetrisScore').textContent = "Xal: "+score;
+    }
+    function move(dx){
+      if(!collide(px+dx,py,piece))px+=dx;
+      draw();
+    }
+    function drop(){
+      while(!collide(px,py+1,piece))py++;
+      loop();
+    }
+    document.addEventListener('keydown',e=>{
+      if(!running)return;
+      if(e.key==="ArrowLeft")move(-1);
+      if(e.key==="ArrowRight")move(1);
+      if(e.key==="ArrowDown")loop();
+      if(e.key==="ArrowUp"){
+        let rot=rotate(piece);if(!collide(px,py,rot))piece=rot;
+        draw();
+      }
+      if(e.key===" "){drop();}
+    });
+    function draw(){
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      // board
+      for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++)
+        if(board[r][c]){
+          drawBlock(ctx, c, r, COLORS[board[r][c]-1]);
+        }
+      // piece
+      for(let r=0;r<piece.length;r++)for(let c=0;c<piece[0].length;c++)
+        if(piece[r][c]){
+          drawBlock(ctx, px+c, py+r, COLORS[color-1], true);
+        }
+      // grid
+      ctx.save();
+      ctx.globalAlpha = .13;
+      ctx.strokeStyle = "#fff";
+      for(let i=0;i<=COLS;i++){
+        ctx.beginPath();
+        ctx.moveTo(i*SIZE,0); ctx.lineTo(i*SIZE,ROWS*SIZE);
+        ctx.stroke();
+      }
+      for(let i=0;i<=ROWS;i++){
+        ctx.beginPath();
+        ctx.moveTo(0,i*SIZE); ctx.lineTo(COLS*SIZE,i*SIZE);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+    function drawBlock(ctx, x, y, color, glow){
+      ctx.save();
+      if(glow){
+        ctx.shadowColor = color;
+        ctx.shadowBlur = 24;
+      }
+      ctx.fillStyle = color;
+      ctx.fillRect(x*SIZE+1, y*SIZE+1, SIZE-2, SIZE-2);
+      // 3D highlight
+      ctx.globalAlpha = 0.23;
+      ctx.fillStyle = "#fff";
+      ctx.fillRect(x*SIZE+3, y*SIZE+3, SIZE-6, 8);
+      ctx.globalAlpha = 1;
+      ctx.restore();
+    }
+    function drawNext(){
+      nctx.clearRect(0,0,nextCanvas.width,nextCanvas.height);
+      let shape = nextShape||SHAPES[0], col = nextColor?COLORS[nextColor-1]:COLORS[0];
+      let offsetX = (5-shape[0].length)*SIZE/2, offsetY = (5-shape.length)*SIZE/2;
+      for(let r=0;r<shape.length;r++)
+        for(let c=0;c<shape[0].length;c++)
+          if(shape[r][c]) drawBlock(nctx, c, r, col, true);
+    }
+    function gameOver(){
+      document.getElementById('tetrisScore').textContent = "Oyun bitdi! Xal: "+score;
+      clearInterval(timer);
+      ctx.save();
+      ctx.globalAlpha = 0.8;
+      ctx.fillStyle = "#181924";
+      ctx.fillRect(0,canvas.height/2-40,canvas.width,80);
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = "#fff";
+      ctx.font = "bold 26px 'Inter', Arial";
+      ctx.textAlign = "center";
+      ctx.shadowColor = "#61dafb";
+      ctx.shadowBlur = 16;
+      ctx.fillText("Oyun bitdi!", canvas.width/2, canvas.height/2+10);
+      ctx.restore();
+    }
+    tetrisStart();
+  </script>
+</body>
+</html>
