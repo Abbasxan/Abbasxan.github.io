@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>X və 0 (Tic-Tac-Toe) | Neon Sultan</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+  <style>
+    .ttt-container { display: flex; flex-direction: column; align-items: center; margin-top: 48px; }
+    .ttt-board { display: grid; grid-template-columns: repeat(3,80px); grid-template-rows: repeat(3,80px); gap: 12px; margin-top: 24px; }
+    .ttt-cell { width: 80px; height: 80px; font-size: 2.5em; background: #18181a; color: #61dafb; display: flex; align-items: center; justify-content: center; cursor: pointer; border-radius: 12px; box-shadow: 0 2px 8px #0002; user-select: none; }
+    .ttt-cell:hover { background: #23232b; }
+    .ttt-status { margin-top: 24px; font-size: 1.2em; }
+    .ttt-btn { margin-top: 18px; padding: 10px 24px; font-size: 1em; border-radius: 8px; border: none; background: #61dafb; color: #222; font-weight: bold; cursor: pointer; }
+    .ttt-btn:hover { background: #21a1f3; color: #fff; }
+  </style>
+</head>
+<body>
+  <nav class="navbar modern-navbar">
+    <div class="container">
+      <div class="logo">Neon Sultan</div>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="../index.html">Ana Səhifə</a></li>
+        <li><a href="../about.html">Haqqımda</a></li>
+        <li><a href="../projects.html">Proyektlərim</a></li>
+        <li><a href="../license.html">Lisenziya</a></li>
+        <li><a href="../contact.html">Əlaqə</a></li>
+        <li><a href="../oyunlar.html" class="active">Oyunlar</a></li>
+      </ul>
+    </div>
+  </nav>
+  <main class="container ttt-container">
+    <h1>X və 0 (Tic-Tac-Toe)</h1>
+    <div class="ttt-status" id="tttStatus">Sıra: X</div>
+    <div class="ttt-board" id="tttBoard"></div>
+    <button class="ttt-btn" onclick="tttReset()">Yenidən başla</button>
+    <a href="../oyunlar.html" class="ttt-btn" style="background:#222; color:#fff; margin-top:12px;">← Oyunlara qayıt</a>
+  </main>
+  <footer class="footer">
+    <p>© 2025 Sultan. Neon Group Azerbaijan | <a href="../license.html">Lisenziya</a></p>
+  </footer>
+  <script>
+    const board = Array(9).fill('');
+    let current = "X", playing = true;
+    const tttBoard = document.getElementById("tttBoard");
+    const tttStatus = document.getElementById("tttStatus");
+    function render() {
+      tttBoard.innerHTML = '';
+      board.forEach((cell,i) => {
+        const d = document.createElement('div');
+        d.className = "ttt-cell";
+        d.textContent = cell;
+        d.onclick = () => tttMove(i);
+        tttBoard.appendChild(d);
+      });
+    }
+    function tttMove(i) {
+      if(!playing || board[i]) return;
+      board[i] = current;
+      if(tttCheck(current)) {
+        tttStatus.textContent = (current === "X" ? "X" : "O") + " qalib oldu!";
+        playing = false;
+      } else if(board.every(cell=>cell)) {
+        tttStatus.textContent = "Heç-heçə!";
+        playing = false;
+      } else {
+        current = current === "X" ? "O" : "X";
+        tttStatus.textContent = "Sıra: "+current;
+      }
+      render();
+    }
+    function tttCheck(p) {
+      const w = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+      return w.some(line => line.every(i => board[i]===p));
+    }
+    function tttReset() {
+      board.fill('');
+      current = "X";
+      playing = true;
+      tttStatus.textContent = "Sıra: X";
+      render();
+    }
+    render();
+  </script>
+</body>
+</html>
