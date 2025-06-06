@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Şahmat | Neon Sultan</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+  <style>
+    body {background: radial-gradient(circle at 60% 20%, #495082 0%, #181924 100%);}
+    .chess-container {display:flex; flex-direction:column; align-items:center; margin-top:48px; background:rgba(24,25,36,.97); border-radius:18px; padding:36px 32px 32px 32px; box-shadow:0 10px 44px #000b; max-width:450px; margin:auto;}
+    .chess-title { font-size:2em; color:#61dafb; margin-bottom:8px; text-shadow:0 2px 12px #222b;}
+    .chess-mode-row { margin-bottom: 12px; display: flex; gap: 14px; }
+    .chess-mode-btn { background:linear-gradient(90deg,#61dafb,#fbbd23); color:#222; border:none; border-radius:9px; font-weight:bold; font-size:1em; padding:7px 20px; cursor:pointer; box-shadow:0 2px 8px #0004; transition:.16s;}
+    .chess-mode-btn.active, .chess-mode-btn:focus { background:linear-gradient(90deg,#fbbd23,#61dafb); color:#fff; outline:2px solid #fbbd23;}
+    .chess-board {display:grid; grid-template-columns:repeat(8,40px); grid-template-rows:repeat(8,40px); gap:2px; margin-top:16px; margin-bottom:18px;}
+    .chess-cell {width:40px; height:40px; border-radius:7px; display:flex; align-items:center; justify-content:center; font-size:1.9em; cursor:pointer; transition:.15s;}
+    .chess-cell.dark {background:#23233a; }
+    .chess-cell.light {background:#61dafb33;}
+    .chess-cell.selected {outline:2.5px solid #fbbd23;}
+    .chess-cell.move {box-shadow:0 0 0 3px #00e67699;}
+    .chess-status {color:#fff; font-size:1.12em; min-height:32px; margin-bottom:8px; text-shadow:0 2px 8px #2229;}
+    .chess-btn {margin-top:13px; padding:10px 24px; font-size:1em; border-radius:9px; border:none; background:linear-gradient(90deg,#61dafb,#fbbd23); color:#222; font-weight:bold; cursor:pointer; box-shadow:0 2px 8px #0004; transition:background .2s, color .2s, transform .12s;}
+    .chess-btn.secondary {background:#222; color:#fff; margin-top:10px;}
+    .chess-btn:hover {background:linear-gradient(90deg,#fbbd23,#61dafb); color:#fff; transform:translateY(-2px) scale(1.07);}
+  </style>
+</head>
+<body>
+  <nav class="navbar modern-navbar"><div class="container"><div class="logo">Neon Sultan</div></div></nav>
+  <main class="chess-container">
+    <div class="chess-title">Şahmat (Chess)</div>
+    <div class="chess-mode-row">
+      <button id="modePVP" class="chess-mode-btn active" onclick="setChessMode('pvp')">2 nəfər</button>
+      <button id="modeAI" class="chess-mode-btn" onclick="setChessMode('ai')">NEON AI</button>
+    </div>
+    <div class="chess-status" id="chessStatus"></div>
+    <div class="chess-board" id="chessBoard"></div>
+    <button class="chess-btn" onclick="chessReset()">Yenidən başla</button>
+    <a href="../oyunlar.html" class="chess-btn secondary">← Oyunlara qayıt</a>
+  </main>
+  <footer class="footer"><p>© 2025 Sultan. Neon Group Azerbaijan</p></footer>
+  <script>
+    // --- State ---
+    let chessMode = 'pvp', chessBoardArr, chessTurn, chessSelected, chessMoves, chessFinished=false, chessAIThinking=false;
+    const PIECES = {
+      r: "♜", n: "♞", b:"♝", q:"♛", k:"♚", p:"♟",
+      R: "♖", N: "♘", B:"♗", Q:"♕", K:"♔", P:"♙"
+    };
+    function setChessMode(nm){
+      chessMode = nm;
+      document.getElementById('modePVP').classList.toggle('active',chessMode==='pvp');
+      document.getElementById('modeAI').classList.toggle('active',chessMode==='ai');
+      chessReset();
+    }
+    function chessReset(){
+      chessBoardArr = [
+        ["r","n","b","q","k","b","n","r"],
+        ["p","p","p","p","p","p","p","p"],
+        [null,null,null,null,null,null,null,null],
+        [null,null,null,null,null,null,null,null],
+        [null,null,null,null,null,null,null,null],
+        [null,null,null,null,null,null,null,null],
+        ["P","P","P","P","P","P","P","P"],
+        ["R","N","B","Q","K","B","N","R"],
+      ];
+      chessTurn = "w"; chessSelected=null; chessMoves=[]; chessFinished=false; chessAIThinking=false;
+      updateChessStatus(); chessRender();
+      if(chessMode==='ai' && chessTurn==='b'){ chessAI(); }
+    }
+    function chessRender(){
+      let brd = '';
+      let legal = chessSelected?legalMoves(chessSelected.y,chessSelected.x):[];
+      for(let y=0;y<8;y++)for(let x=0;x<8;x++){
+        let dark = (x+y)%2;
+        let s = `class="chess-cell ${dark?'dark':'light'}`;
+        if(chessSelected&&chessSelected.x===x&&chessSelected.y===y)s+=" selected";
+        if(legal.some(m=>m.x===x&&m.y===y))s+=" move";
+        s+='"';
+        brd += `<div ${s} onclick="chessCellClick(${y},${x})">`;
+        let v = chessBoardArr[y][x];
+        if(v) brd += `<span style="filter:drop-shadow(0 0 8px #61dafb99);">${PIECES[v]}</span>`;
+        brd += '</div>';
+      }
+      document.getElementById('chessBoard').innerHTML = brd;
+    }
+    function updateChessStatus(){
+      if(chessFinished){
+        document.getElementById('chessStatus').textContent = (chessTurn==='w'?"Qara":"Ağ")+" qalib oldu!";
+        return;
+      }
+      if(chessMode==='ai') document.getElementById('chessStatus').textContent = chessTurn==='w' ? "Sənin növbən (ağ)" : "NEON AI düşünür...";
+      else document.getElementById('chessStatus').textContent = (chessTurn==='w'?"Ağ":"Qara")+" növbədə";
+    }
+    function chessCellClick(y,x){
+      if(chessFinished||chessAIThinking||(chessMode==='ai'&&chessTurn==='b'))return;
+      let v = chessBoardArr[y][x];
+      if(v&&(chessTurn==='w'?/^[A-Z]$/.test(v):/^[a-z]$/.test(v))){
+        chessSelected={y,x};
+        chessRender();
+        return;
+      }
+      if(chessSelected){
+        let moves = legalMoves(chessSelected.y,chessSelected.x);
+        let found = moves.find(m=>m.x===x&&m.y===y);
+        if(found){
+          chessMove(chessSelected.y,chessSelected.x,found.y,found.x);
+        }
+      }
+    }
+    // --- Simple Legal Move Generator (no castling/en passant) ---
+    function legalMoves(y,x){
+      let v = chessBoardArr[y][x];
+      let moves = [], dirs, step, ny, nx, t;
+      if(!v)return [];
+      let color = /^[A-Z]$/.test(v)?"w":"b";
+      // Pawns
+      if(v==="P"||v==="p"){
+        let dir = v==="P"?-1:1, start = v==="P"?6:1;
+        ny = y+dir;
+        if(ny>=0&&ny<8&&!chessBoardArr[ny][x]) moves.push({y:ny,x:x});
+        if((y===start)&&!chessBoardArr[y+dir][x]&&!chessBoardArr[y+2*dir][x]) moves.push({y:y+2*dir,x:x});
+        for(let dx of [-1,1]){
+          nx = x+dx;
+          if(ny>=0&&ny<8&&nx>=0&&nx<8&&chessBoardArr[ny][nx]&&(/^[A-Z]$/.test(v)?/^[a-z]$/.test(chessBoardArr[ny][nx]):/^[A-Z]$/.test(chessBoardArr[ny][nx]))) moves.push({y:ny,x:nx});
+        }
+      }
+      // Knights
+      if(v.toLowerCase()==="n") for(let [dy,dx] of [[-2,-1],[-2,1],[2,-1],[2,1],[-1,-2],[-1,2],[1,-2],[1,2]]){
+        ny=y+dy;nx=x+dx;
+        if(ny>=0&&ny<8&&nx>=0&&nx<8&&(!chessBoardArr[ny][nx]||(color==="w"?/^[a-z]$/.test(chessBoardArr[ny][nx]):/^[A-Z]$/.test(chessBoardArr[ny][nx])))) moves.push({y:ny,x:nx});
+      }
+      // Rooks, Bishops, Queen
+      let lines = [];
+      if("RQrq".includes(v)) lines.push([1,0],[0,1],[-1,0],[0,-1]);
+      if("BQbq".includes(v)) lines.push([1,1],[1,-1],[-1,1],[-1,-1]);
+      for(let [dy,dx] of lines){
+        ny = y+dy; nx = x+dx;
+        while(ny>=0&&ny<8&&nx>=0&&nx<8){
+          t=chessBoardArr[ny][nx];
+          if(!t) moves.push({y:ny,x:nx});
+          else{
+            if(color==="w"?/^[a-z]$/.test(t):/^[A-Z]$/.test(t)) moves.push({y:ny,x:nx});
+            break;
+          }
+          ny+=dy; nx+=dx;
+        }
+      }
+      // King
+      if("Kk".includes(v)){
+        for(let dy of [-1,0,1])for(let dx of [-1,0,1]) if(dy||dx){
+          ny=y+dy; nx=x+dx;
+          if(ny>=0&&ny<8&&nx>=0&&nx<8&&( !chessBoardArr[ny][nx] || (color==="w"?/^[a-z]$/.test(chessBoardArr[ny][nx]):/^[A-Z]$/.test(chessBoardArr[ny][nx])) )) moves.push({y:ny,x:nx});
+        }
+      }
+      return moves;
+    }
+    function chessMove(y1,x1,y2,x2){
+      let v=chessBoardArr[y1][x1];
+      // Pawn promotion
+      if((v==="P"&&y2===0)||(v==="p"&&y2===7)) v = v==="P"?"Q":"q";
+      chessBoardArr[y1][x1]=null;
+      chessBoardArr[y2][x2]=v;
+      chessSelected=null;
+      // Checkmate/Win: (крайне упрощенно: если король съеден)
+      let kings = [].concat(...chessBoardArr).filter(p=>p==="K"||p==="k");
+      if(kings.length<2){chessFinished=true;}
+      chessTurn = chessTurn==="w"?"b":"w";
+      updateChessStatus(); chessRender();
+      if(chessMode==='ai' && chessTurn==='b' && !chessFinished){chessAI();}
+    }
+    function chessAI(){
+      chessAIThinking=true;updateChessStatus();
+      setTimeout(()=>{
+        let movesList=[];
+        for(let y=0;y<8;y++)for(let x=0;x<8;x++)
+          if(chessBoardArr[y][x]&&/^[a-z]$/.test(chessBoardArr[y][x])){
+            let legal = legalMoves(y,x);
+            for(let m of legal)movesList.push({from:{y,x},to:{y:m.y,x:m.x}});
+          }
+        let pick = movesList[Math.floor(Math.random()*movesList.length)];
+        if(pick)chessMove(pick.from.y,pick.from.x,pick.to.y,pick.to.x);
+        chessAIThinking=false;
+      },700+Math.random()*400);
+    }
+    chessReset();
+  </script>
+</body>
+</html>
