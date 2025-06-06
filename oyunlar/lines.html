@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Lines (Şarıklar) | Neon Sultan</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+  <style>
+    body {background:radial-gradient(circle at 60% 20%, #495082 0%, #181924 100%);}
+    .lines-container {display:flex;flex-direction:column;align-items:center;margin-top:40px;background:rgba(24,25,36,.98);border-radius:19px;padding:26px 7px 19px 7px;box-shadow:0 10px 44px #000c;max-width:430px;margin:auto;}
+    .lines-title {font-size:2em;color:#61dafb;margin-bottom:8px;text-shadow:0 2px 16px #222c;}
+    #linesBoard {display:grid;grid-template-columns:repeat(9,28px);grid-template-rows:repeat(9,28px);gap:2.2px;margin-top:13px;border-radius:10px;box-shadow:0 6px 18px #0007;}
+    .lines-cell {width:28px;height:28px;background:linear-gradient(140deg,#23233b 60%,#61dafb22 100%);border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.12s;}
+    .lines-cell.selected {outline:2.5px solid #fbbd23;}
+    .lines-ball {width:21px;height:21px;border-radius:50%;box-shadow:0 0 10px #fff9,0 0 16px #61dafb55 inset;}
+    .lines-ball.c0 {background:radial-gradient(circle,#61dafb 70%,#23233b 100%);}
+    .lines-ball.c1 {background:radial-gradient(circle,#fbbd23 70%,#23233b 100%);}
+    .lines-ball.c2 {background:radial-gradient(circle,#e74c3c 70%,#23233b 100%);}
+    .lines-ball.c3 {background:radial-gradient(circle,#00e676 65%,#23233b 100%);}
+    .lines-ball.c4 {background:radial-gradient(circle,#9c27b0 75%,#23233b 100%);}
+    .lines-score {margin-top:11px;color:#fff;font-size:1.12em;text-shadow:0 2px 8px #222a;}
+    .lines-btn {margin-top:12px;padding:9px 19px;font-size:1em;border-radius:10px;border:none;background:linear-gradient(90deg,#61dafb,#fbbd23);color:#222;font-weight:bold;cursor:pointer;box-shadow:0 2px 10px #0007;transition:background .2s, color .2s, transform .13s;}
+    .lines-btn:hover {background:linear-gradient(90deg,#fbbd23,#61dafb);color:#fff;}
+    @media (max-width:600px){.lines-container{padding:8px 2vw;}#linesBoard{grid-template-columns:repeat(9,8vw);grid-template-rows:repeat(9,8vw);}.lines-cell{width:8vw;height:8vw;}.lines-ball{width:6vw;height:6vw;}}
+  </style>
+</head>
+<body>
+<nav class="navbar modern-navbar"><div class="container"><div class="logo">Neon Sultan</div></div></nav>
+<main class="lines-container">
+  <div class="lines-title">Lines (Şarıklar)</div>
+  <div id="linesBoard"></div>
+  <div class="lines-score" id="linesScore"></div>
+  <button class="lines-btn" onclick="linesStart()">Yenidən başla</button>
+  <a href="../oyunlar.html" class="lines-btn" style="background:#222;color:#fff;margin-top:8px;">← Oyunlara qayıt</a>
+</main>
+<footer class="footer"><p>© 2025 Sultan. Neon Group Azerbaijan</p></footer>
+<script>
+let linesArr, linesScore=0, linesSelected=null, linesColors=5, linesToLine=5;
+function linesStart(){
+  linesArr=[...Array(9)].map(()=>Array(9).fill(null)); linesScore=0; linesSelected=null;
+  for(let i=0;i<5;i++)linesAddBall();
+  linesRender();
+}
+function linesAddBall(){
+  let free=[];
+  for(let y=0;y<9;y++)for(let x=0;x<9;x++)if(!linesArr[y][x])free.push([y,x]);
+  if(free.length==0)return;
+  let [y,x]=free[Math.floor(Math.random()*free.length)];
+  linesArr[y][x]=Math.floor(Math.random()*linesColors);
+}
+function linesRender(){
+  let html='';
+  for(let y=0;y<9;y++)for(let x=0;x<9;x++){
+    let sel=linesSelected&&linesSelected[0]==y&&linesSelected[1]==x?' selected':'';
+    html+=`<div class="lines-cell${sel}" onclick="linesClick(${y},${x})">`;
+    if(linesArr[y][x]!=null)html+=`<div class="lines-ball c${linesArr[y][x]}"></div>`;
+    html+='</div>';
+  }
+  document.getElementById('linesBoard').innerHTML=html;
+  document.getElementById('linesScore').innerHTML="Xal: "+linesScore;
+}
+function linesClick(y,x){
+  if(linesArr[y][x]!=null){
+    linesSelected=[y,x];linesRender();return;
+  }
+  if(linesSelected){
+    let [sy,sx]=linesSelected;
+    if(linesCanMove(sy,sx,y,x)){
+      linesArr[y][x]=linesArr[sy][sx];linesArr[sy][sx]=null;linesSelected=null;
+      if(!linesCheckLines(y,x)){for(let i=0;i<3;i++)linesAddBall();}
+      linesRender();
+      linesCheckAll();
+    }
+  }
+}
+function linesCanMove(sy,sx,ey,ex){
+  let vis=[...Array(9)].map(()=>Array(9).fill(false)),q=[[sy,sx]];
+  vis[sy][sx]=true;
+  while(q.length){
+    let [y,x]=q.shift();
+    if(y==ey&&x==ex)return true;
+    for(let [dy,dx] of [[0,1],[1,0],[-1,0],[0,-1]])
+      if(y+dy>=0&&y+dy<9&&x+dx>=0&&x+dx<9&&!vis[y+dy][x+dx]&&!linesArr[y+dy][x+dx]){
+        vis[y+dy][x+dx]=true;q.push([y+dy,x+dx]);
+      }
+  }
+  return false;
+}
+function linesCheckLines(y,x){
+  let color=linesArr[y][x],found=false;
+  for(let [dy,dx] of [[0,1],[1,0],[1,1],[1,-1]]){
+    let line=[[y,x]];
+    for(let d=1;;d++){let ny=y+dy*d,nx=x+dx*d;if(ny<0||ny>=9||nx<0||nx>=9||linesArr[ny][nx]!=color)break;line.push([ny,nx]);}
+    for(let d=1;;d++){let ny=y-dy*d,nx=x-dx*d;if(ny<0||ny>=9||nx<0||nx>=9||linesArr[ny][nx]!=color)break;line.push([ny,nx]);}
+    if(line.length>=linesToLine){
+      for(let [yy,xx] of line)linesArr[yy][xx]=null;
+      linesScore+=line.length*2;found=true;
+    }
+  }
+  return found;
+}
+function linesCheckAll(){
+  for(let y=0;y<9;y++)for(let x=0;x<9;x++)if(linesArr[y][x]!=null)linesCheckLines(y,x);
+  linesRender();
+}
+linesStart();
+</script>
+</body>
+</html>
