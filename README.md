@@ -57,15 +57,16 @@
 
 | Oyun              | Janr        | AI Dəstəyi | Link |
 |-------------------|-------------|------------|------|
-| 2048              | Puzzle      | ❌         | [Oyna](oyunlar/2048.html) |
-| Sudoku            | Puzzle      | ❌         | [Oyna](oyunlar/sudoku.html) |
-| Tetris            | Arcade      | ❌         | [Oyna](oyunlar/tetris.html) |
-| Domino            | Klassik     | ✅         | [Oyna](oyunlar/domino.html) |
-| Chess             | Strateji    | ✅         | [Oyna](oyunlar/chess.html) |
-| Tic-Tac-Toe       | Strateji    | ✅         | [Oyna](oyunlar/tictactoe.html) |
+| 2048              | Puzzle      | ❌         | [Oyna](https://abbasxan.github.io/oyunlar/2048.html) |
+| Sudoku            | Puzzle      | ❌         | [Oyna](https://abbasxan.github.io/oyunlar/sudoku.html) |
+| Tetris            | Arcade      | ❌         | [Oyna](https://abbasxan.github.io/oyunlar/tetris.html) |
+| Domino            | Klassik     | ✅         | [Oyna](https://abbasxan.github.io/oyunlar/domino.html) |
+| Chess             | Strateji    | ✅         | [Oyna](https://abbasxan.github.io/oyunlar/chess.html) |
+| Tic-Tac-Toe       | Strateji    | ✅         | [Oyna](https://abbasxan.github.io/oyunlar/tictactoe.html) |
 | ...               | ...         | ...        | ...  |
 
-> 📜 Tam siyahı üçün bax: [oyunlar.html](oyunlar.html)
+> 📜 Tam siyahı üçün bax: [Bütün mövcüd oyunlar](https://abbasxan.github.io/oyunlar.html)
+> Siyahı güncəldir...
 
 ---
 
