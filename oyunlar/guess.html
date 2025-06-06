@@ -6,11 +6,146 @@
   <title>Sayı Tapma Oyunu | Neon Sultan</title>
   <link rel="stylesheet" href="../assets/css/style.css" />
   <style>
-    .guess-container { display: flex; flex-direction: column; align-items: center; margin-top: 48px; }
-    .guess-status { margin-top: 20px; color: #61dafb; font-size: 1.1em; min-height: 32px; }
-    .guess-input { font-size: 1.3em; padding: 8px 14px; border-radius: 8px; border: 1.5px solid #aaa; outline: none; margin-top: 14px; }
-    .guess-btn { margin-top: 14px; padding: 10px 24px; font-size: 1em; border-radius: 8px; border: none; background: #61dafb; color: #222; font-weight: bold; cursor: pointer; }
-    .guess-btn:hover { background: #21a1f3; color: #fff; }
+    body {
+      background: radial-gradient(ellipse at 70% 15%, #495082 0%, #181924 100%);
+      min-height: 100vh;
+    }
+    .guess-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 48px;
+      background: rgba(24,25,36,0.93);
+      border-radius: 18px;
+      padding: 36px 32px 32px 32px;
+      box-shadow: 0 10px 44px #000b;
+      max-width: 420px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .guess-title {
+      font-size: 2em;
+      color: #61dafb;
+      margin-bottom: 8px;
+      text-shadow: 0 2px 12px #222b;
+    }
+    .guess-desc {
+      font-size: 1.1em;
+      color: #fbbd23;
+      margin-bottom: 18px;
+      text-shadow: 0 2px 8px #2229;
+    }
+    .guess-status {
+      margin-top: 20px;
+      color: #fff;
+      font-size: 1.18em;
+      min-height: 36px;
+      text-align: center;
+      text-shadow: 0 2px 12px #0007;
+    }
+    .guess-attempts {
+      color: #61dafb;
+      font-size: 1.1em;
+      margin-top: 8px;
+    }
+    .guess-history {
+      margin: 10px 0 0 0;
+      font-size: .98em;
+      color: #fbbd23;
+      min-height: 24px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      justify-content: center;
+    }
+    .guess-input-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 22px;
+      justify-content: center;
+      align-items: center;
+    }
+    .guess-input {
+      font-size: 1.5em;
+      padding: 8px 14px;
+      border-radius: 10px;
+      border: 2px solid #61dafb;
+      background: #222c;
+      color: #fff;
+      min-width: 80px;
+      outline: none;
+      box-shadow: 0 2px 16px #2223;
+      text-align: center;
+      font-weight: bold;
+      transition: border .2s, box-shadow .2s;
+    }
+    .guess-input:focus {
+      border-color: #fbbd23;
+      box-shadow: 0 0 12px #fbbd2377;
+    }
+    .guess-btn {
+      padding: 11px 22px;
+      font-size: 1em;
+      border-radius: 9px;
+      border: none;
+      background: linear-gradient(90deg,#61dafb,#fbbd23);
+      color: #222;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 2px 8px #0004;
+      margin-left: 8px;
+      transition: background .2s, color .2s, transform .1s;
+    }
+    .guess-btn:hover {
+      background: linear-gradient(90deg,#fbbd23,#61dafb);
+      color: #fff;
+      transform: translateY(-2px) scale(1.06);
+    }
+    .guess-btn.secondary {
+      background: #222;
+      color: #fff;
+      margin-top: 18px;
+      margin-left: 0;
+    }
+    .guess-range-bar {
+      width: 90%;
+      max-width: 300px;
+      height: 18px;
+      background: linear-gradient(90deg, #61dafb 0%, #fbbd23 100%);
+      border-radius: 9px;
+      margin: 18px auto 0 auto;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 1.5px 8px #2226;
+      display: flex;
+      align-items: center;
+    }
+    .guess-range-indicator {
+      height: 100%;
+      border-radius: 9px;
+      position: absolute;
+      top: 0;
+      background: rgba(255,255,255,0.15);
+      pointer-events: none;
+      transition: left .2s, width .2s;
+    }
+    .guess-mark {
+      padding: 2px 7px;
+      background: #23232b;
+      color: #61dafb;
+      border-radius: 6px;
+      margin-right: 3px;
+      font-size: 1em;
+      font-weight: bold;
+      border: 1px solid #61dafb44;
+      box-shadow: 0 1px 4px #0005;
+      transition: background .2s, color .2s;
+    }
+    @media (max-width: 600px) {
+      .guess-container { padding: 16px 5vw 22px 5vw;}
+      .guess-title { font-size: 1.5em;}
+      .guess-input { font-size: 1.1em;}
+    }
   </style>
 </head>
 <body>
@@ -27,40 +162,94 @@
       </ul>
     </div>
   </nav>
-  <main class="container guess-container">
-    <h1>Sayı Tapma Oyunu</h1>
-    <div class="guess-status" id="guessStatus">1-100 arası bir sayı tutuldu, tapmağa çalış!</div>
-    <input type="number" id="guessInput" class="guess-input" min="1" max="100" placeholder="Sayı yaz">
-    <button class="guess-btn" onclick="guessCheck()">Təxmin et</button>
-    <button class="guess-btn" onclick="guessStart()" style="background:#222; color:#fff; margin-top:12px;">Yenidən başla</button>
-    <a href="../oyunlar.html" class="guess-btn" style="background:#222; color:#fff; margin-top:12px;">← Oyunlara qayıt</a>
+  <main class="guess-container">
+    <div class="guess-title">Sayı Tapma Oyunu</div>
+    <div class="guess-desc">1-dən 100-ə kimi olan sirli ədədi tap! Sürətli və az cəhdlə qalib ol!</div>
+    <div class="guess-range-bar">
+      <div class="guess-range-indicator" id="guessRangeInd"></div>
+    </div>
+    <div class="guess-attempts" id="guessAttempts">Cəhd: 0</div>
+    <div class="guess-status" id="guessStatus">Başlamaq üçün təxmin yaz və <b>Təxmin et</b> düyməsinə kliklə!</div>
+    <div class="guess-input-row">
+      <input type="number" id="guessInput" class="guess-input" min="1" max="100" placeholder="Sayı yaz">
+      <button class="guess-btn" onclick="guessCheck()">Təxmin et</button>
+    </div>
+    <div class="guess-history" id="guessHistory"></div>
+    <button class="guess-btn secondary" onclick="guessStart()">Yenidən başla</button>
+    <a href="../oyunlar.html" class="guess-btn secondary" style="margin-top:12px;">← Oyunlara qayıt</a>
   </main>
   <footer class="footer">
     <p>© 2025 Sultan. Neon Group Azerbaijan | <a href="../license.html">Lisenziya</a></p>
   </footer>
   <script>
-    let number, tries;
+    let number, tries, history, min, max, finished = false;
+
     function guessStart() {
-      number = Math.floor(Math.random()*100)+1;
+      number = Math.floor(Math.random()*100) + 1;
       tries = 0;
+      history = [];
+      min = 1;
+      max = 100;
+      finished = false;
       document.getElementById('guessInput').value = "";
-      document.getElementById('guessStatus').textContent = "1-100 arası bir sayı tutuldu, tapmağa çalış!";
+      document.getElementById('guessAttempts').textContent = "Cəhd: 0";
+      document.getElementById('guessStatus').innerHTML = "Başlamaq üçün təxmin yaz və <b>Təxmin et</b> düyməsinə kliklə!";
+      document.getElementById('guessHistory').innerHTML = "";
+      updateRangeBar();
     }
+
     function guessCheck() {
-      const val = Number(document.getElementById('guessInput').value);
-      if(!val || val < 1 || val > 100) {
-        document.getElementById('guessStatus').textContent = "1-100 arası bir tam ədəd yaz!";
+      if (finished) return;
+      const input = document.getElementById('guessInput');
+      const val = Number(input.value);
+      if (!val || val < min || val > max) {
+        document.getElementById('guessStatus').textContent = `Zəhmət olmasa, ${min} ilə ${max} arasında bir tam ədəd yaz!`;
+        input.focus();
         return;
       }
       tries++;
-      if(val === number) {
-        document.getElementById('guessStatus').textContent = "Təbriklər! " + tries + " cəhdə tapdın! (Sayı: " + number + ")";
-      } else if(val < number) {
+      document.getElementById('guessAttempts').textContent = "Cəhd: " + tries;
+      history.push(val);
+      document.getElementById('guessHistory').innerHTML = history.map(v=>`<span class="guess-mark">${v}</span>`).join(' ');
+
+      if (val === number) {
+        let praise = tries <= 3 ? "Fantastik!" : tries <= 6 ? "Təbriklər!" : "Yaxşı!";
+        document.getElementById('guessStatus').innerHTML = `${praise} <b>${tries}</b> cəhdə tapdın! <br>Sirli ədəd: <b>${number}</b> 🎉`;
+        finished = true;
+        updateRangeBar(val);
+        return;
+      }
+
+      if (val < number) {
         document.getElementById('guessStatus').textContent = "Daha böyük bir ədəd cəhd et!";
+        min = Math.max(min, val+1);
       } else {
         document.getElementById('guessStatus').textContent = "Daha kiçik bir ədəd cəhd et!";
+        max = Math.min(max, val-1);
+      }
+      updateRangeBar(val);
+      input.value = "";
+      input.focus();
+    }
+
+    function updateRangeBar(last) {
+      const bar = document.getElementById('guessRangeInd');
+      const total = 100, left = ((min-1)/total)*100, right = ((100-max)/total)*100;
+      bar.style.left = left + "%";
+      bar.style.width = (100 - left - right) + "%";
+      if (finished && typeof last === "number") {
+        bar.style.background = "rgba(51,255,120,0.5)";
+        bar.style.transition = "background .5s";
+      } else {
+        bar.style.background = "rgba(255,255,255,0.18)";
+        bar.style.transition = "";
       }
     }
+
+    document.getElementById("guessInput").addEventListener("keyup", function(e){
+      if(e.key === "Enter") guessCheck();
+    });
+
     guessStart();
   </script>
 </body>
