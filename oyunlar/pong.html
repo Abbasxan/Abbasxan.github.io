@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pong Oyunu | Neon Sultan</title>
+  <!-- CSS -->
+  <link rel="stylesheet" href="../assets/css/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
+  <!-- AOS CSS -->
+  <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet" />
+  <style>
+    .pong-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 70vh;
+      margin-top: 48px;
+    }
+    #pongCanvas {
+      background: #111;
+      display: block;
+      margin-top: 30px;
+      border: 3px solid #eee;
+      border-radius: 12px;
+      box-shadow: 0 0 24px #000a;
+      max-width: 100%;
+      height: auto;
+    }
+    #scoreboard {
+      color: #fff;
+      font-size: 34px;
+      font-family: 'Consolas', monospace;
+      margin-top: 18px;
+      letter-spacing: 6px;
+      user-select: none;
+      text-shadow: 0 2px 8px #0008;
+    }
+    .back-btn {
+      margin-top: 30px;
+      padding: 10px 22px;
+      font-size: 1em;
+      background: #61dafb;
+      color: #222;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background .2s, color .2s;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .back-btn:hover {
+      background: #21a1f3;
+      color: #fff;
+    }
+    @media (max-width: 900px) {
+      #pongCanvas { width: 95vw !important; height: 60vw !important; max-width: 100vw;}
+      .pong-container { margin-top: 18px; }
+    }
+  </style>
+</head>
+<body id="top">
+  <!-- Navbar -->
+  <nav class="navbar modern-navbar">
+    <div class="container">
+      <div class="logo">Neon Sultan</div>
+      <button class="menu-toggle" id="mobileMenuBtn"><span></span><span></span><span></span></button>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="../index.html">Ana Səhifə</a></li>
+        <li><a href="../about.html">Haqqımda</a></li>
+        <li><a href="../projects.html">Proyektlərim</a></li>
+        <li><a href="../license.html">Lisenziya</a></li>
+        <li><a href="../contact.html">Əlaqə</a></li>
+        <li><a href="../oyunlar.html" class="active">Oyunlar</a></li>
+      </ul>
+      <button id="themeToggle" class="theme-toggle" title="Tema Dəyiş">
+        <span class="toggle-icon">
+          <svg class="icon-moon" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 1 0 9.79 9.79z"/></svg>
+          <svg class="icon-sun" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M16.36 16.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M16.36 7.64l1.42-1.42"/></svg>
+        </span>
+      </button>
+    </div>
+  </nav>
+
+  <main class="container pong-container">
+    <h1 data-aos="fade-up">Pong Oyunu</h1>
+    <p data-aos="fade-up" data-aos-delay="100">Sola paneli siçan və ya klaviatura ilə idarə et. Sağ paneli kompüter idarə edir.</p>
+    <canvas id="pongCanvas" width="800" height="500"></canvas>
+    <div id="scoreboard">
+      <span id="playerScore">0</span> : <span id="aiScore">0</span>
+    </div>
+    <a href="../oyunlar.html" class="back-btn">← Oyunlar siyahısına qayıt</a>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>© 2025 Sultan. Neon Group Azerbaijan | <a href="../license.html">Lisenziya</a></p>
+  </footer>
+
+  <!-- Scroll-up düyməsi (UI/UX) -->
+  <a href="#top" class="scroll-up" id="scrollUpBtn" title="Yuxarı">
+    <span class="scroll-icon">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+        <circle cx="14" cy="14" r="13" stroke="currentColor" stroke-width="2" opacity="0.14"/>
+        <circle class="scroll-progress" cx="14" cy="14" r="13" stroke="#fff" stroke-width="2"
+          fill="none" stroke-dasharray="81.68" stroke-dashoffset="81.68"/>
+        <path d="M14 20V10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <path d="M10 14L14 10L18 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </span>
+  </a>
+  <script>
+    // PONG GAME JS
+    const canvas = document.getElementById("pongCanvas");
+    const ctx = canvas.getContext("2d");
+
+    const WIDTH = canvas.width;
+    const HEIGHT = canvas.height;
+
+    const PADDLE_WIDTH = 12, PADDLE_HEIGHT = 90, PADDLE_MARGIN = 18;
+    const BALL_SIZE = 14;
+    const PLAYER_SPEED = 7;
+    const AI_SPEED = 5;
+
+    let playerScore = 0, aiScore = 0;
+
+    const paddleLeft = {
+        x: PADDLE_MARGIN,
+        y: HEIGHT/2 - PADDLE_HEIGHT/2,
+        width: PADDLE_WIDTH,
+        height: PADDLE_HEIGHT,
+        dy: 0
+    };
+    const paddleRight = {
+        x: WIDTH - PADDLE_MARGIN - PADDLE_WIDTH,
+        y: HEIGHT/2 - PADDLE_HEIGHT/2,
+        width: PADDLE_WIDTH,
+        height: PADDLE_HEIGHT,
+        dy: 0
+    };
+    const ball = {
+        x: WIDTH/2 - BALL_SIZE/2,
+        y: HEIGHT/2 - BALL_SIZE/2,
+        dx: Math.random() > 0.5 ? 5 : -5,
+        dy: (Math.random() * 6 - 3),
+        size: BALL_SIZE
+    };
+
+    function resetBall() {
+        ball.x = WIDTH/2 - BALL_SIZE/2;
+        ball.y = HEIGHT/2 - BALL_SIZE/2;
+        ball.dx = (Math.random() > 0.5 ? 5 : -5);
+        ball.dy = (Math.random() * 6 - 3);
+    }
+
+    function drawRect(x, y, w, h, color = "#fff") {
+        ctx.fillStyle = color;
+        ctx.fillRect(x, y, w, h);
+    }
+
+    function drawCircle(x, y, r, color = "#fff") {
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.closePath();
+        ctx.fill();
+    }
+
+    function drawNet() {
+        for(let i = 10; i < HEIGHT; i += 30) {
+            drawRect(WIDTH/2 - 2, i, 4, 20, "#aaa");
+        }
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, WIDTH, HEIGHT);
+        drawNet();
+        drawRect(paddleLeft.x, paddleLeft.y, paddleLeft.width, paddleLeft.height);
+        drawRect(paddleRight.x, paddleRight.y, paddleRight.width, paddleRight.height);
+        drawCircle(ball.x + ball.size/2, ball.y + ball.size/2, ball.size/2);
+    }
+
+    function update() {
+        // Move player paddle
+        paddleLeft.y += paddleLeft.dy;
+        paddleLeft.y = Math.max(0, Math.min(HEIGHT - paddleLeft.height, paddleLeft.y));
+
+        // Move AI paddle (simple AI follows ball)
+        if (paddleRight.y + paddleRight.height/2 < ball.y + ball.size/2 - 10) {
+            paddleRight.y += AI_SPEED;
+        } else if (paddleRight.y + paddleRight.height/2 > ball.y + ball.size/2 + 10) {
+            paddleRight.y -= AI_SPEED;
+        }
+        paddleRight.y = Math.max(0, Math.min(HEIGHT - paddleRight.height, paddleRight.y));
+
+        // Move ball
+        ball.x += ball.dx;
+        ball.y += ball.dy;
+
+        // Wall collision (top/bottom)
+        if (ball.y < 0) {
+            ball.y = 0;
+            ball.dy *= -1;
+        } else if (ball.y + ball.size > HEIGHT) {
+            ball.y = HEIGHT - ball.size;
+            ball.dy *= -1;
+        }
+
+        // Paddle collision (player)
+        if (
+            ball.x < paddleLeft.x + paddleLeft.width &&
+            ball.x > paddleLeft.x &&
+            ball.y + ball.size > paddleLeft.y &&
+            ball.y < paddleLeft.y + paddleLeft.height
+        ) {
+            ball.x = paddleLeft.x + paddleLeft.width;
+            ball.dx *= -1.05;
+            // Add paddle influence
+            let collidePoint = (ball.y + ball.size/2) - (paddleLeft.y + paddleLeft.height/2);
+            collidePoint = collidePoint / (paddleLeft.height/2);
+            ball.dy = collidePoint * 6;
+        }
+
+        // Paddle collision (AI)
+        if (
+            ball.x + ball.size > paddleRight.x &&
+            ball.x + ball.size < paddleRight.x + paddleRight.width &&
+            ball.y + ball.size > paddleRight.y &&
+            ball.y < paddleRight.y + paddleRight.height
+        ) {
+            ball.x = paddleRight.x - ball.size;
+            ball.dx *= -1.05;
+            let collidePoint = (ball.y + ball.size/2) - (paddleRight.y + paddleRight.height/2);
+            collidePoint = collidePoint / (paddleRight.height/2);
+            ball.dy = collidePoint * 6;
+        }
+
+        // Score
+        if (ball.x < 0) {
+            aiScore++;
+            updateScoreboard();
+            resetBall();
+        } else if (ball.x + ball.size > WIDTH) {
+            playerScore++;
+            updateScoreboard();
+            resetBall();
+        }
+    }
+
+    function updateScoreboard() {
+        document.getElementById("playerScore").textContent = playerScore;
+        document.getElementById("aiScore").textContent = aiScore;
+    }
+
+    // Mouse control
+    canvas.addEventListener("mousemove", function(e) {
+        const rect = canvas.getBoundingClientRect();
+        let mouseY = e.clientY - rect.top;
+        paddleLeft.y = mouseY - paddleLeft.height/2;
+        paddleLeft.y = Math.max(0, Math.min(HEIGHT - paddleLeft.height, paddleLeft.y));
+    });
+
+    // Keyboard control
+    document.addEventListener("keydown", function(e) {
+        if (e.key === "ArrowUp") {
+            paddleLeft.dy = -PLAYER_SPEED;
+        } else if (e.key === "ArrowDown") {
+            paddleLeft.dy = PLAYER_SPEED;
+        }
+    });
+    document.addEventListener("keyup", function(e) {
+        if (e.key === "ArrowUp" || e.key === "ArrowDown") {
+            paddleLeft.dy = 0;
+        }
+    });
+
+    function gameLoop() {
+        update();
+        draw();
+        requestAnimationFrame(gameLoop);
+    }
+
+    updateScoreboard();
+    gameLoop();
+  </script>
+  <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+  <script src="../assets/js/script.js"></script>
+</body>
+</html>
