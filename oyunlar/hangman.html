@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hangman | Neon Sultan</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+  <style>
+    body {background: radial-gradient(ellipse at 60% 15%, #495082 0%, #181924 100%);}
+    .hangman-container { display:flex; flex-direction:column; align-items:center; margin-top:48px; background:rgba(24,25,36,.96); border-radius:18px; padding:36px 32px 32px 32px; box-shadow:0 10px 44px #000b; max-width:410px; margin:auto;}
+    .hangman-title { font-size:2em; color:#61dafb; margin-bottom:8px; text-shadow:0 2px 12px #222b;}
+    .hangman-word { font-size:2em; letter-spacing:10px; color:#fbbd23; margin:14px 0;}
+    .hangman-letters { display:flex; flex-wrap:wrap; gap:8px; margin:18px 0 10px 0;}
+    .hangman-btn { padding:10px 16px; font-size:1.1em; border-radius:7px; border:none; background:#61dafb; color:#222; font-weight:bold; cursor:pointer; box-shadow:0 2px 8px #0004; transition:.18s;}
+    .hangman-btn:disabled {background:#222a; color:#fff;}
+    .hangman-status {color:#fff; font-size:1.12em; min-height:28px; margin:10px 0;}
+    .hangman-score {color:#fbbd23;}
+    #hangmanCanvas {margin-top:12px; border-radius:8px; background:#131826;}
+  </style>
+</head>
+<body>
+  <nav class="navbar modern-navbar"><div class="container"><div class="logo">Neon Sultan</div></div></nav>
+  <main class="hangman-container">
+    <div class="hangman-title">Hangman (Vur-çat)</div>
+    <canvas id="hangmanCanvas" width="240" height="170"></canvas>
+    <div class="hangman-word" id="hangmanWord"></div>
+    <div class="hangman-letters" id="hangmanLetters"></div>
+    <div class="hangman-status" id="hangmanStatus"></div>
+    <div class="hangman-score" id="hangmanScore"></div>
+    <button class="hangman-btn" onclick="hangmanStart()">Yenidən başla</button>
+    <a href="../oyunlar.html" class="hangman-btn" style="background:#222; color:#fff; margin-top:12px;">← Oyunlara qayıt</a>
+  </main>
+  <footer class="footer"><p>© 2025 Sultan. Neon Group Azerbaijan</p></footer>
+  <script>
+    const words = [
+      "AZƏRBAYCAN", "NEON", "OYUN", "KOMPÜTER", "PROGRAM", "ALQORITM", "WEB", "SULTAN", "QAPI", "BILIK", "SOZ", "TEXNOLOGIYA", "MƏKTƏB"
+    ];
+    let answer, shown, wrong, tries, finished, guessed;
+    function hangmanStart() {
+      answer = words[Math.floor(Math.random()*words.length)];
+      shown = Array(answer.length).fill("_");
+      wrong = 0; tries = 8; finished = false; guessed=[];
+      document.getElementById('hangmanStatus').textContent = '';
+      document.getElementById('hangmanScore').textContent = '';
+      drawGallow();
+      render();
+    }
+    function render() {
+      document.getElementById('hangmanWord').textContent = shown.join(" ");
+      let az = "AĂBCÇDEƏFGĞHIİJKLMNOÖPQRSŞTUÜVXYZağıəöüçş".toUpperCase();
+      document.getElementById('hangmanLetters').innerHTML = az.split("").map(l=>
+        `<button class="hangman-btn" ${guessed.includes(l)?"disabled":""} onclick="pick('${l}')">${l}</button>`
+      ).join('');
+    }
+    function pick(l) {
+      if(finished||guessed.includes(l))return;
+      guessed.push(l);
+      let hit = false;
+      for(let i=0;i<answer.length;i++)
+        if(answer[i]===l){ shown[i]=l; hit=true; }
+      if(!hit){ wrong++; drawGallow(); }
+      if(!shown.includes("_")){ finished=true; document.getElementById('hangmanStatus').textContent = "Təbriklər! Tapdın!"; document.getElementById('hangmanScore').textContent=""; }
+      else if(wrong>=tries){ finished=true; document.getElementById('hangmanStatus').textContent = "Uduzdun! Cavab: "+answer; document.getElementById('hangmanScore').textContent=""; }
+      else document.getElementById('hangmanScore').textContent = `Səhv: ${wrong} / ${tries}`;
+      render();
+    }
+    function drawGallow() {
+      const ctx = document.getElementById('hangmanCanvas').getContext('2d');
+      ctx.clearRect(0,0,240,170);
+      ctx.save();
+      ctx.strokeStyle="#61dafb"; ctx.lineWidth=6;
+      ctx.beginPath(); ctx.moveTo(40,160); ctx.lineTo(200,160); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(70,160); ctx.lineTo(70,30); ctx.lineTo(150,30); ctx.lineTo(150,48); ctx.stroke();
+      ctx.strokeStyle="#fbbd23"; ctx.lineWidth=4;
+      if(wrong>0){ ctx.beginPath(); ctx.arc(150,64,16,0,2*Math.PI); ctx.stroke(); }
+      if(wrong>1){ ctx.beginPath(); ctx.moveTo(150,80); ctx.lineTo(150,120); ctx.stroke(); }
+      if(wrong>2){ ctx.beginPath(); ctx.moveTo(150,95); ctx.lineTo(130,110); ctx.stroke();}
+      if(wrong>3){ ctx.beginPath(); ctx.moveTo(150,95); ctx.lineTo(170,110); ctx.stroke();}
+      if(wrong>4){ ctx.beginPath(); ctx.moveTo(150,120); ctx.lineTo(135,145); ctx.stroke(); }
+      if(wrong>5){ ctx.beginPath(); ctx.moveTo(150,120); ctx.lineTo(165,145); ctx.stroke(); }
+      if(wrong>6){ ctx.strokeStyle="#e74c3c"; ctx.lineWidth=2;
+        ctx.beginPath(); ctx.arc(144,60,2,0,2*Math.PI); ctx.stroke();
+        ctx.beginPath(); ctx.arc(156,60,2,0,2*Math.PI); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(146,70); ctx.lineTo(154,70); ctx.stroke();
+      }
+      ctx.restore();
+    }
+    hangmanStart();
+  </script>
+</body>
+</html>
