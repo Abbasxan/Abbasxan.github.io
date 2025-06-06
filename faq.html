@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tez-tez verilən suallar | Neon Sultan</title>
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
+  <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet" />
+  <style>
+    .faq-main {
+      max-width: 900px;
+      margin: 70px auto 90px auto;
+      background: linear-gradient(120deg,#1a1a23 90%,#222255 100%);
+      border-radius: 32px;
+      box-shadow: 0 8px 48px #000c;
+      padding: 54px 42px 45px 42px;
+      position: relative;
+      overflow: hidden;
+      border: 1.7px solid #2d2d54;
+    }
+    .faq-main::before, .faq-main::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      z-index: 0;
+      pointer-events: none;
+    }
+    .faq-main::before {
+      top: -85px; left: -110px;
+      width: 240px; height: 240px;
+      background: radial-gradient(circle, #fbbd2342 0%, #23233b00 85%);
+    }
+    .faq-main::after {
+      right: -110px; bottom: -100px;
+      width: 200px; height: 200px;
+      background: radial-gradient(circle, #61dafb33 0%, #23233b00 85%);
+    }
+    .faq-title {
+      font-size: 2.9em;
+      font-weight: 900;
+      color: #fbbd23;
+      margin-bottom: 32px;
+      letter-spacing: 1.7px;
+      text-shadow: 0 4px 18px #fbbd2340;
+      position: relative;
+      z-index: 1;
+    }
+    .faq-list { margin:0; padding:0; list-style:none; position:relative; z-index:1;}
+    .faq-list li {
+      margin-bottom: 38px;
+      padding: 22px 38px 20px 38px;
+      border-radius: 18px;
+      background: linear-gradient(120deg,#23233b 80%,#202052 100%);
+      border-left: 5px solid #61dafb99;
+      border-bottom: 1.7px solid #252540;
+      box-shadow: 0 2px 18px #1c1c2a22;
+      transition: box-shadow .22s, border-color .22s;
+      position: relative;
+    }
+    .faq-list li:hover {
+      box-shadow: 0 10px 32px #61dafb44;
+      border-color: #fbbd23dd;
+    }
+    .faq-q {
+      color: #61dafb;
+      font-size: 1.18em;
+      font-weight: 800;
+      margin-bottom: 6px;
+      letter-spacing:.2px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .faq-q::before {
+      content: "❓";
+      font-size: 1.1em;
+      margin-right: 5px;
+      opacity: 0.7;
+    }
+    .faq-a {
+      color: #eee;
+      margin-left: 2px;
+      font-size: 1.1em;
+      line-height: 1.7;
+      font-weight: 500;
+    }
+    .faq-a a { color: #fbbd23; text-decoration: underline; }
+    .faq-a a:hover { color: #61dafb; }
+    @media(max-width:900px){.faq-main{padding:20px 2vw;}}
+    @media(max-width:600px){
+      .faq-main{padding:8px 1vw;}
+      .faq-title{font-size:2em;}
+      .faq-list li{padding:12px 8px 12px 10px;}
+    }
+  </style>
+</head>
+<body id="top">
+  <nav class="navbar modern-navbar">
+    <div class="container">
+      <div class="logo">Neon Sultan</div>
+      <button class="menu-toggle" id="mobileMenuBtn"><span></span><span></span><span></span></button>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html">Ana Səhifə</a></li>
+        <li><a href="about.html">Haqqımda</a></li>
+        <li><a href="projects.html">Proyektlərim</a></li>
+        <li><a href="license.html">Lisenziya</a></li>
+        <li><a href="oyunlar.html">Oyunlar</a></li>
+        <li><a href="blog.html">Blog</a></li>
+        <li><a href="faq.html" class="active">FAQ</a></li>
+        <li><a href="changelog.html">Yeniliklər</a></li>
+        <li><a href="gallery.html">Qalereya</a></li>
+        <li><a href="contributors.html">Töhfə verənlər</a></li>
+        <li><a href="contact.html">Əlaqə</a></li>
+      </ul>
+      <button id="themeToggle" class="theme-toggle" title="Tema Dəyiş">
+        <span class="toggle-icon">
+          <svg class="icon-moon" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 1 0 9.79 9.79z"/></svg>
+          <svg class="icon-sun" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M16.36 16.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M16.36 7.64l1.42-1.42"/></svg>
+        </span>
+      </button>
+    </div>
+  </nav>
+
+  <main class="faq-main" data-aos="fade-up">
+    <div class="faq-title">Tez-tez verilən suallar (FAQ)</div>
+    <ul class="faq-list">
+      <li>
+        <div class="faq-q">Oyunlar pulsuzdur?</div>
+        <div class="faq-a">Bəli, bütün oyunlar tamamilə pulsuzdur və heç bir qeydiyyat tələb etmir.</div>
+      </li>
+      <li>
+        <div class="faq-q">NEON AI nədir?</div>
+        <div class="faq-a">NEON AI — Neon Sultan oyunlarında ağıllı rəqib rolunu oynayan xüsusi hazırlanmış süni intellekt sistemidir.</div>
+      </li>
+      <li>
+        <div class="faq-q">Oyunlar mobil cihazda işləyir?</div>
+        <div class="faq-a">Bəli, sayt və bütün oyunlar tam adaptivdir və istənilən cihazda rahat işləyir.</div>
+      </li>
+      <li>
+        <div class="faq-q">Koddan istifadə edə bilərəm?</div>
+        <div class="faq-a">Kod yalnız şəxsi, qeyri-kommersiya və tədris məqsədilə baxış üçün açıqdır. İstənilən başqa istifadə üçün müəllifdən icazə alınmalıdır. <a href="license.html">Lisenziya qaydaları</a></div>
+      </li>
+      <li>
+        <div class="faq-q">Yeni oyunlar əlavə olunacaq?</div>
+        <div class="faq-a">Bəli! Sayt mütəmadi yenilənir və yeni oyunlar əlavə olunur. Sizin təklifləriniz də qəbul olunur!</div>
+      </li>
+    </ul>
+  </main>
+
+  <footer class="footer">
+    <p>© 2025 Sultan. Neon Group Azerbaijan | <a href="license.html">Lisenziya</a></p>
+  </footer>
+  <a href="#top" class="scroll-up" id="scrollUpBtn" title="Yuxarı">
+    <span class="scroll-icon">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+        <circle cx="14" cy="14" r="13" stroke="currentColor" stroke-width="2" opacity="0.14"/>
+        <circle class="scroll-progress" cx="14" cy="14" r="13" stroke="#fff" stroke-width="2"
+          fill="none" stroke-dasharray="81.68" stroke-dashoffset="81.68"/>
+        <path d="M14 20V10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <path d="M10 14L14 10L18 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </span>
+  </a>
+  <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+  <script src="assets/js/script.js"></script>
+</body>
+</html>
