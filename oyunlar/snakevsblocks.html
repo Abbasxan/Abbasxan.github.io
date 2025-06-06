@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Snake VS Blocks | Neon Sultan</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+  <style>
+    body {background: radial-gradient(circle at 60% 20%, #495082 0%, #181924 100%);}
+    .svb-container {display:flex;flex-direction:column;align-items:center;margin-top:38px;background:rgba(24,25,36,.98);border-radius:20px;padding:30px 18px 23px 18px;box-shadow:0 10px 44px #000c;max-width:440px;margin:auto;}
+    .svb-title {font-size:2em;color:#61dafb;margin-bottom:8px;text-shadow:0 2px 16px #222c;}
+    .svb-btn {margin-top:14px;padding:10px 26px;font-size:1em;border-radius:10px;border:none;background:linear-gradient(90deg,#61dafb,#fbbd23);color:#222;font-weight:bold;cursor:pointer;box-shadow:0 2px 10px #0007;transition:background .2s, color .2s, transform .13s;}
+    .svb-btn:hover {background:linear-gradient(90deg,#fbbd23,#61dafb);color:#fff;transform:translateY(-2px) scale(1.07);}
+    .svb-status {margin-top:8px;color:#fff;min-height:23px;font-size:1.08em;text-shadow:0 2px 8px #222a;}
+    #svbGame {background:linear-gradient(160deg,#23233b 60%,#26394d 100%);margin-top:20px;border-radius:18px;box-shadow:0 9px 36px #000b,0 0 0 4px #61dafb22;}
+    @media (max-width:600px){.svb-container{padding:8px 2vw;}#svbGame{width:96vw !important;max-width:96vw !important;height:70vw !important;}}
+  </style>
+</head>
+<body>
+  <nav class="navbar modern-navbar"><div class="container"><div class="logo">Neon Sultan</div></div></nav>
+  <main class="svb-container">
+    <div class="svb-title">Snake VS Blocks</div>
+    <canvas id="svbGame" width="340" height="480"></canvas>
+    <div class="svb-status" id="svbStatus"></div>
+    <button class="svb-btn" onclick="svbStart()">Yenidən başla</button>
+    <a href="../oyunlar.html" class="svb-btn" style="background:#222;color:#fff;margin-top:10px;">← Oyunlara qayıt</a>
+  </main>
+  <footer class="footer"><p>© 2025 Sultan. Neon Group Azerbaijan</p></footer>
+  <script>
+    // --- Snake VS Blocks Neon ---
+    const canvas=document.getElementById('svbGame'), ctx=canvas.getContext('2d');
+    let W=canvas.width,H=canvas.height,cell=32,snake,snakeLen,speed,blocks,balls,score,playing,moveX=0,moveAnim=0,gameOver=false;
+    function svbStart(){
+      snake=[Math.floor(W/2)];
+      snakeLen=5;
+      speed=2.2;score=0;playing=true;moveX=0;moveAnim=0;gameOver=false;
+      blocks=[],balls=[];
+      for(let i=0;i<4;i++)svbGenRow(i*110+40);
+      document.getElementById('svbStatus').textContent="Xal: 0";
+      requestAnimationFrame(svbLoop);
+    }
+    function svbGenRow(y){
+      // Generate blocks (1-4 blocks per row), and at least one gap
+      let count=2+Math.floor(Math.random()*3), positions=[0,1,2,3,4,5,6],rowBlocks=[];
+      for(let i=0;i<count;i++){
+        let idx=positions.splice(Math.floor(Math.random()*positions.length),1)[0];
+        let val=Math.floor(2+Math.random()*Math.max(4,snakeLen*0.7));
+        rowBlocks.push({x:idx*cell+10, y, val, hit:0, color:svbColor(val)});
+      }
+      blocks.push(rowBlocks);
+      // Place a bonus ball in random gap
+      if(positions.length>0){
+        let idx=positions[Math.floor(Math.random()*positions.length)];
+        balls.push({x:idx*cell+cell/2+10, y:y+cell/2, val:1+Math.floor(Math.random()*3), taken:false});
+      }
+    }
+    function svbColor(val){
+      if(val<4) return "#00e676";
+      if(val<7) return "#61dafb";
+      if(val<12) return "#fbbd23";
+      return "#e74c3c";
+    }
+    function svbLoop(){
+      if(!playing)return;
+      ctx.clearRect(0,0,W,H);
+      // Move everything down
+      for(let row of blocks) for(let b of row) b.y+=speed;
+      for(let b of balls) b.y+=speed;
+      // Remove out of view
+      while(blocks.length&&blocks[0][0].y>H+cell) blocks.shift();
+      while(balls.length&&balls[0].y>H+cell) balls.shift();
+      // Add new rows
+      if(blocks.length<4){ svbGenRow(-cell*3.5); }
+      // Draw blocks
+      for(let row of blocks) for(let b of row){
+        ctx.save();
+        ctx.shadowColor=b.color;ctx.shadowBlur=18;
+        ctx.fillStyle="rgba(30,32,50,0.84)";
+        ctx.fillRect(b.x,b.y,cell,cell);
+        ctx.shadowBlur=0;
+        ctx.strokeStyle=b.color;ctx.lineWidth=3.2;ctx.strokeRect(b.x+2.5,b.y+2.5,cell-5,cell-5);
+        ctx.font="bold 1.2em Arial";ctx.textAlign="center";ctx.textBaseline="middle";
+        ctx.fillStyle=b.color;
+        ctx.fillText(b.val, b.x+cell/2, b.y+cell/2+1);
+        ctx.restore();
+      }
+      // Draw balls
+      for(let ball of balls) if(!ball.taken){
+        ctx.save();
+        ctx.shadowColor="#fff";ctx.shadowBlur=12;
+        ctx.beginPath();
+        ctx.arc(ball.x,ball.y,cell/3.2,0,2*Math.PI);
+        ctx.fillStyle="#fff";
+        ctx.fill();
+        ctx.restore();
+        ctx.font="bold 1.05em Arial";
+        ctx.fillStyle="#fbbd23";
+        ctx.textAlign="center";
+        ctx.fillText("+"+ball.val, ball.x, ball.y+cell/2.2);
+      }
+      // Draw snake
+      let sx = snake[0] + moveAnim * moveX;
+      for(let i=0;i<snakeLen;i++){
+        ctx.save();
+        ctx.shadowColor="#61dafb";
+        ctx.shadowBlur=18;
+        ctx.beginPath();
+        ctx.arc(sx, H-45-i*cell*0.82, cell/2.18, 0, 2*Math.PI);
+        ctx.fillStyle=i==0?"#61dafb":"#18181a";
+        ctx.fill();
+        ctx.strokeStyle="#fff"; ctx.lineWidth=1.2; ctx.stroke();
+        ctx.restore();
+      }
+      // Collisions: blocks
+      for(let row of blocks){
+        for(let b of row){
+          if(
+            sx> b.x+6 && sx< b.x+cell-6 &&
+            H-45 > b.y+4 && H-45 < b.y+cell-4 && b.val>0
+          ){
+            let hit = Math.min(b.val,snakeLen);
+            snakeLen-=hit; b.val-=hit; b.hit+=hit;
+            score+=hit;
+            if(snakeLen<=0){ playing=false; gameOver=true; document.getElementById('svbStatus').innerHTML=`<b style="color:#e74c3c;">Oyun bitdi! Xal: ${score}</b>`; return; }
+            document.getElementById('svbStatus').textContent = "Xal: " + score;
+          }
+        }
+      }
+      // Collisions: balls
+      for(let ball of balls) if(!ball.taken){
+        if(Math.abs(sx-ball.x)<cell/2.1 && Math.abs(H-45-ball.y)<cell/2.1){
+          snakeLen+=ball.val; ball.taken=true; score+=ball.val*2;
+          document.getElementById('svbStatus').textContent = "Xal: " + score;
+        }
+      }
+      // Animate movement
+      if(moveAnim>0){
+        moveAnim-=0.13; snake[0]+=moveX*cell*0.13;
+        if(moveAnim<0){ moveAnim=0; snake[0]=Math.max(cell/2+10,Math.min(W-cell/2-10,snake[0])); }
+      }
+      requestAnimationFrame(svbLoop);
+    }
+    // Controls
+    document.addEventListener('keydown',e=>{
+      if(!playing||moveAnim>0) return;
+      if(e.key=="ArrowLeft"||e.key=="a"){
+        if(snake[0]>cell/2+10){moveX=-1;moveAnim=1;}
+      }
+      if(e.key=="ArrowRight"||e.key=="d"){
+        if(snake[0]<W-cell/2-10){moveX=1;moveAnim=1;}
+      }
+    });
+    // Touch/Mouse move
+    let touchStartX=null;
+    canvas.addEventListener('touchstart',e=>{ if(!playing) return; touchStartX=e.touches[0].clientX; });
+    canvas.addEventListener('touchend',e=>{
+      if(!playing||moveAnim>0) return;
+      if(touchStartX!=null){
+        let dx=e.changedTouches[0].clientX-touchStartX;
+        if(dx<-20&&snake[0]>cell/2+10){moveX=-1;moveAnim=1;}
+        if(dx>20&&snake[0]<W-cell/2-10){moveX=1;moveAnim=1;}
+      }
+      touchStartX=null;
+    });
+    canvas.addEventListener('mousedown',e=>{
+      if(!playing||moveAnim>0)return;
+      let rect=canvas.getBoundingClientRect();
+      if(e.clientX-rect.left<snake[0]){if(snake[0]>cell/2+10){moveX=-1;moveAnim=1;}}
+      else{if(snake[0]<W-cell/2-10){moveX=1;moveAnim=1;}}
+    });
+    svbStart();
+  </script>
+</body>
+</html>
