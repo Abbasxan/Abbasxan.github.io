@@ -35,7 +35,6 @@
       text-align: center; letter-spacing:.2px;
     }
 
-    /* Красивый стол */
     .domino-table-bg {
       background: repeating-linear-gradient(135deg,#7b4a1a 0 40px,#9a6840 40px 80px,#7b4a1a 80px 120px),radial-gradient(circle at 50% 48%, #fbbd2366 0%, #67411a 60%, #2d1a06 100%);
       border-radius: 22px;
@@ -54,7 +53,6 @@
       width: 100%; max-width: 550px; overflow-x: auto;
     }
 
-    /* 3D Domino */
     .domino-tile {
       width: 64px; height: 108px; margin: 0 3px;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -71,8 +69,8 @@
       box-shadow: 0 8px 32px #000b, 0 3px 11px #fbbd2326, 0 0 0 3.2px #b98b44 inset;
       border: 2.2px solid #d3a04c;
       position: relative;
-      display: flex; flex-direction: column; justify-content: space-between;
-      align-items: center; padding: 13px 0;
+      display: flex; flex-direction: row; justify-content: space-between;
+      align-items: center; padding: 0 6px;
       transform: rotateX(7deg) rotateZ(-2deg);
     }
     .domino-tile.selected .domino-3d-face {
@@ -80,14 +78,27 @@
       box-shadow: 0 0 16px #fbbd23dd, 0 8px 34px #000e;
       background: linear-gradient(120deg,#fffad1 60%,#fbbd23 100%);
     }
-    .domino-dotrow {display: flex; justify-content: center; width: 100%; gap: 5px;}
-    .domino-dot {
-      width: 14px; height: 14px; background: radial-gradient(circle, #fbbd23 45%, #fff5b1 100%);
-      border-radius: 50%; margin: 1.5px;
-      box-shadow: 0 0 7px #fbbd23cc, 0 2px 8px #fff8;
-      border: 1.3px solid #ffe484aa;
+    .domino-half {
+      width: 50%; height: 92px; display: flex; flex-direction: column; justify-content: center; align-items: center;
     }
-    .domino-dotrow + .domino-dotrow { margin-top: 12px; }
+    .dot-row {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+      margin-bottom: 2px;
+      height: 16px;
+    }
+    .domino-dot {
+      width: 12px; height: 12px; background: radial-gradient(circle,#fbbd23 48%,#fff7b1 100%);
+      border-radius: 50%; margin: 2px;
+      box-shadow: 0 0 7px #fbbd23cc, 0 2px 8px #fff8;
+      border: 1.1px solid #ffe484aa;
+      transition: opacity .1s;
+    }
+    .domino-dot[style*="opacity:.14"] {
+      opacity: .14;
+    }
+    .domino-dotrow + .domino-dotrow { margin-top: 8px; }
     .domino-hand {
       display: flex; gap: 18px; flex-wrap: wrap; margin-bottom: 10px; justify-content: center;
       width: 100%; max-width: 620px;
@@ -109,7 +120,8 @@
       .domino-board, .domino-hand { max-width: 99vw;}
       .domino-tile { width: 38vw; max-width: 68px; height: 12vw; max-height: 110px;}
       .domino-dot { width: 11px; height: 11px;}
-      .domino-dotrow + .domino-dotrow { margin-top: 8px;}
+      .dot-row { height: 13px;}
+      .domino-dotrow + .domino-dotrow { margin-top: 5px;}
     }
   </style>
 </head>
@@ -176,29 +188,38 @@
     function tileHTML(t, isBoard=false){
       return `<div class="domino-tile${isBoard?'':' disabled'}">${tileInner3D(t)}</div>`;
     }
-    // --- 3D SVG Domino ---
+
+    // Универсальная функция для точек на домино (0–6)
+    function dominoDots(n){
+      // Координаты точек для 0-6, по классике (3x2)
+      const pipMap = [
+        [], // 0
+        [[1,1]], // 1
+        [[0,0],[2,2]], // 2
+        [[0,0],[1,1],[2,2]], // 3
+        [[0,0],[0,2],[2,0],[2,2]], // 4
+        [[0,0],[0,2],[1,1],[2,0],[2,2]], // 5
+        [[0,0],[0,1],[0,2],[2,0],[2,1],[2,2]] // 6
+      ];
+      let res = "";
+      for (let row=0; row<3; row++) {
+        res += '<div class="dot-row">';
+        for (let col=0; col<2; col++) {
+          let has = pipMap[n].some(([r,c])=>r===row&&c===col);
+          res += `<span class="domino-dot"${has?'':' style="opacity:.14"'}></span>`;
+        }
+        res += '</div>';
+      }
+      return res;
+    }
+
     function tileInner3D([a,b]){
-      // Для красоты: dots на 3D-плашке с отблеском
-      let dots = n=>[...Array(n)].map(()=>'<div class="domino-dot"></div>').join('');
+      // Левая и правая половина
       return `
-      <div class="domino-3d-face">
-        <div class="domino-dotrow">${dots(a)}</div>
-        <div class="domino-dotrow">${dots(b)}</div>
-        <svg width="64" height="108" style="position:absolute;top:0;left:0;pointer-events:none;" aria-hidden="true">
-          <defs>
-            <radialGradient id="shine" cx="0.33" cy="0.18" r="1">
-              <stop offset="0%" stop-color="#fff" stop-opacity="0.48"/>
-              <stop offset="80%" stop-color="#fff" stop-opacity="0"/>
-            </radialGradient>
-            <radialGradient id="shadow" cx="0.7" cy="0.85" r="1">
-              <stop offset="40%" stop-color="#000" stop-opacity="0"/>
-              <stop offset="100%" stop-color="#000" stop-opacity="0.18"/>
-            </radialGradient>
-          </defs>
-          <ellipse cx="32" cy="28" rx="26" ry="12" fill="url(#shine)" />
-          <ellipse cx="38" cy="92" rx="19" ry="8" fill="url(#shadow)" />
-        </svg>
-      </div>
+        <div class="domino-3d-face">
+          <div class="domino-half">${dominoDots(a)}</div>
+          <div class="domino-half">${dominoDots(b)}</div>
+        </div>
       `;
     }
 
