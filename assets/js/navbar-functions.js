@@ -43,3 +43,26 @@ function setupScrollUp() {
     }
   });
 }
+
+function setupScrollProgress() {
+  const scrollCircle = document.querySelector('.scroll-progress');
+  if (!scrollCircle) return;
+
+  const radius = scrollCircle.r.baseVal.value;
+  const circumference = 2 * Math.PI * radius;
+
+  scrollCircle.style.strokeDasharray = `${circumference}`;
+  scrollCircle.style.strokeDashoffset = `${circumference}`;
+
+  function updateProgress() {
+    const scrollTop = window.scrollY;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = scrollTop / docHeight;
+
+    const offset = circumference - progress * circumference;
+    scrollCircle.style.strokeDashoffset = offset;
+  }
+
+  window.addEventListener('scroll', updateProgress);
+  updateProgress(); // вызвать сразу на всякий случай
+}
