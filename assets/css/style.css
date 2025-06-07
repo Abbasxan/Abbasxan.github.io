@@ -717,9 +717,11 @@ mark {
   margin-bottom: 12px;
 }
 .hero-intro {
-  font-size: 1.08em;
-  margin-bottom: 18px;
   color: #333;
+}
+
+body.dark-theme .hero-intro {
+  color: #e2e2e2;
 }
 .hero-btns {
   display: flex;
