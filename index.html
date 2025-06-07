@@ -13,29 +13,21 @@
 
   <div id="navbar-include"></div>
 
-  <header class="hero modern-hero">
-    <div class="container">
-      <h1 data-aos="fade-up">👋 Salam, Mənim kod adım <mark>Neon Sultan</mark>-dır</h1>
-      <p data-aos="fade-up" data-aos-delay="200">
-        <span id="typed"></span>
-      </p>
-      <a href="projects.html" class="btn primary-btn" data-aos="fade-up" data-aos-delay="400">🚀 Proyektlərimə bax</a>
-    </div>
-  </header>
-
-  <section class="about-section" id="aboutPreview">
-    <div class="container">
-      <div class="about-content">
-        <div class="about-text">
-          <h2 data-aos="fade-right">Qısa tanıtım</h2>
-          <p data-aos="fade-up" data-aos-delay="100">
-            Mən Python dili ilə müxtəlif avtomatlaşdırma və Telegram bot layihələri üzərində çalışan bir proqramçıyam. Məqsədim texnologiya ilə gündəlik həyatı daha asan və məhsuldar etməkdir.
-          </p>
-          <a href="about.html" class="btn secondary-btn" data-aos="fade-up" data-aos-delay="200">Daha ətraflı →</a>
+  <section class="hero-section">
+    <div class="container hero-flex">
+      <div class="hero-text">
+        <h1 data-aos="fade-up">👋 Salam, Mənim kod adım <mark>Neon Sultan</mark>-dır</h1>
+        <p data-aos="fade-up" data-aos-delay="150" class="hero-intro">
+          Mən Python dili ilə müxtəlif avtomatlaşdırma və Telegram bot layihələri üzərində çalışan bir proqramçıyam.<br/>
+          Məqsədim texnologiya ilə gündəlik həyatı daha asan və məhsuldar etməkdir.
+        </p>
+        <div class="hero-btns" data-aos="fade-up" data-aos-delay="250">
+          <a href="projects.html" class="btn primary-btn">🚀 Proyektlərimə bax</a>
+          <a href="about.html" class="btn secondary-btn">Daha ətraflı →</a>
         </div>
-        <div class="about-avatar" data-aos="zoom-in" data-aos-delay="180">
-          <img src="assets/images/avatar.png" alt="Neon Sultan" />
-        </div>
+      </div>
+      <div class="hero-photo" data-aos="zoom-in" data-aos-delay="180">
+        <img src="assets/images/avatar.png" alt="Neon Sultan" />
       </div>
     </div>
   </section>
@@ -95,7 +87,6 @@
         document.getElementById('navbar-include').innerHTML = html;
         setupThemeToggle();
         setupScrollUp();
-        setupScrollProgress();
       });
   </script>
 </body>
