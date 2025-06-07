@@ -1,4 +1,3 @@
-/* ====== BASE ====== */
 :root {
   --primary: #4c83ff;
   --secondary: #232946;
@@ -28,7 +27,6 @@ body.dark {
   color: var(--text-light);
 }
 
-/* ====== CONTAINER & PAGE LAYOUT ====== */
 .container {
   max-width: 880px;
   margin: 2rem auto;
@@ -45,7 +43,6 @@ body.dark .container {
   border: 1px solid #282b4a;
 }
 
-/* ====== NAVBAR (КОМПАКТНЫЙ) ====== */
 .navbar {
   padding: 0.1rem 0;
   min-height: 44px;
@@ -110,6 +107,76 @@ body.dark .navbar {
   color: var(--text-light);
 }
 
+.has-dropdown { position: relative; }
+.has-dropdown > .dropdown-toggle {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-weight: 600;
+}
+.has-dropdown .arrow {
+  margin-left: 5px;
+  font-size: 0.93em;
+  transition: transform .22s;
+  color: var(--primary);
+}
+.has-dropdown.open > .dropdown-toggle .arrow,
+.has-dropdown:hover > .dropdown-toggle .arrow {
+  transform: rotate(180deg);
+}
+.has-dropdown .dropdown {
+  display: none;
+  position: absolute;
+  left: 0; top: 110%;
+  min-width: 160px;
+  background: var(--nav-bg);
+  border-radius: 0 0 14px 14px;
+  box-shadow: 0 7px 24px #0007;
+  z-index: 100;
+  padding: 8px 0;
+  animation: fadeIn .22s;
+}
+body.dark .has-dropdown .dropdown {
+  background: var(--nav-bg-dark);
+}
+.has-dropdown.open .dropdown,
+.has-dropdown:hover .dropdown {
+  display: block;
+}
+.has-dropdown .dropdown li { width: 100%; }
+.has-dropdown .dropdown a {
+  padding: 10px 22px;
+  color: var(--primary);
+  font-weight: 500;
+  white-space: nowrap;
+  background: none;
+  border-radius: 0;
+  transition: background .18s, color .18s;
+}
+.has-dropdown .dropdown a:hover {
+  background: var(--primary);
+  color: var(--text-light);
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px);}
+  to { opacity: 1; transform: translateY(0);}
+}
+
+@media (max-width: 768px) {
+  .has-dropdown .dropdown {
+    position: static;
+    background: none;
+    box-shadow: none;
+    border-radius: 0;
+    min-width: 0;
+    padding: 0;
+    animation: none;
+  }
+  .has-dropdown .dropdown a {
+    padding-left: 38px;
+  }
+}
+
 .menu-toggle {
   display: none;
   flex-direction: column;
@@ -153,7 +220,6 @@ body.dark .navbar {
   gap: 2px;
 }
 
-/* ====== THEME TOGGLE ICONS FIX ====== */
 .theme-toggle .icon-moon {
   display: none;
 }
@@ -167,7 +233,6 @@ body.dark .theme-toggle .icon-sun {
   display: none !important;
 }
 
-/* ====== HERO, SECTIONS ====== */
 .hero, .about-section, .projects-section, .license-generator, .contact-section {
   padding: 2.5rem 0 2rem 0;
 }
@@ -188,7 +253,6 @@ body.dark .hero p, body.dark .about-section p, body.dark .projects-section p {
   color: var(--text-light);
 }
 
-/* ====== BUTTONS ====== */
 .btn {
   display: inline-block;
   padding: 0.55rem 1.2rem;
@@ -216,7 +280,6 @@ body.dark .hero p, body.dark .about-section p, body.dark .projects-section p {
   box-shadow: 0 2px 12px rgba(76,131,255,0.12);
 }
 
-/* ====== PROJECTS ====== */
 .projects-grid {
   display: flex;
   flex-wrap: wrap;
@@ -275,7 +338,6 @@ body.dark .project-card p {
   margin-top: auto;
 }
 
-/* ====== ABOUT STATS ====== */
 .stats {
   margin-top: 2rem;
   display: flex;
@@ -355,7 +417,6 @@ body.dark .license-result textarea {
   margin-top: 0.7rem;
 }
 
-/* ====== CONTACT ====== */
 .contact-section {
   display: flex;
   flex-direction: column;
@@ -430,7 +491,6 @@ body.dark .contact-info {
   font-weight: 600;
 }
 
-/* ====== TECH ICONS ====== */
 .tech-icons {
   display: flex;
   gap: 2rem;
@@ -445,7 +505,6 @@ body.dark .contact-info {
   filter: grayscale(0.15);
 }
 
-/* ====== FOOTER ====== */
 .footer {
   background: var(--nav-bg);
   color: var(--text);
@@ -467,7 +526,6 @@ body.dark .footer {
   text-decoration: underline;
 }
 
-/* ====== SCROLL-UP BUTTON ====== */
 .scroll-up {
   position: fixed;
   bottom: 36px;
@@ -490,7 +548,6 @@ body.dark .footer {
   display: block;
 }
 
-/* ====== RESPONSIVE ====== */
 @media (max-width: 1020px) {
   .container {
     max-width: 98vw;
@@ -588,6 +645,19 @@ body.dark .footer {
     width: 98%;
     max-width: 360px;
   }
+
+  .has-dropdown .dropdown {
+    position: static;
+    background: none;
+    box-shadow: none;
+    border-radius: 0;
+    min-width: 0;
+    padding: 0;
+    animation: none;
+  }
+  .has-dropdown .dropdown a {
+    padding-left: 38px;
+  }
 }
 @media (max-width: 520px) {
   .container {
@@ -620,7 +690,6 @@ body.dark .footer {
   }
 }
 
-/* ====== MISC ====== */
 mark {
   background: var(--accent);
   color: var(--secondary);
