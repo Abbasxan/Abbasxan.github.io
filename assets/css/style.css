@@ -696,3 +696,54 @@ mark {
   padding: 0 0.2em;
   border-radius: 3px;
 }
+
+.hero-section {
+  margin-top: 40px;
+  margin-bottom: 40px;
+}
+.hero-flex {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 32px;
+}
+.hero-text {
+  flex: 1 1 320px;
+  min-width: 260px;
+}
+.hero-text h1 {
+  font-size: 2.1em;
+  margin-bottom: 12px;
+}
+.hero-intro {
+  font-size: 1.08em;
+  margin-bottom: 18px;
+  color: #333;
+}
+.hero-btns {
+  display: flex;
+  gap: 12px;
+}
+.hero-photo {
+  flex: 0 0 180px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.hero-photo img {
+  width: 160px;
+  max-width: 100%;
+  border-radius: 50%;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+}
+@media (max-width: 700px) {
+  .hero-flex {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+  }
+  .hero-photo {
+    align-self: center;
+  }
+}
