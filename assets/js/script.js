@@ -47,15 +47,6 @@ if (themeToggle) {
   updateThemeIcon();
 }
 
-// Mobile menu (если есть)
-const menuBtn = document.getElementById("mobileMenuBtn");
-const navLinks = document.getElementById("navLinks");
-if (menuBtn && navLinks) {
-  menuBtn.addEventListener("click", () => {
-    navLinks.classList.toggle("open");
-  });
-}
-
 // Typed.js (если есть)
 if (document.getElementById("typed") && typeof Typed !== "undefined") {
   new Typed("#typed", {
@@ -95,7 +86,7 @@ function generateLicense() {
 
 ### 1. Purpose
 
-This license is designed to help **independent developers and creators** protect their original projects from unauthorized use, cloning, and commercialization, especially in the age of automated systems and AI.
+This license is designed to help **independent developers and creators** protect their original projects from unauthorized use, cloning, and commercialization, especially in the age of automated s[...]
 
 ---
 
