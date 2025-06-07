@@ -38,16 +38,6 @@
       <p data-aos="fade-up" data-aos-delay="200">
         Təşkilatlarda iş axınlarını sadələşdirmək və prosesləri avtomatlaşdırmaq üzrə həllər təqdim edirəm. Linux, Git, API inteqrasiyası və data ilə işləmə mənim gündəlik alətlərimdir.
       </p>
-      <div class="stats">
-        <div class="stat" data-aos="flip-up">
-          <h3 class="counter" data-target="22">0</h3>
-          <p>Layihə tamamlandı</p>
-        </div>
-        <div class="stat" data-aos="flip-up" data-aos-delay="100">
-          <h3 class="counter" data-target="1200">0</h3>
-          <p>Kod yazılıb</p>
-        </div>
-      </div>
     </div>
   </section>
   <footer class="footer">
@@ -66,38 +56,5 @@
   </a>
   <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
   <script src="assets/js/script.js"></script>
-  <script>
-    // Sayğac effekti
-    const counters = document.querySelectorAll('.counter');
-    const speed = 200;
-    let countersAnimated = false;
-
-    function animateCounters() {
-      if (countersAnimated) return;
-      counters.forEach(counter => {
-        const updateCount = () => {
-          const target = +counter.getAttribute('data-target');
-          const count = +counter.innerText;
-          const increment = Math.ceil(target / speed);
-
-          if (count < target) {
-            counter.innerText = count + increment;
-            setTimeout(updateCount, 20);
-          } else {
-            counter.innerText = target >= 1000 ? target.toLocaleString() + "+" : target.toLocaleString();
-          }
-        };
-        updateCount();
-      });
-      countersAnimated = true;
-    }
-
-    // AOS animasiyası görününcə sayğacı işə sal
-    document.addEventListener('aos:in', ({ detail }) => {
-      if (detail.classList.contains('stat')) {
-        animateCounters();
-      }
-    });
-  </script>
 </body>
 </html>
