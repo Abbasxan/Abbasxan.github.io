@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Qalereya | Neon Sultan</title>
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
+  <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet" />
+  <style>
+    .gallery-main { max-width: 1000px; margin: 56px auto 72px auto; background:rgba(24,25,36,.96); border-radius:22px; box-shadow:0 6px 44px #000c; padding:38px 24px 32px 24px;}
+    .gallery-title { font-size:2.2em; font-weight:800; color:#fbbd23; margin-bottom:18px;}
+    .gallery-grid {display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:20px; margin-bottom:18px;}
+    .gallery-img {width:100%; border-radius:14px; box-shadow:0 3px 24px #0008; background:#23233b; transition:transform .13s;}
+    .gallery-img:hover {transform:scale(1.045);}
+    .gallery-caption {color:#aaa; font-size:.97em; text-align:center; margin-top:7px;}
+    @media(max-width:650px){.gallery-main{padding:12px 2vw;}}
+  </style>
+</head>
+<body id="top">
+  <nav class="navbar modern-navbar">
+    <div class="container">
+      <div class="logo">Neon Sultan</div>
+      <button class="menu-toggle" id="mobileMenuBtn"><span></span><span></span><span></span></button>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html">Ana Səhifə</a></li>
+        <li><a href="about.html">Haqqımda</a></li>
+        <li><a href="projects.html">Proyektlərim</a></li>
+        <li><a href="license.html">Lisenziya</a></li>
+        <li><a href="oyunlar.html">Oyunlar</a></li>
+        <li><a href="blog.html">Blog</a></li>
+        <li><a href="faq.html">FAQ</a></li>
+        <li><a href="changelog.html">Yeniliklər</a></li>
+        <li><a href="gallery.html" class="active">Qalereya</a></li>
+        <li><a href="contributors.html">Töhfə verənlər</a></li>
+        <li><a href="contact.html">Əlaqə</a></li>
+      </ul>
+      <button id="themeToggle" class="theme-toggle" title="Tema Dəyiş">
+        <span class="toggle-icon">
+          <svg class="icon-moon" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 1 0 9.79 9.79z"/></svg>
+          <svg class="icon-sun" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M16.36 16.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M16.36 7.64l1.42-1.42"/></svg>
+        </span>
+      </button>
+    </div>
+  </nav>
+  <main class="gallery-main" data-aos="fade-up">
+    <div class="gallery-title">Qalereya</div>
+    <div class="gallery-grid">
+      <div>
+        <img src="assets/img/preview1.png" alt="Oyunlar səhifəsi" class="gallery-img">
+        <div class="gallery-caption">Oyunlar səhifəsi (desktop versiya)</div>
+      </div>
+      <div>
+        <img src="assets/img/preview2.png" alt="Neon AI qarşısında Domino" class="gallery-img">
+        <div class="gallery-caption">NEON AI ilə Domino dueli</div>
+      </div>
+      <div>
+        <img src="assets/img/preview3.png" alt="Tetris mobil" class="gallery-img">
+        <div class="gallery-caption">Tetris (mobil görünüş)</div>
+      </div>
+      <div>
+        <img src="assets/img/fanart1.png" alt="Fan Art" class="gallery-img">
+        <div class="gallery-caption">Fan Art: Neon Sultan logosu</div>
+      </div>
+    </div>
+    <div style="color:#aaa;font-size:1em;margin-top:22px;text-align:center;">Öz screenshot və ya fan-art göndərmək istəyirsənsə, <a href="contact.html" style="color:#61dafb;">əlaqə saxla!</a></div>
+  </main>
+  <footer class="footer">
+    <p>© 2025 Sultan. Neon Group Azerbaijan | <a href="license.html">Lisenziya</a></p>
+  </footer>
+  <a href="#top" class="scroll-up" id="scrollUpBtn" title="Yuxarı">
+    <span class="scroll-icon">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+        <circle cx="14" cy="14" r="13" stroke="currentColor" stroke-width="2" opacity="0.14"/>
+        <circle class="scroll-progress" cx="14" cy="14" r="13" stroke="#fff" stroke-width="2"
+          fill="none" stroke-dasharray="81.68" stroke-dashoffset="81.68"/>
+        <path d="M14 20V10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <path d="M10 14L14 10L18 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </span>
+  </a>
+  <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+  <script src="assets/js/script.js"></script>
+</body>
+</html>
