@@ -84,11 +84,14 @@
 
   <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
   <script src="assets/js/script.js"></script>
+  <script src="assets/js/navbar-functions.js"></script>
   <script>
     fetch('files/navbar.html')
       .then(r => r.text())
       .then(html => {
         document.getElementById('navbar-include').innerHTML = html;
+        setupThemeToggle();
+        setupScrollUp();
       });
   </script>
 </body>
