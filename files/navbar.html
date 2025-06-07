@@ -28,3 +28,48 @@
     </button>
   </div>
 </nav>
+
+<!-- Scroll-up düyməsi -->
+<a href="#top" class="scroll-up" id="scrollUpBtn" title="Yuxarı">
+  <span class="scroll-icon">
+    <svg width="28" height="28" ...></svg>
+  </span>
+</a>
+
+<script>
+  // Theme toggle logic
+  const themeToggle = document.getElementById("themeToggle");
+  const iconMoon = document.querySelector('.icon-moon');
+  const iconSun = document.querySelector('.icon-sun');
+  function updateThemeIcon() {
+    if (!iconMoon || !iconSun) return;
+    if (document.body.classList.contains("dark")) {
+      iconMoon.style.display = "inline";
+      iconSun.style.display = "none";
+    } else {
+      iconMoon.style.display = "none";
+      iconSun.style.display = "inline";
+    }
+  }
+  if (themeToggle) {
+    themeToggle.addEventListener("click", () => {
+      document.body.classList.toggle("dark");
+      updateThemeIcon();
+      localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+    });
+    if (localStorage.getItem('theme') === 'dark') {
+      document.body.classList.add('dark');
+    }
+    updateThemeIcon();
+  }
+
+  // Scroll-up button logic
+  const scrollBtn = document.getElementById("scrollUpBtn");
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 200) {
+      scrollBtn.classList.add('active');
+    } else {
+      scrollBtn.classList.remove('active');
+    }
+  });
+</script>
