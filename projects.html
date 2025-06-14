@@ -4,18 +4,26 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Proyektlər | Neon Sultan</title>
+
+  <!-- Стили -->
   <link rel="stylesheet" href="assets/css/style.css" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
   <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet" />
 </head>
 <body id="top">
+
+  <!-- Навбар -->
   <div id="navbar-include"></div>
+
+  <!-- Герой секция -->
   <section class="hero">
     <div class="container">
       <h1 data-aos="fade-up">Proyektlərim</h1>
       <p data-aos="fade-up" data-aos-delay="200">Aşağıda müxtəlif kateqoriyalara bölünmüş botlarımı görə bilərsiniz.</p>
     </div>
   </section>
+
+  <!-- Проекты -->
   <section class="projects-section">
     <div class="container">
 
@@ -83,9 +91,13 @@
       </div>
     </div>
   </section>
+
+  <!-- Подвал -->
   <footer class="footer">
     <p>© 2025 Sultan. Neon Group Azerbaijan | <a href="license.html">Lisenziya</a></p>
   </footer>
+
+  <!-- Кнопка "вверх" -->
   <a href="#top" class="scroll-up" id="scrollUpBtn" title="Yuxarı">
     <span class="scroll-icon">
       <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
@@ -97,19 +109,28 @@
       </svg>
     </span>
   </a>
+
+  <!-- Скрипты -->
   <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
   <script src="assets/js/script.js"></script>
   <script src="assets/js/navbar.js"></script>
   <script src="assets/js/navbar-functions.js"></script>
+
+  <!-- Загрузка и инициализация навбара -->
   <script>
     fetch('files/navbar.html')
       .then(r => r.text())
       .then(html => {
         document.getElementById('navbar-include').innerHTML = html;
+
+        // Инициализация после вставки
+        new NavbarManager();
+
         if (window.NavbarFunctions) {
           window.NavbarFunctions.init();
         }
-      });
+      })
+      .catch(err => console.error('Error loading navbar:', err));
   </script>
 </body>
 </html>
