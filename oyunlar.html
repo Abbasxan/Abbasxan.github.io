@@ -100,21 +100,7 @@
   </style>
 </head>
 <body id="top">
-  <nav class="navbar modern-navbar">
-    <div class="container">
-      <div class="logo">Neon Sultan</div>
-      <button class="menu-toggle" id="mobileMenuBtn"><span></span><span></span><span></span></button>
-      <ul class="nav-links" id="navLinks">
-        <li><a href="index.html">Ana Səhifə</a></li>
-        <li><a href="about.html">Haqqımda</a></li>
-        <li><a href="projects.html">Proyektlərim</a></li>
-        <li><a href="license.html">Lisenziya</a></li>
-        <li><a href="oyunlar.html" class="active">Oyunlar</a></li>
-        <li><a href="contact.html">Əlaqə</a></li>
-      </ul>
-      <button id="themeToggle" class="theme-toggle" title="Tema Dəyiş"><span class="toggle-icon"></span></button>
-    </div>
-  </nav>
+  <div id="navbar-include"></div>
 
   <main class="container">
     <h1 data-aos="fade-up" style="margin-top:48px;">Oyunlar</h1>
@@ -364,5 +350,17 @@
   <a href="#top" class="scroll-up" id="scrollUpBtn" title="Yuxarı"><span class="scroll-icon"></span></a>
   <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
   <script src="assets/js/script.js"></script>
+  <script src="assets/js/navbar.js"></script>
+  <script src="assets/js/navbar-functions.js"></script>
+  <script>
+    fetch('files/navbar.html')
+      .then(r => r.text())
+      .then(html => {
+        document.getElementById('navbar-include').innerHTML = html;
+        if (window.NavbarFunctions) {
+          window.NavbarFunctions.init();
+        }
+      });
+  </script>
 </body>
 </html>

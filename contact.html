@@ -9,26 +9,7 @@
   <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet" />
 </head>
 <body id="top">
-  <nav class="navbar">
-    <div class="container">
-      <div class="logo">Neon Sultan</div>
-      <button class="menu-toggle" id="mobileMenuBtn"><span></span><span></span><span></span></button>
-      <ul class="nav-links" id="navLinks">
-        <li><a href="index.html">Ana Səhifə</a></li>
-        <li><a href="about.html">Haqqımda</a></li>
-        <li><a href="projects.html">Proyektlər</a></li>
-        <li><a href="license.html">Lisenziya</a></li>
-        <li><a href="oyunlar.html">Oyunlar</a></li>
-        <li><a href="contact.html" class="active">Əlaqə</a></li>
-      </ul>
-      <button id="themeToggle" class="theme-toggle" title="Tema Dəyiş">
-        <span class="toggle-icon">
-          <svg class="icon-moon" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 1 0 9.79 9.79z"/></svg>
-          <svg class="icon-sun" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M16.36 16.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M16.36 7.64l1.42-1.42"/></svg>
-        </span>
-      </button>
-    </div>
-  </nav>
+  <div id="navbar-include"></div>
   <section class="hero">
     <div class="container">
       <h1 data-aos="fade-up">Əlaqə</h1>
@@ -90,5 +71,17 @@
   </a>
   <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
   <script src="assets/js/script.js"></script>
+  <script src="assets/js/navbar.js"></script>
+  <script src="assets/js/navbar-functions.js"></script>
+  <script>
+    fetch('files/navbar.html')
+      .then(r => r.text())
+      .then(html => {
+        document.getElementById('navbar-include').innerHTML = html;
+        if (window.NavbarFunctions) {
+          window.NavbarFunctions.init();
+        }
+      });
+  </script>
 </body>
 </html>

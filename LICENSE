@@ -49,9 +49,9 @@ Reading and analyzing the code for **learning or research** is allowed **only if
 
 Any authorized use must retain original credits:
 
-```
+\`\`\`
 © [Year] [Author Name] - Licensed under the Neon Public Protective License (NPPL)
-```
+\`\`\`
 
 ---
 
@@ -81,7 +81,7 @@ Permission requests must be submitted to the author.
 
 To use this license in your own project, include the following in your README or LICENSE file:
 
-```
+\`\`\`
 Licensed under the Neon Public Protective License v1.0  
 See https://neongroup.me/license for details.
-```
+\`\`\`
