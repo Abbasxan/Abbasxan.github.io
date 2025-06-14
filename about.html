@@ -9,7 +9,10 @@
   <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet" />
 </head>
 <body id="top">
+
+  <!-- Навбар вставляется динамически -->
   <div id="navbar-include"></div>
+
   <section class="about">
     <div class="container">
       <h2 data-aos="fade-right">Mən Kiməm?</h2>
@@ -21,9 +24,12 @@
       </p>
     </div>
   </section>
+
   <footer class="footer">
     <p>© 2025 Sultan. Neon Group Azerbaijan | <a href="license.html">Lisenziya</a></p>
   </footer>
+
+  <!-- Кнопка наверх -->
   <a href="#top" class="scroll-up" id="scrollUpBtn" title="Yuxarı">
     <span class="scroll-icon">
       <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
@@ -35,19 +41,28 @@
       </svg>
     </span>
   </a>
+
+  <!-- Скрипты -->
   <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
   <script src="assets/js/script.js"></script>
   <script src="assets/js/navbar.js"></script>
   <script src="assets/js/navbar-functions.js"></script>
+
+  <!-- Загрузка навбара и инициализация -->
   <script>
     fetch('files/navbar.html')
       .then(r => r.text())
       .then(html => {
         document.getElementById('navbar-include').innerHTML = html;
+
+        // Повторная инициализация навбара
+        new NavbarManager();
+
         if (window.NavbarFunctions) {
           window.NavbarFunctions.init();
         }
-      });
+      })
+      .catch(err => console.error('Error loading navbar:', err));
   </script>
 </body>
 </html>
