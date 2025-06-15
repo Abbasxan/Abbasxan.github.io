@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Əlaqə | Neon Sultan</title>
+  <title>Əlaqə | Neon Group</title>
   <link rel="stylesheet" href="assets/css/style.css" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
   <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet" />
@@ -14,7 +14,7 @@
     <div class="container">
       <h1 data-aos="fade-up">Əlaqə</h1>
       <p data-aos="fade-up" data-aos-delay="200">
-        Mənimlə əlaqə saxlamaq üçün aşağıdakı formadan istifadə edə və ya sosial platformalardan birini seçə bilərsiniz.
+        Bizimlə əlaqə saxlamaq üçün aşağıdakı formadan istifadə edə və ya sosial platformalardan birini seçə bilərsiniz.
       </p>
     </div>
   </section>
@@ -34,7 +34,7 @@
         <h3>Sosial Şəbəkələr</h3>
         <ul class="social-links">
           <li>
-            <a href="https://t.me/sultanov" target="_blank">
+            <a href="https://t.me/NeonGroupResmi" target="_blank">
               <svg width="22" height="22" fill="currentColor" viewBox="0 0 24 24"><path d="M9.043 16.462 9 13.497l7.176-6.499-8.711 5.417-3.25-1.016c-.682-.211-.677-1.13.007-1.336l17.237-5.096c.68..." /></svg>
               Telegram
             </a>
@@ -56,7 +56,7 @@
     </div>
   </section>
   <footer class="footer">
-    <p>© 2025 Sultan. Neon Group Azerbaijan | <a href="license.html">Lisenziya</a></p>
+    <p>© 2025 Neon Group Azerbaijan | <a href="license.html">Lisenziya</a></p>
   </footer>
   <a href="#top" class="scroll-up" id="scrollUpBtn" title="Yuxarı">
     <span class="scroll-icon">
@@ -73,15 +73,37 @@
   <script src="assets/js/script.js"></script>
   <script src="assets/js/navbar.js"></script>
   <script src="assets/js/navbar-functions.js"></script>
-  <script>
-    fetch('files/navbar.html')
-      .then(r => r.text())
-      .then(html => {
-        document.getElementById('navbar-include').innerHTML = html;
-        if (window.NavbarFunctions) {
-          window.NavbarFunctions.init();
-        }
-      });
-  </script>
+   <script>
+  // Load navbar
+  fetch('files/navbar.html')
+    .then(r => r.text())
+    .then(html => {
+      document.getElementById('navbar-include').innerHTML = html;
+      // Re-initialize navbar functions after loading
+      if (window.NavbarFunctions) {
+        window.NavbarFunctions.init();
+      }
+      // NavbarManager'ı başlat!
+      if (window.NavbarManager) {
+        new window.NavbarManager();
+      } else if (typeof NavbarManager !== "undefined") {
+        new NavbarManager();
+      }
+    })
+    .catch(err => console.error('Error loading navbar:', err));
+</script>
+<!--Start of Tawk.to Script-->
+<script type="text/javascript">
+var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+(function(){
+var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+s1.async=true;
+s1.src='https://embed.tawk.to/684ef9bf9a4b03190ad92b8d/1itq7v5am';
+s1.charset='UTF-8';
+s1.setAttribute('crossorigin','*');
+s0.parentNode.insertBefore(s1,s0);
+})();
+</script>
+<!--End of Tawk.to Script-->
 </body>
 </html>

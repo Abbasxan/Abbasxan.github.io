@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Oyunlar | Neon Sultan</title>
+  <title>Oyunlar | Neon Group</title>
   <link rel="stylesheet" href="assets/css/style.css" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
   <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet" />
@@ -105,7 +105,7 @@
   <main class="container">
     <h1 data-aos="fade-up" style="margin-top:48px;">Oyunlar</h1>
     <div data-aos="fade-up" data-aos-delay="80" style="font-size:1.13em;color:#fbbd23;max-width:640px;margin-bottom:22px;">
-      🎮 Neon Sultan – Müasir və klassik mini oyunlar kolleksiyası. <br>
+      🎮 Neon Group – Müasir və klassik mini oyunlar kolleksiyası. <br>
       <span style="color:#61dafb;">Bəzi oyunlarda <b>NEON AI</b> (intellektual rəqib) mövcuddur!</span><br>
       <span style="color:#aaa;font-size:.97em;display:inline-block;margin-top:5px;">Yeni oyunlar əlavə olunur. Seç, oyna, dostlarını çağır!</span>
     </div>
@@ -345,7 +345,7 @@
     </div>
   </main>
   <footer class="footer">
-    <p>© 2025 Sultan. Neon Group Azerbaijan | <a href="license.html">Lisenziya</a></p>
+    <p>© 2025  Neon Group Azerbaijan | <a href="license.html">Lisenziya</a></p>
   </footer>
   <a href="#top" class="scroll-up" id="scrollUpBtn" title="Yuxarı"><span class="scroll-icon"></span></a>
   <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
@@ -353,14 +353,36 @@
   <script src="assets/js/navbar.js"></script>
   <script src="assets/js/navbar-functions.js"></script>
   <script>
-    fetch('files/navbar.html')
-      .then(r => r.text())
-      .then(html => {
-        document.getElementById('navbar-include').innerHTML = html;
-        if (window.NavbarFunctions) {
-          window.NavbarFunctions.init();
-        }
-      });
-  </script>
+  // Load navbar
+  fetch('files/navbar.html')
+    .then(r => r.text())
+    .then(html => {
+      document.getElementById('navbar-include').innerHTML = html;
+      // Re-initialize navbar functions after loading
+      if (window.NavbarFunctions) {
+        window.NavbarFunctions.init();
+      }
+      // NavbarManager'ı başlat!
+      if (window.NavbarManager) {
+        new window.NavbarManager();
+      } else if (typeof NavbarManager !== "undefined") {
+        new NavbarManager();
+      }
+    })
+    .catch(err => console.error('Error loading navbar:', err));
+</script>
+<!--Start of Tawk.to Script-->
+<script type="text/javascript">
+var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+(function(){
+var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+s1.async=true;
+s1.src='https://embed.tawk.to/684ef9bf9a4b03190ad92b8d/1itq7v5am';
+s1.charset='UTF-8';
+s1.setAttribute('crossorigin','*');
+s0.parentNode.insertBefore(s1,s0);
+})();
+</script>
+<!--End of Tawk.to Script-->
 </body>
 </html>
