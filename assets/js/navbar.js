@@ -3,12 +3,10 @@ class NavbarManager {
   constructor() {
     this.mobileMenuBtn = null
     this.navLinks = null
-    this.dropdowns = []
     this.init()
   }
 
   init() {
-    // Wait for DOM to be ready
     if (document.readyState === "loading") {
       document.addEventListener("DOMContentLoaded", () => this.setup())
     } else {
@@ -39,11 +37,8 @@ class NavbarManager {
     const isOpen = this.navLinks.classList.contains("open")
     this.navLinks.classList.toggle("open")
     this.mobileMenuBtn.classList.toggle("active")
-
-    // Update aria-expanded
     this.mobileMenuBtn.setAttribute("aria-expanded", !isOpen)
 
-    // Close all dropdowns when mobile menu closes
     if (isOpen) {
       this.closeAllDropdowns()
     }
@@ -57,7 +52,6 @@ class NavbarManager {
       const menu = dropdown.querySelector(".dropdown")
 
       if (toggle && menu) {
-        // Desktop hover events
         dropdown.addEventListener("mouseenter", () => {
           if (window.innerWidth > 768) {
             this.openDropdown(dropdown)
@@ -70,13 +64,11 @@ class NavbarManager {
           }
         })
 
-        // Mobile/keyboard click events
         toggle.addEventListener("click", (e) => {
           e.preventDefault()
           this.toggleDropdown(dropdown)
         })
 
-        // Keyboard navigation
         toggle.addEventListener("keydown", (e) => {
           if (e.key === "Enter" || e.key === " ") {
             e.preventDefault()
@@ -105,10 +97,7 @@ class NavbarManager {
 
   toggleDropdown(dropdown) {
     const isOpen = dropdown.classList.contains("open")
-
-    // Close all other dropdowns first
     this.closeAllDropdowns()
-
     if (!isOpen) {
       this.openDropdown(dropdown)
     }
@@ -137,8 +126,6 @@ class NavbarManager {
   getCurrentPage() {
     const path = window.location.pathname
     const filename = path.split("/").pop().replace(".html", "") || "index"
-
-    // Handle special cases
     const pageMap = {
       deyisiklikler: "changelog",
       tertibatcilar: "contributors",
@@ -150,6 +137,17 @@ class NavbarManager {
   setupEventListeners() {
     // Close mobile menu when clicking nav links
     document.querySelectorAll(".nav-links a").forEach((link) => {
+      link.addEventListener("click", () => {
+        if (window.innerWidth <= 768) {
+          this.navLinks.classList.remove("open")
+          this.mobileMenuBtn.classList.remove("active")
+          this.mobileMenuBtn.setAttribute("aria-expanded", "false")
+        }
+      })
+    })
+
+    // Also close mobile menu when dropdown links are clicked
+    document.querySelectorAll(".has-dropdown .dropdown a").forEach((link) => {
       link.addEventListener("click", () => {
         if (window.innerWidth <= 768) {
           this.navLinks.classList.remove("open")
@@ -178,6 +176,16 @@ class NavbarManager {
     document.addEventListener("click", (e) => {
       if (!e.target.closest(".has-dropdown")) {
         this.closeAllDropdowns()
+      }
+    })
+
+    // Close everything on Escape
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        this.closeAllDropdowns()
+        this.navLinks.classList.remove("open")
+        this.mobileMenuBtn.classList.remove("active")
+        this.mobileMenuBtn.setAttribute("aria-expanded", "false")
       }
     })
   }
