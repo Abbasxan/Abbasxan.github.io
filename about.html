@@ -4,26 +4,47 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Haqqımda | Neon Group</title>
+  <meta name="description" content="Sultan haqqında ətraflı məlumat - Python proqramçısı, avtomatlaşdırma mütəxəssisi və Telegram bot ustası.">
   <link rel="stylesheet" href="assets/css/style.css" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
   <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet" />
 </head>
 <body id="top">
   <div id="navbar-include"></div>
+
   <section class="about">
     <div class="container">
       <h2 data-aos="fade-right">Mən Kiməm?</h2>
       <p data-aos="fade-up">
-        Mən Sultan – Python proqramçısıyam. Xüsusilə Telegram botları, avtomatlaşdırma sistemləri və data analizi sahəsində təcrübəm var. Açıq mənbə layihələrdə iştirak edirəm və yeni texnologiyaları öyrənməyə həvəsliyəm.
+        Mən Sultan — proqramlaşdırma ilə nəfəs alan, texnologiya ilə yaşayan bir gəncəm. Python üzrə ixtisaslaşmışam və əsasən Telegram botları, vebscraping, data analizi və avtomatlaşdırma sahələrində fəaliyyət göstərirəm.
+      </p>
+      <p data-aos="fade-up" data-aos-delay="100">
+        Mənim əsas məqsədim – şirkətlərin və fərdi şəxslərin gündəlik texnoloji proseslərini daha sürətli, səmərəli və etibarlı hala gətirməkdir. Layihələrim arasında bir neçə min istifadəçisi olan Telegram botları, məlumat toplama sistemləri və analitika platformaları var.
       </p>
       <p data-aos="fade-up" data-aos-delay="200">
-        Təşkilatlarda iş axınlarını sadələşdirmək və prosesləri avtomatlaşdırmaq üzrə həllər təqdim edirəm. Linux, Git, API inteqrasiyası və data ilə işləmə mənim gündəlik alətlərimdir.
+        İxtisas sahələrimə aşağıdakılar daxildir:
+        <ul data-aos="fade-up" data-aos-delay="300">
+          <li>🔹 Telegram botlarının hazırlanması (Pyrogram, Aiogram, Telethon)</li>
+          <li>🔹 API inteqrasiyası və backend xidmətlər</li>
+          <li>🔹 MongoDB, PostgreSQL kimi verilənlər bazaları ilə iş</li>
+          <li>🔹 Data scraping, təmizləmə və vizuallaşdırma</li>
+          <li>🔹 Linux serverlərin idarə olunması və deploy prosesləri</li>
+          <li>🔹 Açıq mənbə layihələrdə iştirak və töhfə vermə</li>
+        </ul>
+      </p>
+      <p data-aos="fade-up" data-aos-delay="400">
+        Texnologiyaya olan marağım məni daim öyrənməyə və özümü inkişaf etdirməyə vadar edir. Hər gün yeni nəsə öyrənmək, onu tətbiq etmək və başqaları ilə paylaşmaq mənim üçün həm zövq, həm də həyat tərzidir.
+      </p>
+      <p data-aos="fade-up" data-aos-delay="500">
+        Əgər sən də texnologiyanı sevirsənsə, ideyan varsa və ya komanda yoldaşı axtarırsansa — mənimlə əlaqə saxla. Birlikdə böyük işlər görə bilərik!
       </p>
     </div>
   </section>
+
   <footer class="footer">
     <p>© 2025 Sultan. Neon Group Azerbaijan | <a href="license.html">Lisenziya</a></p>
   </footer>
+
   <a href="#top" class="scroll-up" id="scrollUpBtn" title="Yuxarı">
     <span class="scroll-icon">
       <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
@@ -35,41 +56,40 @@
       </svg>
     </span>
   </a>
+
   <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
   <script src="assets/js/script.js"></script>
   <script src="assets/js/navbar.js"></script>
   <script src="assets/js/navbar-functions.js"></script>
-   <script>
-  // Load navbar
-  fetch('files/navbar.html')
-    .then(r => r.text())
-    .then(html => {
-      document.getElementById('navbar-include').innerHTML = html;
-      // Re-initialize navbar functions after loading
-      if (window.NavbarFunctions) {
-        window.NavbarFunctions.init();
-      }
-      // NavbarManager'ı başlat!
-      if (window.NavbarManager) {
-        new window.NavbarManager();
-      } else if (typeof NavbarManager !== "undefined") {
-        new NavbarManager();
-      }
-    })
-    .catch(err => console.error('Error loading navbar:', err));
-</script>
-<!--Start of Tawk.to Script-->
-<script type="text/javascript">
-var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-(function(){
-var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-s1.async=true;
-s1.src='https://embed.tawk.to/684ef9bf9a4b03190ad92b8d/1itq7v5am';
-s1.charset='UTF-8';
-s1.setAttribute('crossorigin','*');
-s0.parentNode.insertBefore(s1,s0);
-})();
-</script>
-<!--End of Tawk.to Script-->
+  <script>
+    fetch('files/navbar.html')
+      .then(r => r.text())
+      .then(html => {
+        document.getElementById('navbar-include').innerHTML = html;
+        if (window.NavbarFunctions) {
+          window.NavbarFunctions.init();
+        }
+        if (window.NavbarManager) {
+          new window.NavbarManager();
+        } else if (typeof NavbarManager !== "undefined") {
+          new NavbarManager();
+        }
+      })
+      .catch(err => console.error('Error loading navbar:', err));
+  </script>
+
+  <!--Start of Tawk.to Script-->
+  <script type="text/javascript">
+  var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+  (function(){
+  var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+  s1.async=true;
+  s1.src='https://embed.tawk.to/684ef9bf9a4b03190ad92b8d/1itq7v5am';
+  s1.charset='UTF-8';
+  s1.setAttribute('crossorigin','*');
+  s0.parentNode.insertBefore(s1,s0);
+  })();
+  </script>
+  <!--End of Tawk.to Script-->
 </body>
-</html>
+  </html>
