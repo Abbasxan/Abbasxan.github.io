@@ -214,7 +214,7 @@ body.dark .has-dropdown .dropdown a {
 .menu-toggle {
   display: none;
   flex-direction: column;
-  gap: 4px;
+  gap: 7px; /* əvvəlki 4px idi, indi 7px et */
   background: none;
   border: none;
   cursor: pointer;
@@ -230,10 +230,10 @@ body.dark .has-dropdown .dropdown a {
 
 .menu-toggle span {
   display: block;
-  width: 24px;
-  height: 3px;
+  width: 30px;   /* bir az böyütmək üçün */
+  height: 7px; /* bir az qalınlaşdırmaq üçün */
   background: var(--primary);
-  border-radius: 2px;
+  border-radius: 4px;
   transition: all 0.3s ease;
   transform-origin: center;
 }
@@ -304,94 +304,64 @@ body.dark .theme-toggle .icon-sun {
 
 /* Mobile Styles */
 @media (max-width: 768px) {
-  .navbar .container {
-    padding: 0 1rem;
-    min-height: 56px;
+  .navbar {
+    position: relative;
+    z-index: 1000;
   }
-
-  .logo {
-    font-size: 1.1rem;
-  }
-
   .nav-links {
     display: none;
     flex-direction: column;
     position: absolute;
-    top: 100%;
+    top: 60px; /* navbar yüksəkliğine görə ayarla */
     left: 0;
-    right: 0;
-    background: var(--nav-bg);
-    z-index: 999;
-    gap: 0;
-    padding: 1rem 0;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    max-height: calc(100vh - 56px);
+    width: 100vw;
+    background: #fff;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    padding: 1.2rem 0;
+    max-height: 80vh;
     overflow-y: auto;
+    gap: 0;
   }
-
-  body.dark .nav-links {
-    background: var(--nav-bg-dark);
-    border-top-color: rgba(255, 255, 255, 0.05);
-  }
-
   .nav-links.open {
     display: flex;
   }
-
   .nav-links li {
     width: 100%;
+    text-align: left;
+    padding: 0;
+    margin: 0;
   }
-
   .nav-links a {
+    display: block;
     width: 100%;
     padding: 1rem 1.5rem;
-    border-radius: 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    font-size: 1rem;
+    font-size: 1.1rem;
+    border-bottom: 1px solid #f0f0f0;
   }
-
-  .nav-links a:hover,
-  .nav-links a.active {
-    transform: none;
-    background: var(--primary);
-  }
-
-  .menu-toggle {
-    display: flex;
-  }
-
-  .has-dropdown .dropdown {
-    position: static;
-    background: rgba(255, 255, 255, 0.05);
-    box-shadow: none;
-    border-radius: 0;
-    border: none;
-    min-width: 0;
-    padding: 0;
-    animation: none;
-    margin-left: 1rem;
-    opacity: 1;
-    visibility: visible;
-    transform: none;
-    transition: none;
-  }
-
-  .has-dropdown .dropdown a {
-    padding: 0.75rem 2rem;
-    font-size: 0.9rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-  }
-
-  .has-dropdown .dropdown a:last-child {
+  .nav-links a:last-child {
     border-bottom: none;
   }
-
+  .has-dropdown .dropdown {
+    position: static;
+    background: none;
+    box-shadow: none;
+    margin-left: 0;
+    padding-left: 1.5rem;
+  }
+  .menu-toggle {
+    display: block;
+    position: absolute;
+    right: 3.2rem; /* sağdan bir az aralı olsun */
+    top: 1.2rem;
+    z-index: 1100;
+  }
   .theme-toggle {
-    padding: 6px;
+    position: absolute;
+    right: 1.2rem; /* ən sağda olsun */
+    top: 1.2rem;
+    z-index: 1101; /* hamburgerdən bir az yuxarıda */
   }
 }
-
 @media (max-width: 480px) {
   .navbar .container {
     padding: 0 0.75rem;
@@ -772,6 +742,10 @@ body.dark .footer {
     border: none;
     padding: 0 0.3rem;
   }
+  .navbar {
+    position: relative;
+    z-index: 1000;
+  }
   .navbar .container {
     padding: 0 1rem;
     min-height: 56px;
@@ -785,17 +759,15 @@ body.dark .footer {
     display: none;
     flex-direction: column;
     position: absolute;
-    top: 100%;
+    top: 60px; /* navbar yüksəkliğine görə ayarla */
     left: 0;
-    right: 0;
-    background: var(--nav-bg);
-    z-index: 999;
-    gap: 0;
-    padding: 1rem 0;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    max-height: calc(100vh - 56px);
+    width: 100vw;
+    background: #fff;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    padding: 1.2rem 0;
+    max-height: 80vh;
     overflow-y: auto;
+    gap: 0;
   }
 
   body.dark .nav-links {
@@ -809,54 +781,43 @@ body.dark .footer {
 
   .nav-links li {
     width: 100%;
+    text-align: left;
+    padding: 0;
+    margin: 0;
   }
 
   .nav-links a {
+    display: block;
     width: 100%;
     padding: 1rem 1.5rem;
-    border-radius: 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    font-size: 1rem;
+    font-size: 1.1rem;
+    border-bottom: 1px solid #f0f0f0;
   }
 
-  .nav-links a:hover,
-  .nav-links a.active {
-    transform: none;
-    background: var(--primary);
-  }
-
-  .menu-toggle {
-    display: flex;
+  .nav-links a:last-child {
+    border-bottom: none;
   }
 
   .has-dropdown .dropdown {
     position: static;
-    background: rgba(255, 255, 255, 0.05);
+    background: none;
     box-shadow: none;
-    border-radius: 0;
-    border: none;
-    min-width: 0;
-    padding: 0;
-    animation: none;
-    margin-left: 1rem;
-    opacity: 1;
-    visibility: visible;
-    transform: none;
-    transition: none;
+    margin-left: 0;
+    padding-left: 1.5rem;
   }
 
-  .has-dropdown .dropdown a {
-    padding: 0.75rem 2rem;
-    font-size: 0.9rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  .menu-toggle {
+    display: block;
+    position: absolute;
+    right: 3.2rem; /* sağdan bir az aralı olsun */
+    top: 1.2rem;
+    z-index: 1100;
   }
-
-  .has-dropdown .dropdown a:last-child {
-    border-bottom: none;
-  }
-
   .theme-toggle {
-    padding: 6px;
+    position: absolute;
+    right: 1.2rem; /* ən sağda olsun */
+    top: 1.2rem;
+    z-index: 1101; /* hamburgerdən bir az yuxarıda */
   }
 }
 @media (max-width: 520px) {
