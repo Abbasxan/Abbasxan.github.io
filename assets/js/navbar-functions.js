@@ -27,7 +27,9 @@ function setupThemeToggle() {
 
     // Load saved theme
     const savedTheme = localStorage.getItem("theme")
-    if (savedTheme === "dark" || (!savedTheme && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches
+
+    if (savedTheme === "dark" || (!savedTheme && prefersDark)) {
       document.body.classList.add("dark")
     }
 
@@ -78,7 +80,7 @@ function setupScrollUp() {
 
 function updateScrollProgress() {
   const scrollCircle = document.querySelector(".scroll-progress")
-  if (!scrollCircle) return
+  if (!scrollCircle || !scrollCircle.r || !scrollCircle.r.baseVal) return
 
   const scrollTop = window.scrollY
   const docHeight = document.documentElement.scrollHeight - window.innerHeight
