@@ -64,8 +64,8 @@
       width: 80px;
       height: 80px;
       font-size: 2.5em;
-      background: #18181a;
-      color: #61dafb;
+      background: #fcf6e3;
+      color: #e53935;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -74,13 +74,18 @@
       box-shadow: 0 2px 8px #0003;
       user-select: none;
       transition: background .2s, color .2s, box-shadow .2s;
-      border: 2.2px solid #23232b;
+      border: 2.5px solid #2d3250;
       font-family: 'Inter', Arial, sans-serif;
       font-weight: bold;
+      position: relative;
     }
+    .ttt-cell.o { color: #1e88e5; }
+    .ttt-cell.x { color: #e53935; }
     .ttt-cell:hover:not(.disabled):not(.won) {
-      background: #23232b;
+      background: #fffbe7;
       outline: 2.5px solid #61dafb;
+      color: #00bcd4;
+      z-index: 2;
     }
     .ttt-cell.disabled {
       cursor: default;
@@ -89,13 +94,13 @@
     .ttt-cell.won {
       background: #fbbd23;
       color: #222;
-      box-shadow: 0 0 18px #fbbd2377;
+      box-shadow: 0 0 24px #fbbd23cc, 0 0 18px #61dafb99;
       border-color: #fbbd23;
       animation: blink 1s infinite alternate;
     }
     @keyframes blink {
       from { box-shadow: 0 0 18px #fbbd2377; }
-      to { box-shadow: 0 0 24px #61dafb99; }
+      to { box-shadow: 0 0 28px #61dafbcc; }
     }
     .ttt-status {
       margin-top: 14px;
@@ -138,11 +143,39 @@
       width: 270px;
       max-width: 93vw;
     }
+    /* Мобильные кнопки */
+    .ttt-controls-mobile {
+      display: none;
+      margin-top: 14px;
+      width: 100%;
+      max-width: 320px;
+      justify-content: center;
+      gap: 13px;
+    }
+    .ttt-controls-mobile button {
+      background: #23233b;
+      color: #fbbd23;
+      font-size: 1.7em;
+      border: none;
+      border-radius: 11px;
+      width: 54px; height: 54px;
+      margin: 2px;
+      box-shadow: 0 2px 10px #0007;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+      touch-action: manipulation;
+      transition: background .13s, color .13s;
+    }
+    .ttt-controls-mobile button:active, .ttt-controls-mobile button.active { background: #fbbd23; color: #23233b; }
     @media (max-width: 600px) {
-      .ttt-container { padding: 14px 5vw 14px 5vw;}
+      .ttt-container { padding: 14px 3vw 14px 3vw;}
       .ttt-title { font-size: 1.35em;}
-      .ttt-board { grid-template-columns: repeat(3,23vw); grid-template-rows: repeat(3,23vw);}
+      .ttt-board { grid-template-columns: repeat(3,24vw); grid-template-rows: repeat(3,24vw);}
       .ttt-names { width: 99vw;}
+      .ttt-controls-mobile{display:flex;}
+      .ttt-btn {font-size:0.98em;}
     }
   </style>
 </head>
@@ -171,6 +204,11 @@
       <span id="p2Name">Oyunçu 2 (O)</span>
     </div>
     <div class="ttt-board" id="tttBoard"></div>
+    <div class="ttt-controls-mobile" id="tttMobileControls">
+      <button id="btnLeft" aria-label="Sol">&#8592;</button>
+      <button id="btnMark" aria-label="Qoy">✔️</button>
+      <button id="btnRight" aria-label="Sağ">&#8594;</button>
+    </div>
     <div class="ttt-status" id="tttStatus"></div>
     <button class="ttt-btn" onclick="tttReset()">Yenidən başla</button>
     <a href="../oyunlar.html" class="ttt-btn secondary">← Oyunlara qayıt</a>
@@ -186,6 +224,7 @@
     let playing = true;
     let winLine = [];
     let aiThinking = false;
+    let selectedCell = 0; // For mobile
 
     // --- UI INIT ---
     const tttBoard = document.getElementById("tttBoard");
@@ -216,9 +255,13 @@
       for (let i=0; i<9; i++) {
         const d = document.createElement('div');
         d.className = "ttt-cell";
+        if (board[i] === 'O') d.classList.add('o');
+        if (board[i] === 'X') d.classList.add('x');
         d.textContent = board[i];
         if (board[i] || !playing || aiThinking) d.classList.add('disabled');
         if (winLine.includes(i)) d.classList.add('won');
+        if (selectedCell === i && playing && !aiThinking && /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent))
+          d.style.boxShadow = "0 0 0 3.5px #61dafb, 0 2px 8px #0003";
         d.onclick = () => tttMove(i);
         tttBoard.appendChild(d);
       }
@@ -291,6 +334,7 @@
       playing = true;
       winLine = [];
       aiThinking = false;
+      selectedCell = 0;
       render();
       if (mode==='ai' && current==='O') {
         aiThinking = true;
@@ -380,6 +424,48 @@
       for (let line of w) if (line.every(i=>b[i]===p)) return true;
       return false;
     }
+
+    // --- Мобильные кнопки и свайпы ---
+    function setupMobileControls() {
+      const left = document.getElementById('btnLeft');
+      const right = document.getElementById('btnRight');
+      const mark = document.getElementById('btnMark');
+      left.ontouchstart = left.onmousedown = ()=>{ moveSelection(-1); };
+      right.ontouchstart = right.onmousedown = ()=>{ moveSelection(1); };
+      mark.ontouchstart = mark.onmousedown = ()=>{ if (!aiThinking && playing) tttMove(selectedCell); };
+    }
+    function moveSelection(dir) {
+      if (!playing || aiThinking) return;
+      let free = [];
+      for (let i = 0; i < 9; i++) if (!board[i]) free.push(i);
+      if (!free.length) return;
+      let idx = free.indexOf(selectedCell);
+      if (idx === -1) idx = 0;
+      idx = (idx + dir + free.length) % free.length;
+      selectedCell = free[idx];
+      render();
+    }
+    // Свайпы: влево/вправо — перемещение, вниз — поставить
+    let touchStartX = 0, touchStartY = 0;
+    tttBoard.addEventListener('touchstart', function(e){
+      if(e.touches.length===1){
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+      }
+    });
+    tttBoard.addEventListener('touchend', function(e){
+      if(e.changedTouches.length===1){
+        let dx = e.changedTouches[0].clientX - touchStartX;
+        let dy = e.changedTouches[0].clientY - touchStartY;
+        if(Math.abs(dx)>30 && Math.abs(dx)>Math.abs(dy)){
+          if(dx>0) moveSelection(1);
+          else moveSelection(-1);
+        } else if(Math.abs(dy)>30 && dy>0){
+          if (!aiThinking && playing) tttMove(selectedCell);
+        }
+      }
+    });
+    setupMobileControls();
 
     // --- INIT ---
     setMode(mode);
