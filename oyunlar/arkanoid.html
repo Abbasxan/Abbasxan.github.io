@@ -6,9 +6,13 @@
   <title>Arkanoid | Neon Sultan</title>
   <link rel="stylesheet" href="../assets/css/style.css" />
   <style>
+    body {
+      background: radial-gradient(ellipse at 60% 15%, #495082 0%, #181924 100%);
+      min-height: 100vh;
+    }
     .arkanoid-container { display:flex; flex-direction:column; align-items:center; margin-top:48px;}
     #arkanoidCanvas {
-      background: linear-gradient(160deg, #191924 0%, #23304f 100%);
+      background: #181924;
       border:3px solid #eee;
       border-radius:18px;
       margin-top:24px;
@@ -16,40 +20,47 @@
       box-shadow: 0 10px 40px #000a, 0 1.5px 0.5px #61dafb44;
       transition: box-shadow 0.25s;
       touch-action: manipulation;
+      display: block;
     }
     .arkanoid-score { color:#61dafb; font-size:1.2em; margin-top:16px; text-shadow: 0 2px 8px #222b;}
     .arkanoid-btn { margin-top:18px; padding:10px 24px; font-size:1em; border-radius:11px; border:none; background:linear-gradient(90deg,#61dafb,#fbbd23); color:#222; font-weight:bold; cursor:pointer; transition:all .2s;}
     .arkanoid-btn:hover { background:linear-gradient(90deg,#fbbd23,#61dafb); color:#fff; transform: translateY(-2px) scale(1.055);}
     .arkanoid-level { color: #fbbd23; font-size: 1.1em; margin-top: 14px; text-shadow: 0 2px 8px #222a;}
-    .arkanoid-touch-controls {
+    /* Зоны управления */
+    .arkanoid-touch-zones {
       display: none;
-      flex-direction: column;
-      align-items: center;
-      margin-top: 18px;
-      gap: 8px;
+      width: 98vw;
+      max-width: 480px;
+      margin: 14px auto 0;
+      height: 60px;
+      position: relative;
       user-select: none;
       -webkit-user-select: none;
+      z-index: 9;
     }
-    .arkanoid-control-row { display: flex; flex-direction: row; gap: 12px; }
-    .arkanoid-touch-controls button {
-      background: #61dafb;
+    .arkanoid-touch-zone {
+      width: 50%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5em;
       color: #222;
-      border: none;
-      border-radius: 18px;
-      padding: 18px 32px;
-      font-size: 2em;
-      margin: 0 4px;
-      box-shadow: 0 2px 10px #18192433;
+      opacity: 0.89;
+      background: linear-gradient(90deg,#61dafb33,#fbbd2333);
+      border-radius: 16px;
+      transition: background .18s;
       cursor: pointer;
       touch-action: manipulation;
-      font-family: inherit;
-      transition: background .2s, color .2s;
     }
-    .arkanoid-touch-controls button:active,
-    .arkanoid-touch-controls button:focus {
-      background: #fbbd23;
-      color: #222;
-      outline: 2px solid #ffd600;
+    .arkanoid-touch-zone.left { left: 0; }
+    .arkanoid-touch-zone.right { right: 0; }
+    .arkanoid-touch-zone:active, .arkanoid-touch-zone.active {
+      background: linear-gradient(90deg,#fbbd23cc,#61dafbcc);
+      color: #181924;
+      opacity: 1;
     }
     .arkanoid-fullscreen-btn {
       margin-top: 16px;
@@ -75,7 +86,7 @@
       .arkanoid-container { padding: 8px 2px; margin-top:6vw; }
       #arkanoidCanvas { width: 98vw !important; height: 60vw !important; max-width:98vw; max-height:65vw;}
       .arkanoid-btn { padding: 12px 0; width: 100%; font-size: 1.1em; }
-      .arkanoid-touch-controls { display: flex; }
+      .arkanoid-touch-zones { display:flex; }
       .arkanoid-fullscreen-btn { font-size: 1.2em; }
     }
   </style>
@@ -101,11 +112,9 @@
     <div class="arkanoid-score" id="arkanoidScore">Xal: 0</div>
     <button class="arkanoid-btn" onclick="arkanoidStart()" aria-label="Yenidən başla">Yenidən başla</button>
     <button class="arkanoid-fullscreen-btn" id="fullscreenBtn" onclick="toggleFullscreen()" aria-label="Tam ekran rejimi">⛶ Tam ekran</button>
-    <div class="arkanoid-touch-controls" id="arkanoidTouchControls">
-      <div class="arkanoid-control-row">
-        <button aria-label="Sol" onclick="movePaddle(-1)">⬅️</button>
-        <button aria-label="Sağ" onclick="movePaddle(1)">➡️</button>
-      </div>
+    <div class="arkanoid-touch-zones" id="arkanoidTouchZones">
+      <div class="arkanoid-touch-zone left" id="zoneLeft" aria-label="Sola sür"></div>
+      <div class="arkanoid-touch-zone right" id="zoneRight" aria-label="Sağa sür"></div>
     </div>
     <a href="../oyunlar.html" class="arkanoid-btn" style="background:#222; color:#fff; margin-top:12px;">← Oyunlara qayıt</a>
   </main>
@@ -113,34 +122,52 @@
     <p>© 2025 Sultan. Neon Group Azerbaijan | <a href="../license.html">Lisenziya</a></p>
   </footer>
   <script>
-    // 3D/Neon Arkanoid with Level Progression (мобильная и fullscreen поддержка)
+    // === Arkanoid с уровнями и плавным управлением ===
     const canvas = document.getElementById("arkanoidCanvas");
     const ctx = canvas.getContext("2d");
-
-    // Paddle settings
-    const paddleWidth = 80, paddleHeight = 14, paddleMargin = 10;
-    const paddleDepth = 13;
-
-    // Ball
-    const ballRadius = 9;
-
-    // Level configurations (colors, rows, columns, gaps, brick shape)
+    // Список рандомных уровней (разные цвета, ряды/столбцы, формы)
+    function makeRandomLevel() {
+      // Цвета — яркие и разные на каждый уровень
+      function randColor() {
+        const h = Math.floor(Math.random()*360);
+        return `hsl(${h},92%,60%)`;
+      }
+      const forms = ["rect","circle"];
+      const rows = 4 + Math.floor(Math.random()*4); // 4-7
+      const cols = 6 + Math.floor(Math.random()*5); // 6-10
+      const gap = 6 + Math.floor(Math.random()*5);  // 6-10
+      const brickShape = forms[Math.floor(Math.random()*forms.length)];
+      const brickColor = randColor();
+      const paddle = randColor();
+      const ball = randColor();
+      // случайные пустоты
+      let mask = [];
+      for(let c=0;c<cols;c++) {
+        mask[c] = [];
+        for(let r=0;r<rows;r++) mask[c][r] = Math.random()>0.15?1:0;
+      }
+      return {bg:"#181924",brickColor,paddle,ball,rows,cols,gap,brickShape,mask};
+    }
+    // Всего 7 рандомных + 3 фиксированных уровня
     const LEVELS = [
-      {bg:"#18181a", brickColor:"#61dafb", paddle:"#fbbd23", ball:"#fff", rows:4,cols:8,gap:8, brickShape:"rect"},
+      makeRandomLevel(),
+      makeRandomLevel(),
+      makeRandomLevel(),
+      makeRandomLevel(),
+      makeRandomLevel(),
+      makeRandomLevel(),
+      makeRandomLevel(),
       {bg:"#232b3d", brickColor:"#fbbd23", paddle:"#fff", ball:"#61dafb", rows:5,cols:8,gap:9, brickShape:"rect"},
-      {bg:"#1e272e", brickColor:"#f00", paddle:"#61dafb", ball:"#fbbd23", rows:4,cols:9,gap:8, brickShape:"circle"},
-      {bg:"#111b1e", brickColor:"#00e676", paddle:"#fbbd23", ball:"#fff", rows:6,cols:7,gap:8, brickShape:"rect"},
-      {bg:"#312244", brickColor:"#d500f9", paddle:"#00e676", ball:"#fff", rows:5,cols:10,gap:7, brickShape:"circle"},
-      {bg:"#2b2b2b", brickColor:"#fbc02d", paddle:"#f44336", ball:"#fff", rows:4,cols:8,gap:10, brickShape:"rect"},
-      {bg:"#15171b", brickColor:"#00bcd4", paddle:"#d500f9", ball:"#fbc02d", rows:6,cols:8,gap:7, brickShape:"circle"},
       {bg:"#3e2723", brickColor:"#ffd600", paddle:"#00e676", ball:"#00bcd4", rows:5,cols:9,gap:8, brickShape:"rect"},
       {bg:"#1a237e", brickColor:"#e91e63", paddle:"#ffd600", ball:"#fff", rows:6,cols:10,gap:6, brickShape:"circle"},
-      {bg:"#212121", brickColor:"#fff", paddle:"#e91e63", ball:"#ffd600", rows:7,cols:10,gap:6, brickShape:"rect"}
     ];
+
     const brickWidth = 40;
     const brickHeight = 16;
     const brickOffsetTop = 34;
     const brickOffsetLeft = 13;
+    const paddleWidth = 80, paddleHeight = 14, paddleMargin = 10;
+    const ballRadius = 9;
 
     let level, paddleX, ballX, ballY, ballDX, ballDY, bricks, score, running, animationFrame, totalScore;
 
@@ -164,7 +191,9 @@
       for (let c = 0; c < L.cols; c++) {
         bricks[c] = [];
         for (let r = 0; r < L.rows; r++) {
-          bricks[c][r] = { x: 0, y: 0, status: 1, shade: Math.random() };
+          let isBrick = 1;
+          if (L.mask) isBrick = L.mask[c][r]; // mask — для рандомных уровней
+          bricks[c][r] = { x: 0, y: 0, status: isBrick, shade: Math.random() };
         }
       }
       score = 0;
@@ -184,13 +213,13 @@
             bricks[c][r].x = x;
             bricks[c][r].y = y;
             ctx.save();
-            // 3D/glossy effect
+            // 3D/glossy effect + яркий цвет
             if(L.brickShape === "rect") {
               const grad = ctx.createLinearGradient(x, y, x, y+brickHeight);
               grad.addColorStop(0, L.brickColor);
               grad.addColorStop(1, shadeColor(L.brickColor, -25));
               ctx.fillStyle = grad;
-              ctx.shadowColor = "#fff";
+              ctx.shadowColor = L.brickColor;
               ctx.shadowBlur = 10;
               ctx.fillRect(x, y, brickWidth, brickHeight);
               ctx.globalAlpha = 0.36;
@@ -228,7 +257,6 @@
 
     function drawPaddle() {
       const L = LEVELS[level-1];
-      // "3D" rounded paddle
       ctx.save();
       ctx.shadowColor = "#fff";
       ctx.shadowBlur = 20;
@@ -256,7 +284,6 @@
       ctx.fillStyle = L.ball;
       ctx.fill();
       ctx.shadowBlur = 0;
-      // Glossy highlight
       ctx.globalAlpha = 0.5;
       ctx.beginPath();
       ctx.arc(ballX-4, ballY-4, ballRadius/2, Math.PI*1.4, Math.PI*1.9);
@@ -288,7 +315,7 @@
               score += 10 * level;
               if (isWin()) {
                 totalScore += score;
-                if (level < 10) {
+                if (level < LEVELS.length) {
                   showLevelComplete();
                   setTimeout(()=>startLevel(level+1), 1200);
                   level++;
@@ -356,7 +383,6 @@
         // Add effect: ballDX changes slightly depending on hit position
         const hitPoint = (ballX - (paddleX + paddleWidth / 2)) / (paddleWidth / 2);
         ballDX += hitPoint * 1.5;
-        // Clamp speed
         if (ballDX > 7) ballDX = 7;
         if (ballDX < -7) ballDX = -7;
       }
@@ -373,7 +399,7 @@
       animationFrame = requestAnimationFrame(draw);
     }
 
-    // Paddle mouse control
+    // Paddle mouse control (PC)
     canvas.addEventListener("mousemove", function (e) {
       const rect = canvas.getBoundingClientRect();
       let mouseX = e.clientX - rect.left;
@@ -382,7 +408,7 @@
       if (paddleX + paddleWidth > canvas.width) paddleX = canvas.width - paddleWidth;
     });
 
-    // Paddle keyboard control
+    // Paddle keyboard control (PC)
     document.addEventListener("keydown", function (e) {
       if (!running) return;
       if (e.key === "ArrowLeft") {
@@ -394,15 +420,51 @@
       }
     });
 
-    // Сенсорные кнопки для мобильных
-    function movePaddle(dir) {
+    // ==== Быстрое плавное перемещение платформы на мобильных ====
+    let moveLeft = false, moveRight = false, moveInterval = null;
+    function startMove(dir) {
       if (!running) return;
-      paddleX += dir * 40;
-      if (paddleX < 0) paddleX = 0;
-      if (paddleX + paddleWidth > canvas.width) paddleX = canvas.width - paddleWidth;
+      stopMove();
+      if (dir === -1) moveLeft = true;
+      if (dir === 1) moveRight = true;
+      moveInterval = setInterval(() => {
+        if (!running) return;
+        if (moveLeft) {
+          paddleX -= 9;
+          if (paddleX < 0) paddleX = 0;
+        }
+        if (moveRight) {
+          paddleX += 9;
+          if (paddleX + paddleWidth > canvas.width) paddleX = canvas.width - paddleWidth;
+        }
+      }, 15);
     }
+    function stopMove() {
+      moveLeft = false;
+      moveRight = false;
+      if (moveInterval) clearInterval(moveInterval);
+      moveInterval = null;
+    }
+    // Touch и mouse события для зон управления
+    function setupTouchZones() {
+      const left = document.getElementById('zoneLeft');
+      const right = document.getElementById('zoneRight');
+      // Touch events
+      left.addEventListener('touchstart', e => { startMove(-1); left.classList.add('active'); e.preventDefault(); });
+      left.addEventListener('touchend', e => { stopMove(); left.classList.remove('active'); });
+      right.addEventListener('touchstart', e => { startMove(1); right.classList.add('active'); e.preventDefault(); });
+      right.addEventListener('touchend', e => { stopMove(); right.classList.remove('active'); });
+      // Mouse events (удержание мыши)
+      left.addEventListener('mousedown', e => { startMove(-1); left.classList.add('active'); });
+      left.addEventListener('mouseup', e => { stopMove(); left.classList.remove('active'); });
+      left.addEventListener('mouseleave', e => { stopMove(); left.classList.remove('active'); });
+      right.addEventListener('mousedown', e => { startMove(1); right.classList.add('active'); });
+      right.addEventListener('mouseup', e => { stopMove(); right.classList.remove('active'); });
+      right.addEventListener('mouseleave', e => { stopMove(); right.classList.remove('active'); });
+    }
+    setupTouchZones();
 
-    // Свайпы для мобильных устройств + fullscreen вниз
+    // ==== Свайпы для мобильных + fullscreen вниз ====
     let touchStartX = 0, touchStartY = 0;
     canvas.addEventListener('touchstart', function(e) {
       if(e.touches.length === 1) {
@@ -416,20 +478,16 @@
         let dy = e.changedTouches[0].clientY - touchStartY;
         if(Math.abs(dx) > 24 || Math.abs(dy) > 24) {
           if(Math.abs(dx) > Math.abs(dy)) {
-            if(dx > 0) movePaddle(1); // Right
-            else movePaddle(-1);      // Left
+            if(dx > 0) startMove(1), setTimeout(stopMove, 100); // Right (быстрый рывок)
+            else startMove(-1), setTimeout(stopMove, 100);     // Left  (быстрый рывок)
           } else {
-            if(dy > 0) {
-              // Down: Включить fullscreen
-              toggleFullscreen();
-            }
-            // up — ничего
+            if(dy > 0) toggleFullscreen(); // Down — fullscreen
           }
         }
       }
     });
 
-    // Полноэкранный режим
+    // ==== Полноэкранный режим ====
     function toggleFullscreen() {
       const el = document.getElementById('arkanoidMain');
       if (!document.fullscreenElement && el.requestFullscreen) {
@@ -440,7 +498,6 @@
         setFullscreenBtn(false);
       }
     }
-    // Меняет текст кнопки полноэкранного режима
     function setFullscreenBtn(full) {
       const btn = document.getElementById('fullscreenBtn');
       if(full || document.fullscreenElement){
@@ -453,15 +510,11 @@
     }
     document.addEventListener('fullscreenchange', () => {
       setFullscreenBtn(!!document.fullscreenElement);
-      // canvas.resize для мобильных в fullscreen
-      if(document.fullscreenElement) {
-        setTimeout(resizeCanvasMobile, 100);
-      } else {
-        setTimeout(resetCanvasSize, 100);
-      }
+      if(document.fullscreenElement) setTimeout(resizeCanvasMobile, 100);
+      else setTimeout(resetCanvasSize, 100);
     });
 
-    // Помощь для мобильных: canvas по размеру экрана
+    // ==== Canvas под размер экрана (мобильные) ====
     function resizeCanvasMobile() {
       if(window.innerWidth < 600) {
         canvas.width = window.innerWidth * 0.98;
@@ -472,7 +525,6 @@
       canvas.width = 480;
       canvas.height = 320;
     }
-    // Автоматически подстраивать размер canvas под экран на мобильных
     function handleResize() {
       if(window.innerWidth < 600) {
         resizeCanvasMobile();
@@ -482,8 +534,7 @@
     }
     window.addEventListener('resize', handleResize);
 
-    // --- 3D/Neon helpers ---
-    // Draw rounded rectangle
+    // ==== Helpers ====
     function roundRect(ctx, x, y, w, h, r, fill, stroke) {
       ctx.beginPath();
       ctx.moveTo(x+r, y);
@@ -499,8 +550,13 @@
       if (fill) ctx.fill();
       if (stroke) ctx.stroke();
     }
-    // Lighten/darken color by percent
     function shadeColor(color, percent) {
+      // HSL поддержка! для ярких цветов
+      if(color.startsWith("hsl")) {
+        let [h,s,l] = color.match(/\d+/g).map(Number);
+        l = Math.max(0,Math.min(100,l+percent));
+        return `hsl(${h},${s}%,${l}%)`;
+      }
       color = color.replace('#','');
       let R = parseInt(color.substring(0,2),16);
       let G = parseInt(color.substring(2,4),16);
