@@ -3,10 +3,12 @@ class NavbarManager {
   constructor() {
     this.mobileMenuBtn = null
     this.navLinks = null
+    this.dropdowns = []
     this.init()
   }
 
   init() {
+    // Wait for DOM to be ready
     if (document.readyState === "loading") {
       document.addEventListener("DOMContentLoaded", () => this.setup())
     } else {
@@ -37,8 +39,11 @@ class NavbarManager {
     const isOpen = this.navLinks.classList.contains("open")
     this.navLinks.classList.toggle("open")
     this.mobileMenuBtn.classList.toggle("active")
+
+    // Update aria-expanded
     this.mobileMenuBtn.setAttribute("aria-expanded", !isOpen)
 
+    // Close all dropdowns when mobile menu closes
     if (isOpen) {
       this.closeAllDropdowns()
     }
@@ -52,6 +57,7 @@ class NavbarManager {
       const menu = dropdown.querySelector(".dropdown")
 
       if (toggle && menu) {
+        // Desktop hover events
         dropdown.addEventListener("mouseenter", () => {
           if (window.innerWidth > 768) {
             this.openDropdown(dropdown)
@@ -64,11 +70,13 @@ class NavbarManager {
           }
         })
 
+        // Mobile/keyboard click events
         toggle.addEventListener("click", (e) => {
           e.preventDefault()
           this.toggleDropdown(dropdown)
         })
 
+        // Keyboard navigation
         toggle.addEventListener("keydown", (e) => {
           if (e.key === "Enter" || e.key === " ") {
             e.preventDefault()
@@ -97,7 +105,10 @@ class NavbarManager {
 
   toggleDropdown(dropdown) {
     const isOpen = dropdown.classList.contains("open")
+
+    // Close all other dropdowns first
     this.closeAllDropdowns()
+
     if (!isOpen) {
       this.openDropdown(dropdown)
     }
@@ -126,6 +137,8 @@ class NavbarManager {
   getCurrentPage() {
     const path = window.location.pathname
     const filename = path.split("/").pop().replace(".html", "") || "index"
+
+    // Handle special cases
     const pageMap = {
       deyisiklikler: "changelog",
       tertibatcilar: "contributors",
@@ -137,17 +150,6 @@ class NavbarManager {
   setupEventListeners() {
     // Close mobile menu when clicking nav links
     document.querySelectorAll(".nav-links a").forEach((link) => {
-      link.addEventListener("click", () => {
-        if (window.innerWidth <= 768) {
-          this.navLinks.classList.remove("open")
-          this.mobileMenuBtn.classList.remove("active")
-          this.mobileMenuBtn.setAttribute("aria-expanded", "false")
-        }
-      })
-    })
-
-    // Also close mobile menu when dropdown links are clicked
-    document.querySelectorAll(".has-dropdown .dropdown a").forEach((link) => {
       link.addEventListener("click", () => {
         if (window.innerWidth <= 768) {
           this.navLinks.classList.remove("open")
@@ -178,18 +180,68 @@ class NavbarManager {
         this.closeAllDropdowns()
       }
     })
-
-    // Close everything on Escape
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") {
-        this.closeAllDropdowns()
-        this.navLinks.classList.remove("open")
-        this.mobileMenuBtn.classList.remove("active")
-        this.mobileMenuBtn.setAttribute("aria-expanded", "false")
-      }
-    })
   }
 }
 
 // Initialize navbar when script loads
 new NavbarManager()
+
+// Fallback for older browsers or if class doesn't work
+document.addEventListener("DOMContentLoaded", () => {
+  // Mobile menu toggle
+  const mobileMenuBtn = document.getElementById("mobileMenuBtn")
+  const navLinks = document.getElementById("navLinks")
+
+  if (mobileMenuBtn && navLinks) {
+    mobileMenuBtn.addEventListener("click", (e) => {
+      e.preventDefault()
+      navLinks.classList.toggle("open")
+      mobileMenuBtn.classList.toggle("active")
+    })
+  }
+
+  // Dropdown functionality
+  document.querySelectorAll(".has-dropdown").forEach((dropdown) => {
+    const toggle = dropdown.querySelector(".dropdown-toggle")
+
+    if (toggle) {
+      // Desktop hover
+      dropdown.addEventListener("mouseenter", () => {
+        if (window.innerWidth > 768) {
+          dropdown.classList.add("open")
+        }
+      })
+
+      dropdown.addEventListener("mouseleave", () => {
+        if (window.innerWidth > 768) {
+          dropdown.classList.remove("open")
+        }
+      })
+
+      // Mobile/Desktop click
+      toggle.addEventListener("click", (e) => {
+        e.preventDefault()
+        dropdown.classList.toggle("open")
+      })
+    }
+  })
+
+  // Close dropdowns when clicking outside
+  document.addEventListener("click", (e) => {
+    if (!e.target.closest(".has-dropdown")) {
+      document.querySelectorAll(".has-dropdown.open").forEach((dropdown) => {
+        dropdown.classList.remove("open")
+      })
+    }
+  })
+
+  // Close mobile menu when clicking nav links
+  document.querySelectorAll(".nav-links a").forEach((link) => {
+    link.addEventListener("click", () => {
+      if (window.innerWidth <= 768 && navLinks) {
+        navLinks.classList.remove("open")
+        if (mobileMenuBtn) mobileMenuBtn.classList.remove("active")
+      }
+    })
+  })
+})
