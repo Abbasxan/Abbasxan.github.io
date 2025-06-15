@@ -9,10 +9,44 @@
     body {background: radial-gradient(ellipse at 60% 15%, #495082 0%, #181924 100%);}
     .snake-container { display:flex; flex-direction:column; align-items:center; margin-top:48px; background:rgba(24,25,36,.96); border-radius:18px; padding:36px 32px 32px 32px; box-shadow:0 10px 44px #000b; max-width:410px; margin:auto;}
     .snake-title { font-size:2em; color:#61dafb; margin-bottom:8px; text-shadow:0 2px 12px #222b;}
-    #snakeCanvas { background:linear-gradient(160deg, #191924 0%, #23304f 100%); border-radius:12px; margin-top:24px; box-shadow:0 10px 40px #000a, 0 1.5px 0.5px #61dafb44;}
+    #snakeCanvas { background:linear-gradient(160deg, #191924 0%, #23304f 100%); border-radius:12px; margin-top:24px; box-shadow:0 10px 40px #000a, 0 1.5px 0.5px #61dafb44; width:320px; height:320px;}
     .snake-score { color:#fbbd23; font-size:1.2em; margin-top:16px; text-shadow:0 2px 8px #222b;}
     .snake-btn { margin-top:18px; padding:10px 24px; font-size:1em; border-radius:11px; border:none; background:linear-gradient(90deg,#61dafb,#fbbd23); color:#222; font-weight:bold; cursor:pointer; box-shadow:0 2px 8px #0004; transition:.2s;}
     .snake-btn:hover { background:linear-gradient(90deg,#fbbd23,#61dafb); color:#fff; transform: translateY(-2px) scale(1.055);}
+    .snake-controls { color:#61dafb; font-size:.98em; margin-top:8px; text-align:center; }
+    .mobile-controls {
+      display: none;
+      margin-top: 18px;
+      gap: 14px;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .mobile-btn {
+      background: #23233b;
+      color: #fbbd23;
+      font-size: 2em;
+      border: none;
+      border-radius: 14px;
+      width: 64px; height: 64px;
+      margin: 2px 7px;
+      box-shadow: 0 2px 10px #0007;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+      touch-action: manipulation;
+      transition: background .13s, color .13s;
+    }
+    .mobile-btn:active { background: #fbbd23; color: #23233b; }
+    @media (max-width:600px){
+      .snake-container { padding:14px 10px; max-width:98vw; }
+      #snakeCanvas { width:98vw; height:98vw; max-width:400px; max-height:400px; }
+      .mobile-controls { display:flex; }
+      .snake-title { font-size:1.4em; }
+      .snake-score { font-size:1em; }
+      .snake-btn { font-size:0.98em; }
+    }
   </style>
 </head>
 <body>
@@ -21,6 +55,14 @@
     <div class="snake-title">Neon Snake</div>
     <canvas id="snakeCanvas" width="320" height="320"></canvas>
     <div class="snake-score" id="snakeScore">Xal: 0</div>
+    <div class="snake-controls">⬅️ ➡️ ⬆️ ⬇️ — hərəkət</div>
+    <!-- Mobile Controls -->
+    <div class="mobile-controls" id="mobileControls">
+      <button class="mobile-btn" id="btnLeft">⬅️</button>
+      <button class="mobile-btn" id="btnUp">⬆️</button>
+      <button class="mobile-btn" id="btnRight">➡️</button>
+      <button class="mobile-btn" id="btnDown">⬇️</button>
+    </div>
     <button class="snake-btn" onclick="snakeStart()">Yenidən başla</button>
     <a href="../oyunlar.html" class="snake-btn" style="background:#222; color:#fff; margin-top:12px;">← Oyunlara qayıt</a>
   </main>
@@ -29,6 +71,21 @@
     const canvas = document.getElementById('snakeCanvas');
     const ctx = canvas.getContext('2d');
     let snake, dir, nextDir, food, score, running, timer, cell=20, size=16, speed=100;
+
+    // Responsive canvas sizing
+    function resizeCanvas() {
+      const maxSize = Math.min(window.innerWidth * 0.95, 400);
+      if (window.innerWidth <= 600) {
+        canvas.style.width = Math.min(window.innerWidth * 0.98, maxSize) + 'px';
+        canvas.style.height = Math.min(window.innerWidth * 0.98, maxSize) + 'px';
+      } else {
+        canvas.style.width = '320px';
+        canvas.style.height = '320px';
+      }
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
 
     function snakeStart() {
       snake = [{x:8,y:8}];
@@ -48,12 +105,64 @@
       } while(snake.some(s=>s.x===pos.x&&s.y===pos.y));
       return pos;
     }
+
+    // Keyboard controls
     document.addEventListener('keydown', e=>{
       if(e.key==="ArrowUp"&&dir!=="down") nextDir="up";
       if(e.key==="ArrowDown"&&dir!=="up") nextDir="down";
       if(e.key==="ArrowLeft"&&dir!=="right") nextDir="left";
       if(e.key==="ArrowRight"&&dir!=="left") nextDir="right";
     });
+
+    // Mobile controls
+    function setupMobileControls() {
+      // Check if mobile device
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      if (isMobile) {
+        document.getElementById('mobileControls').style.display = 'flex';
+      }
+
+      // Set up touch events for mobile buttons
+      document.getElementById('btnUp').addEventListener('touchstart', function(e) {
+        e.preventDefault();
+        if(dir!=="down") nextDir="up";
+      });
+
+      document.getElementById('btnDown').addEventListener('touchstart', function(e) {
+        e.preventDefault();
+        if(dir!=="up") nextDir="down";
+      });
+
+      document.getElementById('btnLeft').addEventListener('touchstart', function(e) {
+        e.preventDefault();
+        if(dir!=="right") nextDir="left";
+      });
+
+      document.getElementById('btnRight').addEventListener('touchstart', function(e) {
+        e.preventDefault();
+        if(dir!=="left") nextDir="right";
+      });
+
+      // Also add mouse events for testing on desktop
+      document.getElementById('btnUp').addEventListener('mousedown', function() {
+        if(dir!=="down") nextDir="up";
+      });
+
+      document.getElementById('btnDown').addEventListener('mousedown', function() {
+        if(dir!=="up") nextDir="down";
+      });
+
+      document.getElementById('btnLeft').addEventListener('mousedown', function() {
+        if(dir!=="right") nextDir="left";
+      });
+
+      document.getElementById('btnRight').addEventListener('mousedown', function() {
+        if(dir!=="left") nextDir="right";
+      });
+    }
+
+    // Initialize mobile controls
+    setupMobileControls();
 
     function loop() {
       if (!running) return;

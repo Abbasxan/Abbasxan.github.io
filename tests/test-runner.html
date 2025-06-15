@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neon Sultan - Test Runner</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h1 {
+            color: #61dafb;
+            text-align: center;
+        }
+        .test-controls {
+            margin: 20px 0;
+            text-align: center;
+        }
+        .page-selector {
+            margin: 20px 0;
+            text-align: center;
+        }
+        select, button {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            padding: 8px 15px;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #61dafb;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #4fa8c7;
+        }
+        #results {
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 4px;
+        }
+        .test-result {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .pass {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .fail {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .summary {
+            margin-top: 20px;
+            font-weight: bold;
+            text-align: center;
+        }
+        .test-section {
+            margin-top: 30px;
+            border-top: 1px solid #ddd;
+            padding-top: 20px;
+        }
+        #page-container {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Neon Sultan - Test Runner</h1>
+
+    <div class="page-selector">
+        <label for="pageSelect">Select page to test:</label>
+        <select id="pageSelect">
+            <option value="../index.html">Home Page</option>
+            <option value="../about.html">About Page</option>
+            <option value="../projects.html">Projects Page</option>
+            <option value="../oyunlar.html">Games Page</option>
+        </select>
+        <button id="loadPage">Load Page</button>
+    </div>
+
+    <div id="page-container">
+        <!-- The iframe will be inserted here -->
+    </div>
+
+    <div class="test-section">
+        <h2>Page Tests</h2>
+        <div class="test-controls">
+            <button id="runPageTests">Run Page Tests</button>
+        </div>
+
+        <div id="pageTestResults">
+            <p>Load a page and click "Run Page Tests" to test the loaded page.</p>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>Component Tests</h2>
+        <div class="test-controls">
+            <button id="runComponentTests">Run Component Tests</button>
+        </div>
+
+        <div id="componentTestResults">
+            <p>Click "Run Component Tests" to test individual components.</p>
+        </div>
+    </div>
+
+    <!-- Load the test scripts -->
+    <script src="basic-tests.js"></script>
+    <script src="page-loader.js"></script>
+
+    <script>
+        // Variables to store the loaded iframe and page test suite
+        let loadedIframe = null;
+        let pageTestSuite = null;
+
+        // Load page button click handler
+        document.getElementById('loadPage').addEventListener('click', function() {
+            // Clear previous iframe
+            document.getElementById('page-container').innerHTML = '';
+
+            // Get selected page
+            const pageUrl = document.getElementById('pageSelect').value;
+
+            // Load page in iframe
+            PageLoader.loadPageInIframe(pageUrl)
+                .then(iframe => {
+                    loadedIframe = iframe;
+                    pageTestSuite = PageLoader.runTestsAgainstPage(iframe);
+                    document.getElementById('pageTestResults').innerHTML = 
+                        '<p>Page loaded. Click "Run Page Tests" to test the page.</p>';
+                })
+                .catch(error => {
+                    document.getElementById('pageTestResults').innerHTML = 
+                        `<p class="fail">Error loading page: ${error.message}</p>`;
+                });
+        });
+
+        // Run page tests button click handler
+        document.getElementById('runPageTests').addEventListener('click', function() {
+            if (!loadedIframe || !pageTestSuite) {
+                document.getElementById('pageTestResults').innerHTML = 
+                    '<p class="fail">Please load a page first.</p>';
+                return;
+            }
+
+            // Clear previous results
+            const resultsDiv = document.getElementById('pageTestResults');
+            resultsDiv.innerHTML = '<h3>Page Test Results</h3>';
+
+            // Run tests
+            const results = pageTestSuite.runTests();
+
+            // Display results
+            results.details.forEach(test => {
+                const resultDiv = document.createElement('div');
+                resultDiv.className = `test-result ${test.passed ? 'pass' : 'fail'}`;
+
+                if (test.passed) {
+                    resultDiv.innerHTML = `✅ PASS: ${test.name}`;
+                } else {
+                    resultDiv.innerHTML = `❌ FAIL: ${test.name} - ${test.message}`;
+                }
+
+                resultsDiv.appendChild(resultDiv);
+            });
+
+            // Add summary
+            const summaryDiv = document.createElement('div');
+            summaryDiv.className = 'summary';
+            summaryDiv.innerHTML = `Page Test Summary: ${results.passed} passed, ${results.failed} failed`;
+            resultsDiv.appendChild(summaryDiv);
+        });
+
+        // Run component tests button click handler
+        document.getElementById('runComponentTests').addEventListener('click', function() {
+            // Clear previous results
+            const resultsDiv = document.getElementById('componentTestResults');
+            resultsDiv.innerHTML = '<h3>Component Test Results</h3>';
+
+            // Run tests
+            const results = TestSuite.runTests();
+
+            // Display results
+            results.details.forEach(test => {
+                const resultDiv = document.createElement('div');
+                resultDiv.className = `test-result ${test.passed ? 'pass' : 'fail'}`;
+
+                if (test.passed) {
+                    resultDiv.innerHTML = `✅ PASS: ${test.name}`;
+                } else {
+                    resultDiv.innerHTML = `❌ FAIL: ${test.name} - ${test.message}`;
+                }
+
+                resultsDiv.appendChild(resultDiv);
+            });
+
+            // Add summary
+            const summaryDiv = document.createElement('div');
+            summaryDiv.className = 'summary';
+            summaryDiv.innerHTML = `Component Test Summary: ${results.passed} passed, ${results.failed} failed`;
+            resultsDiv.appendChild(summaryDiv);
+        });
+    </script>
+</body>
+</html>

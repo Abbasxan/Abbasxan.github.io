@@ -214,14 +214,15 @@ body.dark .has-dropdown .dropdown a {
 .menu-toggle {
   display: none;
   flex-direction: column;
-  gap: 7px; /* əvvəlki 4px idi, indi 7px et */
+  gap: 6px; /* Optimized spacing for better appearance */
   background: none;
   border: none;
   cursor: pointer;
-  padding: 8px;
+  padding: 10px; /* Increased for better touch target */
   border-radius: 6px;
   z-index: 1001;
   transition: background 0.2s ease;
+  touch-action: manipulation; /* Prevents delay on touch devices */
 }
 
 .menu-toggle:hover {
@@ -230,8 +231,8 @@ body.dark .has-dropdown .dropdown a {
 
 .menu-toggle span {
   display: block;
-  width: 30px;   /* bir az böyütmək üçün */
-  height: 7px; /* bir az qalınlaşdırmaq üçün */
+  width: 30px;
+  height: 5px; /* Slightly reduced for better appearance */
   background: var(--primary);
   border-radius: 4px;
   transition: all 0.3s ease;
@@ -255,13 +256,14 @@ body.dark .has-dropdown .dropdown a {
   background: none;
   border: none;
   cursor: pointer;
-  padding: 8px;
+  padding: 10px; /* Increased for better touch target */
   border-radius: 8px;
   transition: all 0.2s ease;
   z-index: 1001;
   display: flex;
   align-items: center;
   justify-content: center;
+  touch-action: manipulation; /* Prevents delay on touch devices */
 }
 
 .theme-toggle:hover {
@@ -303,77 +305,35 @@ body.dark .theme-toggle .icon-sun {
 }
 
 /* Mobile Styles */
+/* Mobile Styles - Consolidated */
 @media (max-width: 768px) {
   .navbar {
     position: relative;
     z-index: 1000;
   }
-  .nav-links {
-    display: none;
-    flex-direction: column;
-    position: absolute;
-    top: 60px; /* navbar yüksəkliğine görə ayarla */
-    left: 0;
-    width: 100vw;
-    background: #fff;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
-    padding: 1.2rem 0;
-    max-height: 80vh;
-    overflow-y: auto;
-    gap: 0;
-  }
-  .nav-links.open {
-    display: flex;
-  }
-  .nav-links li {
-    width: 100%;
-    text-align: left;
-    padding: 0;
-    margin: 0;
-  }
-  .nav-links a {
-    display: block;
-    width: 100%;
-    padding: 1rem 1.5rem;
-    font-size: 1.1rem;
-    border-bottom: 1px solid #f0f0f0;
-  }
-  .nav-links a:last-child {
-    border-bottom: none;
-  }
-  .has-dropdown .dropdown {
-    position: static;
-    background: none;
-    box-shadow: none;
-    margin-left: 0;
-    padding-left: 1.5rem;
-  }
-  .menu-toggle {
-    display: block;
-    position: absolute;
-    right: 3.2rem; /* sağdan bir az aralı olsun */
-    top: 1.2rem;
-    z-index: 1100;
-  }
-  .theme-toggle {
-    position: absolute;
-    right: 1.2rem; /* ən sağda olsun */
-    top: 1.2rem;
-    z-index: 1101; /* hamburgerdən bir az yuxarıda */
-  }
 }
 @media (max-width: 480px) {
   .navbar .container {
     padding: 0 0.75rem;
+    min-height: 56px; /* Slightly smaller for very small screens */
   }
 
   .logo {
     font-size: 1rem;
   }
 
+  .nav-links {
+    top: 56px; /* Match the navbar height */
+    max-height: calc(100vh - 56px); /* Adjust for smaller navbar */
+  }
+
   .nav-links a {
-    padding: 0.875rem 1.25rem;
+    padding: 1rem 1.25rem; /* Still larger than original for touch, but smaller than 768px */
     font-size: 0.95rem;
+  }
+
+  .menu-toggle, .theme-toggle {
+    top: 0.9rem; /* Adjust position for smaller navbar */
   }
 }
 
@@ -748,7 +708,7 @@ body.dark .footer {
   }
   .navbar .container {
     padding: 0 1rem;
-    min-height: 56px;
+    min-height: 60px; /* Increased for better touch targets */
   }
 
   .logo {
@@ -759,15 +719,16 @@ body.dark .footer {
     display: none;
     flex-direction: column;
     position: absolute;
-    top: 60px; /* navbar yüksəkliğine görə ayarla */
+    top: 60px;
     left: 0;
-    width: 100vw;
+    width: 100%; /* Changed from 100vw to prevent horizontal scrolling */
     background: #fff;
     box-shadow: 0 4px 24px rgba(0,0,0,0.08);
     padding: 1.2rem 0;
-    max-height: 80vh;
+    max-height: calc(100vh - 60px); /* Improved to use all available space */
     overflow-y: auto;
     gap: 0;
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
   }
 
   body.dark .nav-links {
@@ -789,9 +750,13 @@ body.dark .footer {
   .nav-links a {
     display: block;
     width: 100%;
-    padding: 1rem 1.5rem;
+    padding: 1.2rem 1.5rem; /* Increased padding for better touch targets */
     font-size: 1.1rem;
     border-bottom: 1px solid #f0f0f0;
+  }
+
+  body.dark .nav-links a {
+    border-bottom-color: rgba(255, 255, 255, 0.05);
   }
 
   .nav-links a:last-child {
@@ -804,20 +769,36 @@ body.dark .footer {
     box-shadow: none;
     margin-left: 0;
     padding-left: 1.5rem;
+    display: none; /* Hide by default */
+  }
+
+  .has-dropdown.open .dropdown {
+    display: block; /* Show when parent is open */
+  }
+
+  .dropdown-toggle .arrow {
+    transition: transform 0.3s ease;
+  }
+
+  .has-dropdown.open .dropdown-toggle .arrow {
+    transform: rotate(180deg); /* Rotate arrow when open */
   }
 
   .menu-toggle {
     display: block;
     position: absolute;
-    right: 3.2rem; /* sağdan bir az aralı olsun */
+    right: 3.2rem;
     top: 1.2rem;
     z-index: 1100;
+    padding: 8px; /* Increased padding for better touch target */
   }
+
   .theme-toggle {
     position: absolute;
-    right: 1.2rem; /* ən sağda olsun */
+    right: 1.2rem;
     top: 1.2rem;
-    z-index: 1101; /* hamburgerdən bir az yuxarıda */
+    z-index: 1101;
+    padding: 8px; /* Increased padding for better touch target */
   }
 }
 @media (max-width: 520px) {
@@ -862,20 +843,6 @@ body.dark .footer {
   }
 }
 
-@media (max-width: 480px) {
-  .navbar .container {
-    padding: 0 0.75rem;
-  }
-
-  .logo {
-    font-size: 1rem;
-  }
-
-  .nav-links a {
-    padding: 0.875rem 1.25rem;
-    font-size: 0.95rem;
-  }
-}
 
 mark {
   background: var(--accent);
