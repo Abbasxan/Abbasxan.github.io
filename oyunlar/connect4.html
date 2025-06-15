@@ -108,6 +108,7 @@
     // --- State
     let c4BoardArr, c4Turn, c4WinLine=[], c4Mode='pvp', c4AIThinking=false, c4Finished=false;
     let c4SelectedCol = 3; // Для мобильных и кнопок
+
     function c4SetMode(m){
       c4Mode = m;
       document.getElementById('c4PVP').classList.toggle('active',m==='pvp');
@@ -118,7 +119,7 @@
       c4BoardArr = Array(6).fill().map(()=>Array(7).fill(null));
       c4Turn = 'r'; c4WinLine=[]; c4AIThinking=false; c4Finished=false; c4SelectedCol=3;
       c4Render(); c4Status();
-      if(c4Mode==='ai' && c4Turn==='y') setTimeout(c4AIMove,800);
+      if(c4Mode==='ai' && c4Turn==='y') setTimeout(()=>{if(!c4Finished) c4AIMove();},800);
     }
     function c4Render(){
       let html='';
@@ -144,7 +145,7 @@
         c4Turn = c4Turn==='r'?'y':'r';
         c4SelectedCol = 3;
         c4Render(); c4Status();
-        if(c4Mode==='ai' && c4Turn==='y') setTimeout(c4AIMove,800);
+        if(c4Mode==='ai' && c4Turn==='y') setTimeout(()=>{if(!c4Finished) c4AIMove();},800);
         break;
       }
     }
@@ -166,6 +167,7 @@
     }
     // --- NEON AI (улучшенный: сначала ищет победу, затем блокирует игрока, иначе случайно)
     function c4AIMove(){
+      if(c4Finished) { c4AIThinking = false; return; }
       c4AIThinking=true;
       let choices = [];
       for(let x=0;x<7;x++)if(!c4BoardArr[0][x])choices.push(x);
@@ -196,7 +198,10 @@
       if(col===null){
         col = choices.includes(3)?3:choices[Math.floor(Math.random()*choices.length)];
       }
-      setTimeout(()=>{c4CellClick(col);c4AIThinking=false;},350+Math.random()*300);
+      setTimeout(()=>{
+        if(!c4Finished) c4CellClick(col);
+        c4AIThinking=false;
+      },350+Math.random()*300);
     }
     function getAvailableRow(col){
       for(let y=5;y>=0;y--)if(!c4BoardArr[y][col])return y;
