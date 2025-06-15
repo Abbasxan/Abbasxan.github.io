@@ -13,9 +13,33 @@
     .chess-mode-btn { background:linear-gradient(90deg,#61dafb,#fbbd23); color:#222; border:none; border-radius:9px; font-weight:bold; font-size:1em; padding:7px 20px; cursor:pointer; box-shadow:0 2px 8px #0004; transition:.16s;}
     .chess-mode-btn.active, .chess-mode-btn:focus { background:linear-gradient(90deg,#fbbd23,#61dafb); color:#fff; outline:2px solid #fbbd23;}
     .chess-board {display:grid; grid-template-columns:repeat(8,40px); grid-template-rows:repeat(8,40px); gap:2px; margin-top:16px; margin-bottom:18px;}
-    .chess-cell {width:40px; height:40px; border-radius:7px; display:flex; align-items:center; justify-content:center; font-size:1.9em; cursor:pointer; transition:.15s;}
-    .chess-cell.dark {background:#23233a; }
-    .chess-cell.light {background:#61dafb33;}
+    /* Оптимизированные цвета доски */
+    .chess-cell {
+      width:40px; height:40px; border-radius:7px;
+      display:flex; align-items:center; justify-content:center;
+      font-size:1.9em; cursor:pointer; transition:.15s;
+      position: relative;
+      box-shadow: 0 1.5px 5px #0003;
+    }
+    .chess-cell.dark {
+      background: #2d3250;
+      /* глубокий синий для тёмных */
+    }
+    .chess-cell.light {
+      background: #f3eecb;
+      /* светлый бежевый для светлых */
+    }
+    /* Контрастные фигуры */
+    .chess-piece-white {
+      color: #f6f6f6;
+      text-shadow: 0 0 2px #222, 0 2px 8px #fff8;
+      filter: drop-shadow(0 0 10px #fff6);
+    }
+    .chess-piece-black {
+      color: #222b3d;
+      text-shadow: 0 0 2px #fff, 0 2px 8px #000a;
+      filter: drop-shadow(0 0 8px #2228);
+    }
     .chess-cell.selected {outline:2.5px solid #fbbd23;}
     .chess-cell.move {box-shadow:0 0 0 3px #00e67699;}
     .chess-status {color:#fff; font-size:1.12em; min-height:32px; margin-bottom:8px; text-shadow:0 2px 8px #2229;}
@@ -88,7 +112,6 @@
     </div>
     <div class="chess-status" id="chessStatus"></div>
     <div class="chess-board" id="chessBoard"></div>
-    <!-- Управление для мобильных -->
     <div class="chess-controls-mobile" id="chessMobileControls">
       <button id="btnUndo" aria-label="Geri al (undo)">↩️</button>
       <button id="btnFS" class="chess-fullscreen-btn" aria-label="Tam ekran rejimi">⛶</button>
@@ -146,7 +169,10 @@
           s+='"';
           brd += `<div ${s} onclick="chessCellClick(${y},${x})">`;
           let v = chessBoardArr[y][x];
-          if(v) brd += `<span style="filter:drop-shadow(0 0 8px #61dafb99);">${PIECES[v]}</span>`;
+          if(v) {
+            let pieceClass = /^[A-Z]$/.test(v) ? 'chess-piece-white' : 'chess-piece-black';
+            brd += `<span class="${pieceClass}">${PIECES[v]}</span>`;
+          }
           brd += '</div>';
         }
       }
@@ -181,7 +207,6 @@
       let moves = [], dirs, step, ny, nx, t;
       if(!v)return [];
       let color = /^[A-Z]$/.test(v)?"w":"b";
-      // Pawns
       if(v==="P"||v==="p"){
         let dir = v==="P"?-1:1, start = v==="P"?6:1;
         ny = y+dir;
@@ -192,12 +217,10 @@
           if(ny>=0&&ny<8&&nx>=0&&nx<8&&chessBoardArr[ny][nx]&&(/^[A-Z]$/.test(v)?/^[a-z]$/.test(chessBoardArr[ny][nx]):/^[A-Z]$/.test(chessBoardArr[ny][nx]))) moves.push({y:ny,x:nx});
         }
       }
-      // Knights
       if(v.toLowerCase()==="n") for(let [dy,dx] of [[-2,-1],[-2,1],[2,-1],[2,1],[-1,-2],[-1,2],[1,-2],[1,2]]){
         ny=y+dy;nx=x+dx;
         if(ny>=0&&ny<8&&nx>=0&&nx<8&&(!chessBoardArr[ny][nx]||(color==="w"?/^[a-z]$/.test(chessBoardArr[ny][nx]):/^[A-Z]$/.test(chessBoardArr[ny][nx])))) moves.push({y:ny,x:nx});
       }
-      // Rooks, Bishops, Queen
       let lines = [];
       if("RQrq".includes(v)) lines.push([1,0],[0,1],[-1,0],[0,-1]);
       if("BQbq".includes(v)) lines.push([1,1],[1,-1],[-1,1],[-1,-1]);
@@ -213,18 +236,15 @@
           ny+=dy; nx+=dx;
         }
       }
-      // King
       if("Kk".includes(v)){
         for(let dy of [-1,0,1])for(let dx of [-1,0,1]) if(dy||dx){
           ny=y+dy; nx=x+dx;
           if(ny>=0&&ny<8&&nx>=0&&nx<8&&( !chessBoardArr[ny][nx] || (color==="w"?/^[a-z]$/.test(chessBoardArr[ny][nx]):/^[A-Z]$/.test(chessBoardArr[ny][nx])) )) moves.push({y:ny,x:nx});
         }
       }
-      // Remove moves leaving king in check
       return moves.filter(m=>!wouldBeInCheck(y,x,m.y,m.x,color));
     }
     function wouldBeInCheck(y1,x1,y2,x2,color){
-      // Simulate move
       let backup = JSON.parse(JSON.stringify(chessBoardArr));
       let v = chessBoardArr[y1][x1];
       chessBoardArr[y1][x1]=null;
@@ -240,7 +260,6 @@
       chessBoardArr = backup;
       return inCheck;
     }
-    // Legal moves ignoring own king check (for wouldBeInCheck)
     function legalMovesNoCheck(y,x){
       let v = chessBoardArr[y][x];
       let moves = [], dirs, step, ny, nx, t;
@@ -284,7 +303,6 @@
       return moves;
     }
     function chessMove(y1,x1,y2,x2){
-      // Save state for undo
       chessHistory.push({
         board: chessBoardArr.map(row=>row.slice()),
         turn: chessTurn,
@@ -295,7 +313,6 @@
       chessBoardArr[y1][x1]=null;
       chessBoardArr[y2][x2]=v;
       chessSelected=null;
-      // Checkmate/Win: (крайне упрощенно: если король съеден или нет ходов)
       let kings = [].concat(...chessBoardArr).filter(p=>p==="K"||p==="k");
       if(kings.length<2){chessFinished=true;}
       else if(!hasAnyLegalMoves(chessTurn==="w"?"b":"w")){chessFinished=true;}
@@ -309,7 +326,6 @@
           if(legalMoves(y,x).length) return true;
       return false;
     }
-    // --- Улучшенный AI ---
     function chessAI(){
       chessAIThinking=true;updateChessStatus();
       setTimeout(()=>{
@@ -325,14 +341,12 @@
                 self: pieceValue(chessBoardArr[y][x])
               });
           }
-        // 1. Если есть взятие — бьёт самую дорогую фигуру
         let captureMoves = movesList.filter(m=>m.capture>0);
         let pick;
         if(captureMoves.length) {
           captureMoves.sort((a,b)=>b.capture-a.capture);
           pick = captureMoves[0];
         } else {
-          // 2. Не подставляет ферзя и короля под бой (простейшая логика)
           let safeMoves = movesList.filter(m=>{
             let backup = chessBoardArr.map(row=>row.slice());
             let v = chessBoardArr[m.from.y][m.from.x];
@@ -346,7 +360,7 @@
                 if(legal2.some(mm=>mm.y===m.to.y&&mm.x===m.to.x)) underAttack=true;
               }
             chessBoardArr = backup;
-            return !underAttack || m.self<=3; // пешки и кони можно и рискнуть
+            return !underAttack || m.self<=3;
           });
           pick = safeMoves.length ? safeMoves[Math.floor(Math.random()*safeMoves.length)] : movesList[Math.floor(Math.random()*movesList.length)];
         }
@@ -362,7 +376,6 @@
       if("qQ".includes(p)) return 9;
       if("kK".includes(p)) return 100;
     }
-    // --- Мобильные кнопки ---
     document.getElementById('btnUndo').onclick = function() {
       if(chessHistory.length) {
         let prev = chessHistory.pop();
@@ -396,7 +409,6 @@
         btn.setAttribute('aria-label','Tam ekran rejimi');
       }
     });
-    // --- Drag and Drop для мобильных и мыши ---
     let dragFrom = null;
     document.getElementById('chessBoard').addEventListener('touchstart', function(e){
       let cell = e.target.closest('.chess-cell');
@@ -419,7 +431,6 @@
         dragFrom = null;
       }
     });
-    // --- Свайп вниз по доске — fullscreen ---
     let touchStartY = 0;
     document.getElementById('chessBoard').addEventListener('touchstart', function(e){
       if(e.touches.length===1) touchStartY = e.touches[0].clientY;
