@@ -143,14 +143,14 @@
       width: 270px;
       max-width: 93vw;
     }
-    /* Мобильные кнопки */
     .ttt-controls-mobile {
       display: none;
       margin-top: 14px;
       width: 100%;
       max-width: 320px;
       justify-content: center;
-      gap: 13px;
+      gap: 12px;
+      flex-wrap: wrap;
     }
     .ttt-controls-mobile button {
       background: #23233b;
@@ -205,9 +205,11 @@
     </div>
     <div class="ttt-board" id="tttBoard"></div>
     <div class="ttt-controls-mobile" id="tttMobileControls">
+      <button id="btnUp" aria-label="Yuxarı">&#8593;</button>
       <button id="btnLeft" aria-label="Sol">&#8592;</button>
       <button id="btnMark" aria-label="Qoy">✔️</button>
       <button id="btnRight" aria-label="Sağ">&#8594;</button>
+      <button id="btnDown" aria-label="Aşağı">&#8595;</button>
     </div>
     <div class="ttt-status" id="tttStatus"></div>
     <button class="ttt-btn" onclick="tttReset()">Yenidən başla</button>
@@ -217,16 +219,14 @@
     <p>© 2025 Sultan. Neon Group Azerbaijan | <a href="../license.html">Lisenziya</a></p>
   </footer>
   <script>
-    // --- GAME STATE ---
     let mode = 'pvp'; // 'pvp' or 'ai'
     let board = Array(9).fill('');
     let current = 'X';
     let playing = true;
     let winLine = [];
     let aiThinking = false;
-    let selectedCell = 0; // For mobile
+    let selectedCell = 0; // 0-8
 
-    // --- UI INIT ---
     const tttBoard = document.getElementById("tttBoard");
     const tttStatus = document.getElementById("tttStatus");
     const tttNames = document.getElementById("tttNames");
@@ -249,7 +249,6 @@
       tttReset();
     }
 
-    // --- BOARD RENDER ---
     function render() {
       tttBoard.innerHTML = '';
       for (let i=0; i<9; i++) {
@@ -267,6 +266,7 @@
       }
       // Status
       if (!playing) {
+        aiThinking = false;
         if (winLine.length > 0) {
           const winner = board[winLine[0]];
           if (mode === 'ai' && winner === 'O') {
@@ -290,7 +290,6 @@
       }
     }
 
-    // --- GAME LOGIC ---
     function tttMove(i) {
       if (!playing || board[i] || (mode==='ai' && current==='O') || aiThinking) return;
       board[i] = current;
@@ -309,15 +308,15 @@
       if (mode==='ai' && current==='O' && playing) {
         aiThinking = true;
         tttStatus.innerHTML = '<span style="color:#61dafb;">NEON AI düşünür...</span>';
-        setTimeout(aiMove, 500 + Math.random()*350); // Simulate "thinking"
+        setTimeout(aiMove, 500 + Math.random()*350);
       }
     }
 
     function tttCheck(p) {
       const w = [
-        [0,1,2],[3,4,5],[6,7,8], // rows
-        [0,3,6],[1,4,7],[2,5,8], // cols
-        [0,4,8],[2,4,6]          // diags
+        [0,1,2],[3,4,5],[6,7,8],
+        [0,3,6],[1,4,7],[2,5,8],
+        [0,4,8],[2,4,6]
       ];
       for (let line of w) {
         if (line.every(i=>board[i]===p)) {
@@ -334,7 +333,7 @@
       playing = true;
       winLine = [];
       aiThinking = false;
-      selectedCell = 0;
+      selectedCell = firstFreeCell();
       render();
       if (mode==='ai' && current==='O') {
         aiThinking = true;
@@ -342,13 +341,10 @@
       }
     }
 
-    // --- NEON AI (Minimax with random for fun) ---
     function aiMove() {
-      if (!playing) return;
+      if (!playing) { aiThinking=false; return; }
       let move;
-      // 25% случайно, 75% — минимакс (сложнее)
       if (Math.random() < 0.25) {
-        // random free
         const free = board.map((v,i)=>v==''?i:null).filter(i=>i!==null);
         move = free[Math.floor(Math.random()*free.length)];
       } else {
@@ -372,7 +368,6 @@
       render();
     }
 
-    // Minimax AI
     function bestMove() {
       let bestScore = -Infinity;
       let move;
@@ -425,27 +420,62 @@
       return false;
     }
 
-    // --- Мобильные кнопки и свайпы ---
     function setupMobileControls() {
       const left = document.getElementById('btnLeft');
       const right = document.getElementById('btnRight');
+      const up = document.getElementById('btnUp');
+      const down = document.getElementById('btnDown');
       const mark = document.getElementById('btnMark');
-      left.ontouchstart = left.onmousedown = ()=>{ moveSelection(-1); };
-      right.ontouchstart = right.onmousedown = ()=>{ moveSelection(1); };
-      mark.ontouchstart = mark.onmousedown = ()=>{ if (!aiThinking && playing) tttMove(selectedCell); };
+      left.ontouchstart = left.onmousedown = ()=>{ moveSelection(-1,0); };
+      right.ontouchstart = right.onmousedown = ()=>{ moveSelection(1,0); };
+      up.ontouchstart = up.onmousedown = ()=>{ moveSelection(0,-1); };
+      down.ontouchstart = down.onmousedown = ()=>{ moveSelection(0,1); };
+      mark.ontouchstart = mark.onmousedown = ()=>{ markSelectedCell(); };
     }
-    function moveSelection(dir) {
+
+    // dirX: -1 (left), 1 (right), dirY: -1 (up), 1 (down)
+    function moveSelection(dirX, dirY) {
       if (!playing || aiThinking) return;
-      let free = [];
-      for (let i = 0; i < 9; i++) if (!board[i]) free.push(i);
-      if (!free.length) return;
-      let idx = free.indexOf(selectedCell);
-      if (idx === -1) idx = 0;
-      idx = (idx + dir + free.length) % free.length;
-      selectedCell = free[idx];
+      let row = Math.floor(selectedCell/3);
+      let col = selectedCell%3;
+      let nextIdx = selectedCell;
+      let tries = 0;
+      do {
+        if(dirX!==0){
+          col = (col+dirX+3)%3;
+        }
+        if(dirY!==0){
+          row = (row+dirY+3)%3;
+        }
+        nextIdx = row*3+col;
+        tries++;
+      } while(board[nextIdx] && tries<9);
+      selectedCell = nextIdx;
       render();
     }
-    // Свайпы: влево/вправо — перемещение, вниз — поставить
+
+    function getFreeCells() {
+      let arr = [];
+      for(let i=0;i<9;i++) if(!board[i]) arr.push(i);
+      return arr;
+    }
+    function firstFreeCell() {
+      let arr = getFreeCells();
+      return arr.length ? arr[0] : 0;
+    }
+    function markSelectedCell() {
+      if (!playing || aiThinking) return;
+      if (board[selectedCell] === '') tttMove(selectedCell);
+      else {
+        // Автопереход к следующей свободной
+        let free = getFreeCells();
+        if (free.length) {
+          selectedCell = free[0];
+          render();
+        }
+      }
+    }
+    // Свайпы: влево/вправо/вверх/вниз — перемещение, тач вниз — поставить
     let touchStartX = 0, touchStartY = 0;
     tttBoard.addEventListener('touchstart', function(e){
       if(e.touches.length===1){
@@ -458,16 +488,17 @@
         let dx = e.changedTouches[0].clientX - touchStartX;
         let dy = e.changedTouches[0].clientY - touchStartY;
         if(Math.abs(dx)>30 && Math.abs(dx)>Math.abs(dy)){
-          if(dx>0) moveSelection(1);
-          else moveSelection(-1);
-        } else if(Math.abs(dy)>30 && dy>0){
-          if (!aiThinking && playing) tttMove(selectedCell);
+          if(dx>0) moveSelection(1,0);
+          else moveSelection(-1,0);
+        } else if(Math.abs(dy)>30 && Math.abs(dy)>Math.abs(dx)){
+          if(dy>0) moveSelection(0,1);
+          else moveSelection(0,-1);
+        } else if(Math.abs(dy)<=30 && Math.abs(dx)<=30) {
+          markSelectedCell();
         }
       }
     });
     setupMobileControls();
-
-    // --- INIT ---
     setMode(mode);
   </script>
 </body>
