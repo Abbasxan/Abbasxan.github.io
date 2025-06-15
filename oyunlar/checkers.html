@@ -53,7 +53,6 @@
       checkersReset();
     }
     function checkersReset(){
-      // 8x8 board, only dark cells playable
       board = Array(8).fill().map(()=>Array(8).fill(EMPTY));
       for(let y=0;y<3;y++)for(let x=0;x<8;x++)if((x+y)%2)board[y][x]=BLACK;
       for(let y=5;y<8;y++)for(let x=0;x<8;x++)if((x+y)%2)board[y][x]=RED;
@@ -112,7 +111,6 @@
       for(let [dy,dx] of dirs){
         let ny=y+dy, nx=x+dx;
         if(ny>=0&&ny<8&&nx>=0&&nx<8&&!board[ny][nx]&&(!mustJump||!markJumpsOnly)) out.push({y:ny,x:nx,jump:false});
-        // jumps
         let jy=y+2*dy, jx=x+2*dx;
         if(jy>=0&&jy<8&&jx>=0&&jx<8&&board[ny][nx]&&((turn===RED&&/^[bB]$/.test(board[ny][nx]))||(turn===BLACK&&/^[rR]$/.test(board[ny][nx])))&&!board[jy][jx])
           out.push({y:jy,x:jx,jump:{y:ny,x:nx}});
@@ -124,17 +122,14 @@
       board[y1][x1]=EMPTY;
       board[y2][x2]=v;
       if(jump){ board[jump.y][jump.x]=EMPTY; }
-      // king
       if(v===RED&&y2===0)board[y2][x2]=RED_K;
       if(v===BLACK&&y2===7)board[y2][x2]=BLACK_K;
       selected=null;
-      // Check for additional jumps
       if(jump){
         let moreJumps = getMoves(y2,x2,true).filter(m=>m.jump);
         if(moreJumps.length){ selected={y:y2,x:x2}; mustJump=true; render(); return; }
       }
       mustJump=hasJump(turn==='RED'?BLACK:RED);
-      // Win check
       if(!hasMoves(turn==='RED'?BLACK:RED)){
         finished=true; updateStatus(); render(); return;
       }
@@ -156,22 +151,33 @@
           if(getMoves(y,x,true).some(m=>m.jump)) return true;
       return false;
     }
+    // --- МОДЕРНИЗАЦИЯ: AI теперь делает серию взятий подряд (мульти-удар) ---
     function aiTurn(){
       aiThinking=true; updateStatus();
-      setTimeout(()=>{
+
+      function aiMultiCaptureStep(){
         let movesList=[];
         for(let y=0;y<8;y++)for(let x=0;x<8;x++)
           if(board[y][x]&&/^[bB]$/.test(board[y][x])){
             let legal = getMoves(y,x,true);
             for(let m of legal) movesList.push({from:{y,x},to:{y:m.y,x:m.x},jump:m.jump});
           }
-        
         let jumps = movesList.filter(m=>m.jump);
         let pick = jumps.length?jumps[Math.floor(Math.random()*jumps.length)]:movesList[Math.floor(Math.random()*movesList.length)];
-        if(pick) move(pick.from.y,pick.from.x,pick.to.y,pick.to.x,pick.jump);
+        if(pick){
+          move(pick.from.y,pick.from.x,pick.to.y,pick.to.x,pick.jump);
+          // Проверяем, можно ли ещё бить той же шашкой
+          if(jumps.length && selected && selected.y===pick.to.y && selected.x===pick.to.x){
+            setTimeout(aiMultiCaptureStep, 500+Math.random()*400); // даём "подумать" между ударами
+            return;
+          }
+        }
         aiThinking=false;
-      }, 650+Math.random()*400);
+      }
+
+      setTimeout(aiMultiCaptureStep, 650+Math.random()*400);
     }
+
     checkersReset();
   </script>
 </body>
