@@ -143,14 +143,34 @@
       width: 270px;
       max-width: 93vw;
     }
+    .ttt-scores {
+      margin-bottom: 6px;
+      margin-top: 2px;
+      font-size: 1.1em;
+      color: #61dafb;
+      width: 264px;
+      max-width: 93vw;
+      display: flex;
+      justify-content: space-between;
+      font-family: 'Inter', Arial, sans-serif;
+    }
     .ttt-controls-mobile {
       display: none;
-      margin-top: 14px;
+      margin-top: 12px;
       width: 100%;
       max-width: 320px;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+    .ttt-controls-row {
+      display: flex;
       justify-content: center;
       gap: 12px;
-      flex-wrap: wrap;
+      width: 100%;
+      margin: 0;
+      padding: 0;
     }
     .ttt-controls-mobile button {
       background: #23233b;
@@ -159,7 +179,7 @@
       border: none;
       border-radius: 11px;
       width: 54px; height: 54px;
-      margin: 2px;
+      margin: 1px 3px;
       box-shadow: 0 2px 10px #0007;
       display: flex;
       align-items: center;
@@ -173,7 +193,7 @@
       .ttt-container { padding: 14px 3vw 14px 3vw;}
       .ttt-title { font-size: 1.35em;}
       .ttt-board { grid-template-columns: repeat(3,24vw); grid-template-rows: repeat(3,24vw);}
-      .ttt-names { width: 99vw;}
+      .ttt-names, .ttt-scores { width: 99vw;}
       .ttt-controls-mobile{display:flex;}
       .ttt-btn {font-size:0.98em;}
     }
@@ -203,13 +223,23 @@
       <span id="p1Name">Oyunçu 1 (X)</span>
       <span id="p2Name">Oyunçu 2 (O)</span>
     </div>
+    <div class="ttt-scores" id="tttScores">
+      <span id="scoreX">X: 0</span>
+      <span id="scoreO">O: 0</span>
+    </div>
     <div class="ttt-board" id="tttBoard"></div>
     <div class="ttt-controls-mobile" id="tttMobileControls">
-      <button id="btnUp" aria-label="Yuxarı">&#8593;</button>
-      <button id="btnLeft" aria-label="Sol">&#8592;</button>
-      <button id="btnMark" aria-label="Qoy">✔️</button>
-      <button id="btnRight" aria-label="Sağ">&#8594;</button>
-      <button id="btnDown" aria-label="Aşağı">&#8595;</button>
+      <div class="ttt-controls-row">
+        <button id="btnUp" aria-label="Yuxarı">&#8593;</button>
+      </div>
+      <div class="ttt-controls-row">
+        <button id="btnLeft" aria-label="Sol">&#8592;</button>
+        <button id="btnMark" aria-label="Qoy">✔️</button>
+        <button id="btnRight" aria-label="Sağ">&#8594;</button>
+      </div>
+      <div class="ttt-controls-row">
+        <button id="btnDown" aria-label="Aşağı">&#8595;</button>
+      </div>
     </div>
     <div class="ttt-status" id="tttStatus"></div>
     <button class="ttt-btn" onclick="tttReset()">Yenidən başla</button>
@@ -219,19 +249,23 @@
     <p>© 2025 Sultan. Neon Group Azerbaijan | <a href="../license.html">Lisenziya</a></p>
   </footer>
   <script>
-    let mode = 'pvp'; // 'pvp' or 'ai'
+    let mode = 'pvp';
     let board = Array(9).fill('');
     let current = 'X';
     let playing = true;
     let winLine = [];
     let aiThinking = false;
-    let selectedCell = 0; // 0-8
+    let selectedCell = 0;
+    let scoreX = 0, scoreO = 0;
 
     const tttBoard = document.getElementById("tttBoard");
     const tttStatus = document.getElementById("tttStatus");
     const tttNames = document.getElementById("tttNames");
+    const tttScores = document.getElementById("tttScores");
     const p1Name = document.getElementById("p1Name");
     const p2Name = document.getElementById("p2Name");
+    const scoreXEl = document.getElementById("scoreX");
+    const scoreOEl = document.getElementById("scoreO");
     const modePVP = document.getElementById("modePVP");
     const modeAI = document.getElementById("modeAI");
 
@@ -246,7 +280,19 @@
         p1Name.textContent = "Sən (X)";
         p2Name.innerHTML = '<span style="color:#61dafb;">NEON AI (O)</span>';
       }
+      resetScores();
       tttReset();
+    }
+
+    function resetScores() {
+      scoreX = 0;
+      scoreO = 0;
+      updateScores();
+    }
+
+    function updateScores() {
+      scoreXEl.textContent = `X: ${scoreX}`;
+      scoreOEl.textContent = `O: ${scoreO}`;
     }
 
     function render() {
@@ -264,6 +310,7 @@
         d.onclick = () => tttMove(i);
         tttBoard.appendChild(d);
       }
+      updateScores();
       // Status
       if (!playing) {
         aiThinking = false;
@@ -295,6 +342,8 @@
       board[i] = current;
       if (tttCheck(current)) {
         playing = false;
+        if (current === "X") scoreX++;
+        if (current === "O") scoreO++;
         render();
         return;
       }
@@ -353,6 +402,7 @@
       board[move] = 'O';
       if (tttCheck('O')) {
         playing = false;
+        scoreO++;
         aiThinking = false;
         render();
         return;
@@ -426,20 +476,19 @@
       const up = document.getElementById('btnUp');
       const down = document.getElementById('btnDown');
       const mark = document.getElementById('btnMark');
-      left.ontouchstart = left.onmousedown = ()=>{ moveSelection(-1,0); };
-      right.ontouchstart = right.onmousedown = ()=>{ moveSelection(1,0); };
-      up.ontouchstart = up.onmousedown = ()=>{ moveSelection(0,-1); };
-      down.ontouchstart = down.onmousedown = ()=>{ moveSelection(0,1); };
-      mark.ontouchstart = mark.onmousedown = ()=>{ markSelectedCell(); };
+      // Use pointerdown instead of both ontouchstart and onmousedown, prevents double trigger
+      left.addEventListener('pointerdown', ()=>{ moveSelection(-1,0); });
+      right.addEventListener('pointerdown', ()=>{ moveSelection(1,0); });
+      up.addEventListener('pointerdown', ()=>{ moveSelection(0,-1); });
+      down.addEventListener('pointerdown', ()=>{ moveSelection(0,1); });
+      mark.addEventListener('pointerdown', ()=>{ markSelectedCell(); });
     }
-
-    // dirX: -1 (left), 1 (right), dirY: -1 (up), 1 (down)
     function moveSelection(dirX, dirY) {
       if (!playing || aiThinking) return;
       let row = Math.floor(selectedCell/3);
       let col = selectedCell%3;
-      let nextIdx = selectedCell;
       let tries = 0;
+      let nextIdx = selectedCell;
       do {
         if(dirX!==0){
           col = (col+dirX+3)%3;
@@ -453,7 +502,6 @@
       selectedCell = nextIdx;
       render();
     }
-
     function getFreeCells() {
       let arr = [];
       for(let i=0;i<9;i++) if(!board[i]) arr.push(i);
@@ -467,7 +515,6 @@
       if (!playing || aiThinking) return;
       if (board[selectedCell] === '') tttMove(selectedCell);
       else {
-        // Автопереход к следующей свободной
         let free = getFreeCells();
         if (free.length) {
           selectedCell = free[0];
