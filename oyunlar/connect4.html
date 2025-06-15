@@ -12,37 +12,102 @@
     .c4-mode-row {margin-bottom:13px; display:flex; gap:13px;}
     .c4-mode-btn {background:linear-gradient(90deg,#61dafb,#fbbd23); color:#222; border:none; border-radius:8px; font-weight:bold; font-size:1em; padding:7px 18px; cursor:pointer; box-shadow:0 2px 8px #0004; transition:.16s;}
     .c4-mode-btn.active, .c4-mode-btn:focus {background:linear-gradient(90deg,#fbbd23,#61dafb); color:#fff; outline:2px solid #fbbd23;}
-    .c4-board {display:grid; grid-template-columns:repeat(7,44px); grid-template-rows:repeat(6,44px); gap:4px; margin-top:13px; background:#23233a; border-radius:12px; box-shadow:0 7px 28px #0007;}
-    .c4-cell {width:44px; height:44px; border-radius:50%; background:linear-gradient(120deg,#23233b 65%,#3e4a7e 100%); display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 3px 14px #0007; transition:.15s;}
-    .c4-piece.r {background:radial-gradient(circle,#fbbd23 65%,#e74c3c 100%); box-shadow:0 0 16px #fbbd23aa,0 4px 8px #e74c3c88;}
-    .c4-piece.y {background:radial-gradient(circle,#61dafb 70%,#00e676 100%); box-shadow:0 0 16px #61dafbaa,0 4px 8px #00e67688;}
-    .c4-cell.win {outline:3.5px solid #00e676; box-shadow:0 0 12px #00e676;}
+    .c4-board {display:grid; grid-template-columns:repeat(7,44px); grid-template-rows:repeat(6,44px); gap:4px; margin-top:13px; background:#174c6f; border-radius:14px; box-shadow:0 7px 28px #0007;}
+    .c4-cell {
+      width:44px; height:44px; border-radius:50%;
+      background:linear-gradient(135deg,#f5efdf 70%,#e5e1c1 100%);
+      border:3px solid #3e4a7e;
+      display:flex; align-items:center; justify-content:center;
+      cursor:pointer; box-shadow:0 3px 14px #0007; transition:.14s;
+      position: relative;
+    }
+    .c4-piece.r {
+      background:radial-gradient(circle,#e53935 60%,#b71c1c 100%);
+      box-shadow:0 0 16px #e53935bb,0 4px 8px #b71c1c88;
+      border:2.5px solid #fff;
+    }
+    .c4-piece.y {
+      background:radial-gradient(circle,#ffeb3b 65%,#ffc107 100%);
+      box-shadow:0 0 16px #ffe500bb,0 4px 8px #ffc10788;
+      border:2.5px solid #fff;
+    }
+    .c4-cell.win {outline:4px solid #00e676; box-shadow:0 0 12px #00e676;}
     .c4-status {margin-top:13px; color:#fff; min-height:26px; font-size:1.08em; text-shadow:0 2px 8px #222a;}
     .c4-btn {margin-top:17px; padding:10px 26px; font-size:1em; border-radius:9px; border:none; background:linear-gradient(90deg,#61dafb,#fbbd23); color:#222; font-weight:bold; cursor:pointer; box-shadow:0 2px 10px #0006; transition:.2s;}
     .c4-btn:hover {background:linear-gradient(90deg,#fbbd23,#61dafb); color:#fff;}
+    .c4-controls-mobile {
+      display:none; margin-top:13px; gap:13px; width:100%; max-width:400px; justify-content:center;
+    }
+    .c4-controls-mobile button {
+      background: #23233b;
+      color: #fbbd23;
+      font-size: 1.7em;
+      border: none;
+      border-radius: 11px;
+      width: 54px; height: 54px;
+      margin: 2px;
+      box-shadow: 0 2px 10px #0007;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+      touch-action: manipulation;
+      transition: background .13s, color .13s;
+    }
+    .c4-controls-mobile button:active, .c4-controls-mobile button.active { background: #fbbd23; color: #23233b; }
+    .c4-fullscreen-btn {
+      margin-top: 14px;
+      padding: 10px 24px;
+      font-size: 1.1em;
+      border-radius: 10px;
+      border: none;
+      background: #181924;
+      color: #61dafb;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 2px 8px #222b44;
+      transition: background .2s, color .2s;
+      width: 100%;
+      max-width: 340px;
+    }
+    .c4-fullscreen-btn:active, .c4-fullscreen-btn:focus {
+      background: #61dafb;
+      color: #181924;
+      outline: 2px solid #ffd600;
+    }
     @media (max-width:600px) {
       .c4-container {padding:12px 2vw;}
-      .c4-board {grid-template-columns:repeat(7,11vw); grid-template-rows:repeat(6,11vw);}
-      .c4-cell {width:11vw; height:11vw;}
+      .c4-board {grid-template-columns:repeat(7,12vw); grid-template-rows:repeat(6,12vw);}
+      .c4-cell {width:12vw; height:12vw;}
+      .c4-controls-mobile{display:flex;}
+      .c4-btn, .c4-fullscreen-btn {font-size:1.07em;}
     }
   </style>
 </head>
 <body>
   <nav class="navbar modern-navbar"><div class="container"><div class="logo">Neon Sultan</div></div></nav>
-  <main class="c4-container">
+  <main class="c4-container" id="c4Main">
     <div class="c4-title">Connect Four</div>
     <div class="c4-mode-row">
       <button id="c4PVP" class="c4-mode-btn active" onclick="c4SetMode('pvp')">2 nəfər</button>
       <button id="c4AI" class="c4-mode-btn" onclick="c4SetMode('ai')">NEON AI</button>
     </div>
     <div class="c4-board" id="c4Board"></div>
+    <div class="c4-controls-mobile" id="c4MobileControls">
+      <button aria-label="Sol" id="btnLeftC4">⬅️</button>
+      <button aria-label="Aşağı" id="btnDropC4">⏬</button>
+      <button aria-label="Sağ" id="btnRightC4">➡️</button>
+      <button id="btnFS" class="c4-fullscreen-btn" aria-label="Tam ekran rejimi">⛶</button>
+    </div>
     <div class="c4-status" id="c4Status"></div>
     <button class="c4-btn" onclick="c4Reset()">Yenidən başla</button>
     <a href="../oyunlar.html" class="c4-btn" style="background:#222; color:#fff; margin-top:12px;">← Oyunlara qayıt</a>
   </main>
   <footer class="footer"><p>© 2025 Sultan. Neon Group Azerbaijan</p></footer>
   <script>
+    // --- State
     let c4BoardArr, c4Turn, c4WinLine=[], c4Mode='pvp', c4AIThinking=false, c4Finished=false;
+    let c4SelectedCol = 3; // Для мобильных и кнопок
     function c4SetMode(m){
       c4Mode = m;
       document.getElementById('c4PVP').classList.toggle('active',m==='pvp');
@@ -51,7 +116,7 @@
     }
     function c4Reset(){
       c4BoardArr = Array(6).fill().map(()=>Array(7).fill(null));
-      c4Turn = 'r'; c4WinLine=[]; c4AIThinking=false; c4Finished=false;
+      c4Turn = 'r'; c4WinLine=[]; c4AIThinking=false; c4Finished=false; c4SelectedCol=3;
       c4Render(); c4Status();
       if(c4Mode==='ai' && c4Turn==='y') setTimeout(c4AIMove,800);
     }
@@ -59,7 +124,8 @@
       let html='';
       for(let y=0;y<6;y++)for(let x=0;x<7;x++){
         let v = c4BoardArr[y][x]; let win = c4WinLine.some(([yy,xx])=>yy===y&&xx===x);
-        html+=`<div class="c4-cell${v?' c4-piece '+v:''}${win?' win':''}" onclick="c4CellClick(${x})"></div>`;
+        let selected = (y===0 && x===c4SelectedCol) ? ' style="box-shadow:0 0 0 4px #fbbd23,0 7px 28px #0007"' : '';
+        html+=`<div class="c4-cell${v?' c4-piece '+v:''}${win?' win':''}" onclick="c4CellClick(${x})"${selected}></div>`;
       }
       document.getElementById('c4Board').innerHTML=html;
     }
@@ -76,6 +142,7 @@
         if(c4CheckWin(y,col,c4Turn)){c4Finished=true;c4Render();c4Status();return;}
         if(c4BoardArr.every(row=>row.every(cell=>cell))){c4Render();c4Status();return;}
         c4Turn = c4Turn==='r'?'y':'r';
+        c4SelectedCol = 3;
         c4Render(); c4Status();
         if(c4Mode==='ai' && c4Turn==='y') setTimeout(c4AIMove,800);
         break;
@@ -97,14 +164,96 @@
       }
       return false;
     }
-    // --- NEON AI (очень простой: случайный валидный столбец)
+    // --- NEON AI (улучшенный: сначала ищет победу, затем блокирует игрока, иначе случайно)
     function c4AIMove(){
       c4AIThinking=true;
       let choices = [];
       for(let x=0;x<7;x++)if(!c4BoardArr[0][x])choices.push(x);
-      let col = choices[Math.floor(Math.random()*choices.length)];
+      let col = null;
+      // 1. Победный ход
+      for(let x of choices){
+        let y = getAvailableRow(x);
+        if(y!==-1){
+          c4BoardArr[y][x]='y';
+          if(c4CheckWin(y,x,'y')){col=x;}
+          c4BoardArr[y][x]=null; c4WinLine=[];
+          if(col!==null) break;
+        }
+      }
+      // 2. Блокировка игрока
+      if(col===null){
+        for(let x of choices){
+          let y = getAvailableRow(x);
+          if(y!==-1){
+            c4BoardArr[y][x]='r';
+            if(c4CheckWin(y,x,'r')){col=x;}
+            c4BoardArr[y][x]=null; c4WinLine=[];
+            if(col!==null) break;
+          }
+        }
+      }
+      // 3. Иначе в центр или случайно
+      if(col===null){
+        col = choices.includes(3)?3:choices[Math.floor(Math.random()*choices.length)];
+      }
       setTimeout(()=>{c4CellClick(col);c4AIThinking=false;},350+Math.random()*300);
     }
+    function getAvailableRow(col){
+      for(let y=5;y>=0;y--)if(!c4BoardArr[y][col])return y;
+      return -1;
+    }
+    // --- Мобильные кнопки и жесты
+    function setupMobileControls() {
+      const left = document.getElementById('btnLeftC4');
+      const right = document.getElementById('btnRightC4');
+      const drop = document.getElementById('btnDropC4');
+      left.ontouchstart = left.onmousedown = ()=>{ c4SelectedCol = Math.max(0,c4SelectedCol-1); c4Render(); };
+      right.ontouchstart = right.onmousedown = ()=>{ c4SelectedCol = Math.min(6,c4SelectedCol+1); c4Render(); };
+      drop.ontouchstart = drop.onmousedown = ()=>{ c4CellClick(c4SelectedCol); };
+      // Кнопка fullscreen
+      const btnFS = document.getElementById('btnFS');
+      btnFS.onclick = function() {
+        const el = document.getElementById('c4Main');
+        if (!document.fullscreenElement && el.requestFullscreen) {
+          el.requestFullscreen();
+          btnFS.textContent = '⛶ çıx';
+        } else if (document.exitFullscreen) {
+          document.exitFullscreen();
+          btnFS.textContent = '⛶';
+        }
+      };
+      document.addEventListener('fullscreenchange', () => {
+        const btn = document.getElementById('btnFS');
+        if(document.fullscreenElement){
+          btn.textContent = '⛶ çıx';
+        } else {
+          btn.textContent = '⛶';
+        }
+      });
+    }
+    setupMobileControls();
+    // --- Свайпы на доске для мобильных
+    let touchStartX=0, touchStartY=0;
+    document.getElementById('c4Board').addEventListener('touchstart', function(e){
+      if(e.touches.length===1){
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+      }
+    });
+    document.getElementById('c4Board').addEventListener('touchend', function(e){
+      if(e.changedTouches.length===1){
+        let dx = e.changedTouches[0].clientX - touchStartX;
+        let dy = e.changedTouches[0].clientY - touchStartY;
+        if(Math.abs(dx)>30 && Math.abs(dx)>Math.abs(dy)){
+          if(dx>0) { c4SelectedCol = Math.min(6,c4SelectedCol+1); c4Render(); }
+          else { c4SelectedCol = Math.max(0,c4SelectedCol-1); c4Render(); }
+        } else if(Math.abs(dy)>30 && dy>0){
+          c4CellClick(c4SelectedCol);
+        }
+        // Свайп вниз на доске — fullscreen
+        if(dy>70) document.getElementById('btnFS').click();
+      }
+    });
     c4Reset();
   </script>
 </body>
