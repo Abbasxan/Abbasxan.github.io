@@ -6,17 +6,21 @@
   <title>Reversi / Othello | Neon Sultan</title>
   <link rel="stylesheet" href="../assets/css/style.css" />
   <style>
-    body {background: radial-gradient(circle at 60% 20%, #495082 0%, #181924 100%);}
+    body {background: radial-gradient(circle at 60% 20%, #23283a 0%, #161726 100%);}
     .reversi-container {
       display: flex; flex-direction: column; align-items: center; margin-top: 48px;
-      background: rgba(24,25,36,0.98); border-radius: 19px; padding: 36px 24px 30px 24px;
-      box-shadow: 0 10px 44px #000c; max-width: 450px; margin: auto;
+      background: rgba(24,25,36,0.98); border-radius: 22px; padding: 38px 20px 32px 20px;
+      box-shadow: 0 10px 50px #000c; max-width: 520px; margin: auto;
     }
-    .reversi-title {font-size: 2em; color: #61dafb; margin-bottom: 8px; text-shadow: 0 2px 16px #222c;}
-    .reversi-mode-row {margin-bottom: 12px; display: flex; gap: 15px;}
+    .reversi-title {
+      font-size: 2.15em; color: #61dafb; margin-bottom: 8px;
+      text-shadow: 0 2px 16px #222c, 0 4px 18px #61dafb55;
+      letter-spacing: 1px;
+    }
+    .reversi-mode-row {margin-bottom: 14px; display: flex; gap: 15px;}
     .reversi-mode-btn {
       background: linear-gradient(90deg,#61dafb,#fbbd23); color: #222; border: none; border-radius: 10px;
-      font-weight: bold; font-size: 1em; padding: 7px 22px; cursor: pointer;
+      font-weight: bold; font-size: 1.01em; padding: 7px 24px; cursor: pointer;
       box-shadow: 0 2px 12px #0006, 0 0 0 2px #61dafb33; transition: .18s;
     }
     .reversi-mode-btn.active, .reversi-mode-btn:focus {
@@ -24,59 +28,68 @@
       box-shadow: 0 2px 15px #fbbd2380, 0 0 0 3px #61dafb80;
     }
     .reversi-status {
-      color: #fff; font-size: 1.13em; min-height: 32px; margin-bottom: 10px; text-shadow: 0 2px 10px #222b;
+      color: #fff; font-size: 1.16em; min-height: 32px; margin-bottom: 10px;
+      text-shadow: 0 2px 10px #222b, 0 2px 18px #61dafb55;
       text-align: center; letter-spacing:.2px;
     }
     .reversi-board {
-      display: grid; grid-template-columns: repeat(8, 40px); grid-template-rows: repeat(8, 40px); gap: 3px;
-      background: linear-gradient(90deg,#23233a 75%,#26394d 100%);
-      border-radius: 15px; box-shadow: 0 7px 28px #0008; padding: 10px;
-      margin-bottom: 14px;
+      display: grid; grid-template-columns: repeat(8, 48px); grid-template-rows: repeat(8, 48px); gap: 4px;
+      background: linear-gradient(120deg,#182032 60%,#23233a 100%);
+      border-radius: 20px; box-shadow: 0 7px 38px #0009; padding: 12px;
+      margin-bottom: 16px; margin-top: 8px;
     }
     .reversi-cell {
-      width: 40px; height: 40px; border-radius: 8px;
-      background: linear-gradient(140deg,#252540 55%,#61dafb22 100%);
-      box-shadow: 0 1px 6px #232a, 0 0 0 2.5px #222d;
+      width: 48px; height: 48px; border-radius: 10px;
+      background: linear-gradient(140deg,#23243c 65%,#61dafb18 100%);
+      box-shadow: 0 1px 10px #232a, 0 0 0 2.5px #222e;
       display: flex; align-items: center; justify-content: center; cursor: pointer;
       transition: background .14s, box-shadow .12s, transform .15s;
       position: relative;
+      z-index: 1;
     }
     .reversi-cell.playable {
-      background: linear-gradient(120deg,#18181a 60%,#fbbd2355 100%);
-      box-shadow: 0 0 0 4px #00e676bb, 0 8px 24px #61dafb55;
-      transform: scale(1.06);
+      background: linear-gradient(120deg,#1f1f22 60%,#fbbd2365 100%);
+      box-shadow: 0 0 0 4.5px #00e676bb, 0 8px 24px #61dafb55;
+      transform: scale(1.065);
     }
     .reversi-piece {
-      width: 28px; height: 28px; border-radius: 50%; background: #fff; box-shadow: 0 2px 10px #000a, 0 0 24px #61dafb66;
-      transition: background .2s, box-shadow .2s, filter .2s;
+      width: 32px; height: 32px; border-radius: 50%; background: #fff; box-shadow: 0 2px 12px #000a, 0 0 26px #61dafb66;
+      transition: background .22s, box-shadow .25s, filter .2s;
       filter: drop-shadow(0 0 10px #fff5);
-      position: relative; z-index: 1;
+      position: relative; z-index: 2;
     }
     .reversi-piece.black {
-      background: linear-gradient(135deg,#37474f 60%,#23232b 100%);
-      box-shadow: 0 0 12px #18181a88, 0 4px 17px #61dafb22;
-      filter: drop-shadow(0 0 10px #23232b88);
+      background: linear-gradient(135deg,#37474f 60%,#18181c 100%);
+      box-shadow: 0 0 18px #18181a88, 0 4px 18px #61dafb33;
+      filter: drop-shadow(0 0 11px #23232b88);
+      border: 2.2px solid #61dafb44;
     }
     .reversi-piece.white {
-      background: linear-gradient(135deg,#fff 60%,#fbbd23 100%);
-      box-shadow: 0 0 15px #fbbd23cc, 0 4px 17px #61dafb22;
+      background: linear-gradient(135deg,#fff 64%,#fbbd23 100%);
+      box-shadow: 0 0 20px #fbbd23cc, 0 4px 21px #61dafb22;
+      border: 2.2px solid #fbbd2344;
     }
     .reversi-cell.lastmove::after {
       content: "";
       display: block; position: absolute; left: 50%; top: 50%;
-      width: 13px; height: 13px; border-radius: 50%; background: #00e676;
+      width: 16px; height: 16px; border-radius: 50%; background: #00e676bb;
       transform: translate(-50%,-50%);
-      opacity:.44;
-      box-shadow: 0 0 10px #00e676a0;
+      opacity:.36;
+      box-shadow: 0 0 15px #00e676c0;
+      z-index: 4;
     }
     .reversi-scoreboard {
-      margin-bottom: 6px; color: #fbbd23; font-size: 1.11em; text-shadow: 0 2px 8px #2228;
-      display: flex; gap: 9px; align-items: center; justify-content: center;
+      margin-bottom: 8px; color: #fbbd23; font-size: 1.13em; text-shadow: 0 2px 8px #2228;
+      display: flex; gap: 15px; align-items: center; justify-content: center;
+      background: #18181c; border-radius: 10px; padding: 7px 16px;
+      box-shadow: 0 1px 6px #61dafb33;
+      font-weight: bold; letter-spacing:.6px;
     }
+    .reversi-scoreboard span {display:inline-block; min-width:75px;}
     .reversi-btn {
-      margin-top: 13px; padding: 11px 26px; font-size: 1em; border-radius: 10px; border: none;
+      margin-top: 15px; padding: 11px 26px; font-size: 1em; border-radius: 12px; border: none;
       background: linear-gradient(90deg,#61dafb,#fbbd23); color: #222; font-weight: bold; cursor: pointer;
-      box-shadow: 0 2px 10px #0007; transition: background .2s, color .2s, transform .13s;
+      box-shadow: 0 2px 14px #0007; transition: background .2s, color .2s, transform .13s;
     }
     .reversi-btn.secondary {background: #222; color: #fff; margin-top: 10px;}
     .reversi-btn:hover {
@@ -84,11 +97,18 @@
       color: #fff;
       transform: translateY(-2px) scale(1.07);
     }
+    .reversi-desc {
+      color: #fbbd23; font-size:1.09em; background:#21223a; border-radius:11px; box-shadow:0 2px 12px #0005;
+      padding:12px 15px 11px 15px; margin-bottom: 15px; max-width: 420px; text-align:center;
+      line-height:1.6;
+    }
     @media (max-width: 600px) {
       .reversi-container { padding: 10px 2vw;}
-      .reversi-board { grid-template-columns: repeat(8, 8vw); grid-template-rows: repeat(8, 8vw);}
-      .reversi-cell { width: 8vw; height: 8vw;}
-      .reversi-piece { width: 5vw; height: 5vw;}
+      .reversi-board { grid-template-columns: repeat(8, 10vw); grid-template-rows: repeat(8, 10vw);}
+      .reversi-cell { width: 10vw; height: 10vw;}
+      .reversi-piece { width: 6vw; height: 6vw;}
+      .reversi-scoreboard span {min-width:46px;}
+      .reversi-desc {font-size:1em;}
     }
   </style>
 </head>
@@ -96,6 +116,11 @@
   <nav class="navbar modern-navbar"><div class="container"><div class="logo">Neon Sultan</div></div></nav>
   <main class="reversi-container">
     <div class="reversi-title">Reversi / Othello</div>
+    <div class="reversi-desc">
+      Reversi – məntiq və taktika oyunu. Qara və ağ fişklərlə 8×8 taxtada oynanılır.<br>
+      Sıra ilə öz rənginizlə elə hərəkət edin ki, rəqibin fişklərini arada saxlayıb çevirməyi bacarasınız.<br>
+      Əgər heç bir xanaya qoymaq olmursa, növbə ötürülür. Oyun bitdikdə ən çox fişkiyə sahib olan qalib olur!
+    </div>
     <div class="reversi-mode-row">
       <button id="revPVP" class="reversi-mode-btn active" onclick="revSetMode('pvp')">2 nəfər</button>
       <button id="revAI" class="reversi-mode-btn" onclick="revSetMode('ai')">NEON AI</button>
@@ -139,7 +164,7 @@
       let count = {b:0,w:0};
       for(let y=0;y<8;y++)for(let x=0;x<8;x++)if(revArr[y][x]) count[revArr[y][x]]++;
       document.getElementById('revScore').innerHTML =
-        `<span style="color:#61dafb">Qara:</span> <b>${count.b}</b> &nbsp; <span style="color:#fbbd23;">Ağ:</span> <b>${count.w}</b>`;
+        `<span style="color:#61dafb">Qara:</span> <b>${count.b}</b> <span style="color:#fbbd23;">Ağ:</span> <b>${count.w}</b>`;
     }
     function revStatus(){
       if(revFinished){
