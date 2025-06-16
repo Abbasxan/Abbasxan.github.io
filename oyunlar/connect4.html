@@ -12,6 +12,7 @@
     .c4-mode-row {margin-bottom:13px; display:flex; gap:13px;}
     .c4-mode-btn {background:linear-gradient(90deg,#61dafb,#fbbd23); color:#222; border:none; border-radius:8px; font-weight:bold; font-size:1em; padding:7px 18px; cursor:pointer; box-shadow:0 2px 8px #0004; transition:.16s;}
     .c4-mode-btn.active, .c4-mode-btn:focus {background:linear-gradient(90deg,#fbbd23,#61dafb); color:#fff; outline:2px solid #fbbd23;}
+    .c4-scores {display: flex; justify-content: space-between; width: 230px; color:#61dafb; font-size:1.12em; font-family: 'Inter', Arial, sans-serif; margin-bottom: 4px;}
     .c4-board {display:grid; grid-template-columns:repeat(7,44px); grid-template-rows:repeat(6,44px); gap:4px; margin-top:13px; background:#174c6f; border-radius:14px; box-shadow:0 7px 28px #0007;}
     .c4-cell {
       width:44px; height:44px; border-radius:50%;
@@ -19,7 +20,13 @@
       border:3px solid #3e4a7e;
       display:flex; align-items:center; justify-content:center;
       cursor:pointer; box-shadow:0 3px 14px #0007; transition:.14s;
-      position: relative;
+      position: relative; overflow:hidden;
+    }
+    .c4-piece {
+      width: 100%; height: 100%;
+      border-radius: 50%;
+      transition: transform 0.38s cubic-bezier(.39,1.01,.19,1.02);
+      will-change: transform;
     }
     .c4-piece.r {
       background:radial-gradient(circle,#e53935 60%,#b71c1c 100%);
@@ -31,12 +38,23 @@
       box-shadow:0 0 16px #ffe500bb,0 4px 8px #ffc10788;
       border:2.5px solid #fff;
     }
-    .c4-cell.win {outline:4px solid #00e676; box-shadow:0 0 12px #00e676;}
+    .c4-cell.win .c4-piece {
+      animation: c4-win-pulse 0.6s infinite alternate;
+      outline: 4px solid #00e676;
+      box-shadow:0 0 12px #00e676;
+    }
+    @keyframes c4-win-pulse {
+      from { box-shadow: 0 0 12px #00e676, 0 0 0 #fff0; }
+      to   { box-shadow: 0 0 28px #fbbd23dd, 0 0 14px #fff7; }
+    }
     .c4-status {margin-top:13px; color:#fff; min-height:26px; font-size:1.08em; text-shadow:0 2px 8px #222a;}
     .c4-btn {margin-top:17px; padding:10px 26px; font-size:1em; border-radius:9px; border:none; background:linear-gradient(90deg,#61dafb,#fbbd23); color:#222; font-weight:bold; cursor:pointer; box-shadow:0 2px 10px #0006; transition:.2s;}
     .c4-btn:hover {background:linear-gradient(90deg,#fbbd23,#61dafb); color:#fff;}
     .c4-controls-mobile {
-      display:none; margin-top:13px; gap:13px; width:100%; max-width:400px; justify-content:center;
+      display:none; margin-top:13px; width:100%; max-width:400px; flex-direction:column; align-items:center; gap:2px;
+    }
+    .c4-controls-row {
+      display: flex; justify-content: center; gap: 12px; width: 100%;
     }
     .c4-controls-mobile button {
       background: #23233b;
@@ -45,7 +63,7 @@
       border: none;
       border-radius: 11px;
       width: 54px; height: 54px;
-      margin: 2px;
+      margin: 1px 3px;
       box-shadow: 0 2px 10px #0007;
       display: flex;
       align-items: center;
@@ -81,6 +99,7 @@
       .c4-cell {width:12vw; height:12vw;}
       .c4-controls-mobile{display:flex;}
       .c4-btn, .c4-fullscreen-btn {font-size:1.07em;}
+      .c4-scores {width: 98vw;}
     }
   </style>
 </head>
@@ -92,12 +111,26 @@
       <button id="c4PVP" class="c4-mode-btn active" onclick="c4SetMode('pvp')">2 nəfər</button>
       <button id="c4AI" class="c4-mode-btn" onclick="c4SetMode('ai')">NEON AI</button>
     </div>
+    <div class="c4-scores" id="c4Scores">
+      <span id="c4ScoreR">🔴 0</span>
+      <span id="c4ScoreY">🟡 0</span>
+    </div>
     <div class="c4-board" id="c4Board"></div>
     <div class="c4-controls-mobile" id="c4MobileControls">
-      <button aria-label="Sol" id="btnLeftC4">⬅️</button>
-      <button aria-label="Aşağı" id="btnDropC4">⏬</button>
-      <button aria-label="Sağ" id="btnRightC4">➡️</button>
-      <button id="btnFS" class="c4-fullscreen-btn" aria-label="Tam ekran rejimi">⛶</button>
+      <div class="c4-controls-row">
+        <button id="btnUpC4" aria-label="Yuxarı">⬆️</button>
+      </div>
+      <div class="c4-controls-row">
+        <button id="btnLeftC4" aria-label="Sol">⬅️</button>
+        <button id="btnDropC4" aria-label="Aşağı">⏬</button>
+        <button id="btnRightC4" aria-label="Sağ">➡️</button>
+      </div>
+      <div class="c4-controls-row">
+        <button id="btnDownC4" aria-label="Aşağı">⬇️</button>
+      </div>
+      <div class="c4-controls-row" style="margin-top:6px;">
+        <button id="btnFS" class="c4-fullscreen-btn" aria-label="Tam ekran rejimi" style="width:auto;max-width:160px;">⛶</button>
+      </div>
     </div>
     <div class="c4-status" id="c4Status"></div>
     <button class="c4-btn" onclick="c4Reset()">Yenidən başla</button>
@@ -107,7 +140,8 @@
   <script>
     // --- State
     let c4BoardArr, c4Turn, c4WinLine=[], c4Mode='pvp', c4AIThinking=false, c4Finished=false;
-    let c4SelectedCol = 3; // Для мобильных и кнопок
+    let c4SelectedCol = 3, c4SelectedRow = 0;
+    let c4ScoreR = 0, c4ScoreY = 0, c4LastDrop = null;
 
     function c4SetMode(m){
       c4Mode = m;
@@ -117,37 +151,75 @@
     }
     function c4Reset(){
       c4BoardArr = Array(6).fill().map(()=>Array(7).fill(null));
-      c4Turn = 'r'; c4WinLine=[]; c4AIThinking=false; c4Finished=false; c4SelectedCol=3;
-      c4Render(); c4Status();
+      c4Turn = 'r'; c4WinLine=[]; c4AIThinking=false; c4Finished=false;
+      c4SelectedCol=3; c4SelectedRow=0; c4LastDrop=null;
+      c4Render(); c4Status(); c4UpdateScores();
       if(c4Mode==='ai' && c4Turn==='y') setTimeout(()=>{if(!c4Finished) c4AIMove();},800);
+    }
+    function c4UpdateScores(){
+      document.getElementById('c4ScoreR').textContent = `🔴 ${c4ScoreR}`;
+      document.getElementById('c4ScoreY').textContent = `🟡 ${c4ScoreY}`;
     }
     function c4Render(){
       let html='';
       for(let y=0;y<6;y++)for(let x=0;x<7;x++){
         let v = c4BoardArr[y][x]; let win = c4WinLine.some(([yy,xx])=>yy===y&&xx===x);
-        let selected = (y===0 && x===c4SelectedCol) ? ' style="box-shadow:0 0 0 4px #fbbd23,0 7px 28px #0007"' : '';
-        html+=`<div class="c4-cell${v?' c4-piece '+v:''}${win?' win':''}" onclick="c4CellClick(${x})"${selected}></div>`;
+        let selected = (y===c4SelectedRow && x===c4SelectedCol) ? ' style="box-shadow:0 0 0 4px #fbbd23,0 7px 28px #0007"' : '';
+        html+=`<div class="c4-cell${win?' win':''}"${selected} onclick="c4CellClick(${x})">`;
+        if(v){
+          // Animation: если только что дропнули, то анимируем падение
+          let dropAnim = "";
+          if(c4LastDrop && c4LastDrop.x===x && c4LastDrop.y===y && c4LastDrop.anim){
+            dropAnim = `style="transform:translateY(-${(c4LastDrop.fromRow-y)*52}px);opacity:0;animation:c4-drop 0.38s cubic-bezier(.39,1.01,.19,1.02) 1;animation-fill-mode:forwards;"`;
+            c4LastDrop = null;
+          }
+          html+=`<div class="c4-piece ${v}" ${dropAnim}></div>`;
+        }
+        html+=`</div>`;
       }
       document.getElementById('c4Board').innerHTML=html;
     }
+    // CSS drop анимация
+    const styleAnim = document.createElement('style');
+    styleAnim.innerHTML = `
+      @keyframes c4-drop {
+        0% {transform:translateY(-260px); opacity:0;}
+        80% {transform:translateY(8px); opacity:1;}
+        100% {transform:translateY(0); opacity:1;}
+      }
+    `;
+    document.head.appendChild(styleAnim);
+
     function c4Status(){
       if(c4WinLine.length) document.getElementById('c4Status').innerHTML = (c4Turn==='r'?(c4Mode==='ai'?"NEON AI":"Sarı"):"Qırmızı")+" qalib oldu!";
       else if(c4BoardArr.every(row=>row.every(cell=>cell))) document.getElementById('c4Status').innerHTML = "Heç-heçə!";
       else if(c4Mode==='ai') document.getElementById('c4Status').innerHTML = c4Turn==='r'?"Sənin növbən":"NEON AI düşünür...";
       else document.getElementById('c4Status').innerHTML = (c4Turn==='r'?"Qırmızı":"Sarı")+" növbədə";
     }
+
     function c4CellClick(col){
       if(c4Finished||c4AIThinking||(c4Mode==='ai'&&c4Turn==='y'))return;
+      let yDrop = -1;
       for(let y=5;y>=0;y--)if(!c4BoardArr[y][col]){
-        c4BoardArr[y][col]=c4Turn;
-        if(c4CheckWin(y,col,c4Turn)){c4Finished=true;c4Render();c4Status();return;}
-        if(c4BoardArr.every(row=>row.every(cell=>cell))){c4Render();c4Status();return;}
-        c4Turn = c4Turn==='r'?'y':'r';
-        c4SelectedCol = 3;
-        c4Render(); c4Status();
-        if(c4Mode==='ai' && c4Turn==='y') setTimeout(()=>{if(!c4Finished) c4AIMove();},800);
+        yDrop = y;
         break;
       }
+      if(yDrop === -1) return;
+      // Анимация падения
+      c4LastDrop = {x:col, y:yDrop, fromRow:0, anim:true};
+      c4BoardArr[yDrop][col]=c4Turn;
+      c4SelectedRow=yDrop;
+      if(c4CheckWin(yDrop,col,c4Turn)){
+        c4Finished=true;
+        if(c4Turn==='r') c4ScoreR++;
+        else c4ScoreY++;
+        c4Render(); c4Status(); c4UpdateScores(); return;
+      }
+      if(c4BoardArr.every(row=>row.every(cell=>cell))){ c4Render(); c4Status(); return;}
+      c4Turn = c4Turn==='r'?'y':'r';
+      c4SelectedCol=3; c4SelectedRow=0;
+      c4Render(); c4Status();
+      if(c4Mode==='ai' && c4Turn==='y') setTimeout(()=>{if(!c4Finished) c4AIMove();},800);
     }
     function c4CheckWin(y,x,p){
       let dirs=[[0,1],[1,0],[1,1],[1,-1]];
@@ -165,14 +237,12 @@
       }
       return false;
     }
-    // --- NEON AI (улучшенный: сначала ищет победу, затем блокирует игрока, иначе случайно)
     function c4AIMove(){
       if(c4Finished) { c4AIThinking = false; return; }
       c4AIThinking=true;
       let choices = [];
       for(let x=0;x<7;x++)if(!c4BoardArr[0][x])choices.push(x);
       let col = null;
-      // 1. Победный ход
       for(let x of choices){
         let y = getAvailableRow(x);
         if(y!==-1){
@@ -182,7 +252,6 @@
           if(col!==null) break;
         }
       }
-      // 2. Блокировка игрока
       if(col===null){
         for(let x of choices){
           let y = getAvailableRow(x);
@@ -194,7 +263,6 @@
           }
         }
       }
-      // 3. Иначе в центр или случайно
       if(col===null){
         col = choices.includes(3)?3:choices[Math.floor(Math.random()*choices.length)];
       }
@@ -207,14 +275,19 @@
       for(let y=5;y>=0;y--)if(!c4BoardArr[y][col])return y;
       return -1;
     }
-    // --- Мобильные кнопки и жесты
+    // --- Мобильные кнопки и жесты ---
     function setupMobileControls() {
       const left = document.getElementById('btnLeftC4');
       const right = document.getElementById('btnRightC4');
       const drop = document.getElementById('btnDropC4');
-      left.ontouchstart = left.onmousedown = ()=>{ c4SelectedCol = Math.max(0,c4SelectedCol-1); c4Render(); };
-      right.ontouchstart = right.onmousedown = ()=>{ c4SelectedCol = Math.min(6,c4SelectedCol+1); c4Render(); };
-      drop.ontouchstart = drop.onmousedown = ()=>{ c4CellClick(c4SelectedCol); };
+      const up   = document.getElementById('btnUpC4');
+      const down = document.getElementById('btnDownC4');
+      // pointerdown предотвращает двойное срабатывание
+      left.addEventListener('pointerdown', ()=>{ c4SelectedCol = Math.max(0,c4SelectedCol-1); c4Render(); });
+      right.addEventListener('pointerdown', ()=>{ c4SelectedCol = Math.min(6,c4SelectedCol+1); c4Render(); });
+      up.addEventListener('pointerdown', ()=>{ c4SelectedRow = Math.max(0,c4SelectedRow-1); c4Render(); });
+      down.addEventListener('pointerdown', ()=>{ c4SelectedRow = Math.min(5,c4SelectedRow+1); c4Render(); });
+      drop.addEventListener('pointerdown', ()=>{ c4CellClick(c4SelectedCol); });
       // Кнопка fullscreen
       const btnFS = document.getElementById('btnFS');
       btnFS.onclick = function() {
@@ -252,10 +325,11 @@
         if(Math.abs(dx)>30 && Math.abs(dx)>Math.abs(dy)){
           if(dx>0) { c4SelectedCol = Math.min(6,c4SelectedCol+1); c4Render(); }
           else { c4SelectedCol = Math.max(0,c4SelectedCol-1); c4Render(); }
-        } else if(Math.abs(dy)>30 && dy>0){
-          c4CellClick(c4SelectedCol);
+        } else if(Math.abs(dy)>30 && Math.abs(dy)>Math.abs(dx)){
+          if(dy>0) c4CellClick(c4SelectedCol);
+          else { c4SelectedRow = Math.max(0,c4SelectedRow-1); c4Render(); }
         }
-        // Свайп вниз на доске — fullscreen
+        // Свайп длинный вниз — fullscreen
         if(dy>70) document.getElementById('btnFS').click();
       }
     });
