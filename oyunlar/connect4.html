@@ -6,20 +6,22 @@
   <title>Connect Four | Neon Sultan</title>
   <link rel="stylesheet" href="../assets/css/style.css" />
   <style>
-    body {background: radial-gradient(ellipse at 60% 15%, #495082 0%, #181924 100%);}
-    .c4-container {display:flex; flex-direction:column; align-items:center; margin-top:44px; background:rgba(24,25,36,.98); border-radius:19px; padding:36px 22px 32px 22px; box-shadow:0 10px 44px #000b; max-width:430px; margin:auto;}
+    body {background: radial-gradient(ellipse at 60% 15%, #22264a 0%, #181924 100%);}
+    .c4-container {display:flex; flex-direction:column; align-items:center; margin-top:44px; background:rgba(24,25,36,.98); border-radius:19px; padding:36px 22px 32px 22px; box-shadow:0 10px 44px #000b; max-width:470px; margin:auto;}
     .c4-title {font-size:2em; color:#61dafb; margin-bottom:8px; text-shadow:0 2px 12px #222b;}
     .c4-mode-row {margin-bottom:13px; display:flex; gap:13px;}
     .c4-mode-btn {background:linear-gradient(90deg,#61dafb,#fbbd23); color:#222; border:none; border-radius:8px; font-weight:bold; font-size:1em; padding:7px 18px; cursor:pointer; box-shadow:0 2px 8px #0004; transition:.16s;}
     .c4-mode-btn.active, .c4-mode-btn:focus {background:linear-gradient(90deg,#fbbd23,#61dafb); color:#fff; outline:2px solid #fbbd23;}
-    .c4-scores {display: flex; justify-content: space-between; width: 230px; color:#61dafb; font-size:1.12em; font-family: 'Inter', Arial, sans-serif; margin-bottom: 4px;}
-    .c4-board {display:grid; grid-template-columns:repeat(7,44px); grid-template-rows:repeat(6,44px); gap:4px; margin-top:13px; background:#174c6f; border-radius:14px; box-shadow:0 7px 28px #0007;}
+    .c4-scores {display: flex; justify-content: space-between; width: 260px; color:#61dafb; font-size:1.18em; font-family: 'Inter', Arial, sans-serif; margin-bottom: 4px;}
+    .c4-scores span {display:inline-block; min-width: 65px;}
+    .c4-lang-select {margin:0 0 10px 0;}
+    .c4-board {display:grid; grid-template-columns:repeat(7,48px); grid-template-rows:repeat(6,48px); gap:4px; margin-top:13px; background:#1a2240; border-radius:16px; box-shadow:0 7px 28px #0009;}
     .c4-cell {
-      width:44px; height:44px; border-radius:50%;
+      width:48px; height:48px; border-radius:50%;
       background:linear-gradient(135deg,#f5efdf 70%,#e5e1c1 100%);
-      border:3px solid #3e4a7e;
+      border:3px solid #2d3250;
       display:flex; align-items:center; justify-content:center;
-      cursor:pointer; box-shadow:0 3px 14px #0007; transition:.14s;
+      cursor:pointer; box-shadow:0 4px 18px #0007; transition:.12s;
       position: relative; overflow:hidden;
     }
     .c4-piece {
@@ -29,17 +31,17 @@
       will-change: transform;
     }
     .c4-piece.r {
-      background:radial-gradient(circle,#e53935 60%,#b71c1c 100%);
+      background:radial-gradient(circle,#ff3377 60%,#b71c1c 100%);
       box-shadow:0 0 16px #e53935bb,0 4px 8px #b71c1c88;
       border:2.5px solid #fff;
     }
     .c4-piece.y {
-      background:radial-gradient(circle,#ffeb3b 65%,#ffc107 100%);
+      background:radial-gradient(circle,#ffe600 65%,#ffd000 100%);
       box-shadow:0 0 16px #ffe500bb,0 4px 8px #ffc10788;
       border:2.5px solid #fff;
     }
     .c4-cell.win .c4-piece {
-      animation: c4-win-pulse 0.6s infinite alternate;
+      animation: c4-win-pulse 0.48s infinite alternate;
       outline: 4px solid #00e676;
       box-shadow:0 0 12px #00e676;
     }
@@ -53,17 +55,15 @@
     .c4-controls-mobile {
       display:none; margin-top:13px; width:100%; max-width:400px; flex-direction:column; align-items:center; gap:2px;
     }
-    .c4-controls-row {
-      display: flex; justify-content: center; gap: 12px; width: 100%;
-    }
+    .c4-controls-row {display: flex; justify-content: center; gap: 12px; width: 100%;}
     .c4-controls-mobile button {
-      background: #23233b;
+      background: #1c2060;
       color: #fbbd23;
-      font-size: 1.7em;
+      font-size: 1.8em;
       border: none;
-      border-radius: 11px;
-      width: 54px; height: 54px;
-      margin: 1px 3px;
+      border-radius: 13px;
+      width: 51px; height: 51px;
+      margin: 1.5px 3px;
       box-shadow: 0 2px 10px #0007;
       display: flex;
       align-items: center;
@@ -74,7 +74,7 @@
     }
     .c4-controls-mobile button:active, .c4-controls-mobile button.active { background: #fbbd23; color: #23233b; }
     .c4-fullscreen-btn {
-      margin-top: 14px;
+      margin-top: 10px;
       padding: 10px 24px;
       font-size: 1.1em;
       border-radius: 10px;
@@ -86,26 +86,54 @@
       box-shadow: 0 2px 8px #222b44;
       transition: background .2s, color .2s;
       width: 100%;
-      max-width: 340px;
+      max-width: 160px;
     }
     .c4-fullscreen-btn:active, .c4-fullscreen-btn:focus {
       background: #61dafb;
       color: #181924;
       outline: 2px solid #ffd600;
     }
+    .c4-hint {
+      position: absolute;
+      left: 50%; top: 0; transform: translateX(-50%);
+      font-size: 2.1em;
+      color: #00e676;
+      pointer-events:none;
+      z-index: 3;
+      animation: hint-pulse 1.1s infinite alternate;
+      filter: drop-shadow(0 3px 7px #00e67644);
+    }
+    @keyframes hint-pulse {
+      from { opacity: 0.6; }
+      to { opacity: 1; }
+    }
+    .c4-avatar {
+      width:28px; height:28px; border-radius:50%; object-fit:cover; vertical-align:middle; margin-right:6px;
+      border:2px solid #fbbd23;background:#fff;
+    }
     @media (max-width:600px) {
       .c4-container {padding:12px 2vw;}
-      .c4-board {grid-template-columns:repeat(7,12vw); grid-template-rows:repeat(6,12vw);}
-      .c4-cell {width:12vw; height:12vw;}
+      .c4-board {grid-template-columns:repeat(7,13vw); grid-template-rows:repeat(6,13vw);}
+      .c4-cell {width:13vw; height:13vw;}
       .c4-controls-mobile{display:flex;}
       .c4-btn, .c4-fullscreen-btn {font-size:1.07em;}
-      .c4-scores {width: 98vw;}
+      .c4-scores {width: 99vw;}
     }
   </style>
 </head>
 <body>
   <nav class="navbar modern-navbar"><div class="container"><div class="logo">Neon Sultan</div></div></nav>
   <main class="c4-container" id="c4Main">
+    <div style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;">
+      <div class="c4-lang-select">
+        <select id="langSelect" style="border-radius:7px;font-size:1em;padding:3px 12px;">
+          <option value="az">🇦🇿 AZ</option>
+          <option value="ru">🇷🇺 RU</option>
+          <option value="en">🇬🇧 EN</option>
+        </select>
+      </div>
+      <button class="c4-btn" id="btnScreenshot" style="margin:0;font-size:0.97em;padding:7px 14px;">📸</button>
+    </div>
     <div class="c4-title">Connect Four</div>
     <div class="c4-mode-row">
       <button id="c4PVP" class="c4-mode-btn active" onclick="c4SetMode('pvp')">2 nəfər</button>
@@ -114,6 +142,10 @@
     <div class="c4-scores" id="c4Scores">
       <span id="c4ScoreR">🔴 0</span>
       <span id="c4ScoreY">🟡 0</span>
+    </div>
+    <div id="c4Avatars" style="width: 230px; margin-bottom: 8px; display:flex; justify-content:space-between;">
+      <span id="avatarRWrap"><img id="avatarR" class="c4-avatar" src="https://api.dicebear.com/8.x/identicon/svg?seed=Player1" /><span id="nickR">Player 1</span></span>
+      <span id="avatarYWrap"><img id="avatarY" class="c4-avatar" src="https://api.dicebear.com/8.x/identicon/svg?seed=Player2" /><span id="nickY">Player 2</span></span>
     </div>
     <div class="c4-board" id="c4Board"></div>
     <div class="c4-controls-mobile" id="c4MobileControls">
@@ -133,15 +165,149 @@
       </div>
     </div>
     <div class="c4-status" id="c4Status"></div>
-    <button class="c4-btn" onclick="c4Reset()">Yenidən başla</button>
+    <button class="c4-btn" onclick="c4Reset()"
+      id="btnRestart">Yenidən başla</button>
     <a href="../oyunlar.html" class="c4-btn" style="background:#222; color:#fff; margin-top:12px;">← Oyunlara qayıt</a>
   </main>
   <footer class="footer"><p>© 2025 Sultan. Neon Group Azerbaijan</p></footer>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <script>
-    // --- State
+    // ====== i18n ======
+    const LANGS = {
+      az: {
+        connect4: "Connect Four",
+        pvp: "2 nəfər",
+        ai: "NEON AI",
+        turnR: "Qırmızı növbədə",
+        turnY: "Sarı növbədə",
+        yourTurn: "Sənin növbən",
+        aiThinking: "NEON AI düşünür...",
+        redWin: "Qırmızı qalib oldu!",
+        yellowWin: "Sarı qalib oldu!",
+        aiWin: "NEON AI qalib oldu!",
+        tie: "Heç-heçə!",
+        restart: "Yenidən başla",
+        screenshot: "📸"
+      },
+      ru: {
+        connect4: "Четыре в ряд",
+        pvp: "2 игрока",
+        ai: "NEON AI",
+        turnR: "Ход красных",
+        turnY: "Ход жёлтых",
+        yourTurn: "Твой ход",
+        aiThinking: "NEON AI думает...",
+        redWin: "Победа красных!",
+        yellowWin: "Победа жёлтых!",
+        aiWin: "NEON AI победил!",
+        tie: "Ничья!",
+        restart: "Сыграть ещё",
+        screenshot: "📸"
+      },
+      en: {
+        connect4: "Connect Four",
+        pvp: "2 Players",
+        ai: "NEON AI",
+        turnR: "Red's turn",
+        turnY: "Yellow's turn",
+        yourTurn: "Your turn",
+        aiThinking: "NEON AI is thinking...",
+        redWin: "Red wins!",
+        yellowWin: "Yellow wins!",
+        aiWin: "NEON AI wins!",
+        tie: "Draw!",
+        restart: "Restart",
+        screenshot: "📸"
+      }
+    };
+    let lang = localStorage.getItem("c4lang") || "az";
+    function setLang(l) {
+      lang = l;
+      localStorage.setItem("c4lang",l);
+      document.querySelector(".c4-title").textContent = LANGS[lang].connect4;
+      document.getElementById('c4PVP').textContent = LANGS[lang].pvp;
+      document.getElementById('c4AI').textContent = LANGS[lang].ai;
+      document.getElementById('btnRestart').textContent = LANGS[lang].restart;
+      document.getElementById('btnScreenshot').textContent = LANGS[lang].screenshot;
+      c4Render(); c4Status();
+    }
+    document.getElementById("langSelect").value = lang;
+    document.getElementById("langSelect").onchange = (e) => setLang(e.target.value);
+
+    // ====== Player avatars & names ======
+    let c4Avatars = {
+      r: localStorage.getItem("c4AvatarR") || "https://api.dicebear.com/8.x/identicon/svg?seed=Player1",
+      y: localStorage.getItem("c4AvatarY") || "https://api.dicebear.com/8.x/identicon/svg?seed=Player2"
+    };
+    let c4Nicks = {
+      r: localStorage.getItem("c4NickR") || "Player 1",
+      y: localStorage.getItem("c4NickY") || "Player 2"
+    };
+    function updateAvatarsNicks() {
+      document.getElementById('avatarR').src = c4Avatars.r;
+      document.getElementById('avatarY').src = c4Avatars.y;
+      document.getElementById('nickR').textContent = c4Nicks.r;
+      document.getElementById('nickY').textContent = c4Nicks.y;
+    }
+    // Выбор аватарки и ника
+    document.getElementById('avatarR').onclick = () => chooseAvatar('r');
+    document.getElementById('avatarY').onclick = () => chooseAvatar('y');
+    document.getElementById('nickR').onclick = () => chooseNick('r');
+    document.getElementById('nickY').onclick = () => chooseNick('y');
+    function chooseAvatar(color) {
+      let url = prompt(LANGS[lang].yourTurn + ": " + (color === "r" ? "🔴" : "🟡") + "\nURL şəkli və ya DiceBear", c4Avatars[color]);
+      if (url) {
+        c4Avatars[color] = url;
+        localStorage.setItem("c4Avatar" + color.toUpperCase(), url);
+        updateAvatarsNicks();
+      }
+    }
+    function chooseNick(color) {
+      let nick = prompt(LANGS[lang].yourTurn + ": " + (color === "r" ? "🔴" : "🟡") + "\nAdınızı yazın", c4Nicks[color]);
+      if (nick) {
+        c4Nicks[color] = nick;
+        localStorage.setItem("c4Nick" + color.toUpperCase(), nick);
+        updateAvatarsNicks();
+      }
+    }
+
+    // ====== Game State ======
     let c4BoardArr, c4Turn, c4WinLine=[], c4Mode='pvp', c4AIThinking=false, c4Finished=false;
     let c4SelectedCol = 3, c4SelectedRow = 0;
-    let c4ScoreR = 0, c4ScoreY = 0, c4LastDrop = null;
+    let c4ScoreR = Number(localStorage.getItem("c4ScoreR")||0), c4ScoreY = Number(localStorage.getItem("c4ScoreY")||0), c4LastDrop = null;
+    let c4HintMode = localStorage.getItem("c4Hint") === "1";
+
+    // --- Save/load localStorage progress
+    function saveC4State() {
+      localStorage.setItem("c4Board", JSON.stringify(c4BoardArr));
+      localStorage.setItem("c4Turn", c4Turn);
+      localStorage.setItem("c4WinLine", JSON.stringify(c4WinLine));
+      localStorage.setItem("c4Mode", c4Mode);
+      localStorage.setItem("c4ScoreR", c4ScoreR);
+      localStorage.setItem("c4ScoreY", c4ScoreY);
+      localStorage.setItem("c4SelectedCol", c4SelectedCol);
+      localStorage.setItem("c4SelectedRow", c4SelectedRow);
+    }
+    function loadC4State() {
+      if(localStorage.getItem("c4Board")){
+        c4BoardArr = JSON.parse(localStorage.getItem("c4Board"));
+        c4Turn = localStorage.getItem("c4Turn")||'r';
+        c4WinLine = JSON.parse(localStorage.getItem("c4WinLine"))||[];
+        c4Mode = localStorage.getItem("c4Mode")||'pvp';
+        c4ScoreR = Number(localStorage.getItem("c4ScoreR")||0);
+        c4ScoreY = Number(localStorage.getItem("c4ScoreY")||0);
+        c4SelectedCol = Number(localStorage.getItem("c4SelectedCol")||3);
+        c4SelectedRow = Number(localStorage.getItem("c4SelectedRow")||0);
+        c4Finished = !!c4WinLine.length || c4BoardArr.every(row=>row.every(cell=>cell));
+        c4AIThinking = false;
+        setLang(lang);
+        updateAvatarsNicks();
+        c4Render(); c4Status(); c4UpdateScores();
+        if(c4Mode==='ai' && c4Turn==='y' && !c4Finished) setTimeout(()=>{if(!c4Finished) c4AIMove();},500);
+        return true;
+      }
+      return false;
+    }
 
     function c4SetMode(m){
       c4Mode = m;
@@ -152,25 +318,32 @@
     function c4Reset(){
       c4BoardArr = Array(6).fill().map(()=>Array(7).fill(null));
       c4Turn = 'r'; c4WinLine=[]; c4AIThinking=false; c4Finished=false;
-      c4SelectedCol=3; c4SelectedRow=0; c4LastDrop=null;
-      c4Render(); c4Status(); c4UpdateScores();
+      c4SelectedCol = 3; c4SelectedRow = 0; c4LastDrop = null;
+      c4Render(); c4Status(); c4UpdateScores(); updateAvatarsNicks();
+      saveC4State();
       if(c4Mode==='ai' && c4Turn==='y') setTimeout(()=>{if(!c4Finished) c4AIMove();},800);
     }
     function c4UpdateScores(){
       document.getElementById('c4ScoreR').textContent = `🔴 ${c4ScoreR}`;
       document.getElementById('c4ScoreY').textContent = `🟡 ${c4ScoreY}`;
+      localStorage.setItem("c4ScoreR", c4ScoreR);
+      localStorage.setItem("c4ScoreY", c4ScoreY);
     }
     function c4Render(){
       let html='';
+      let hints = c4HintMode && !c4Finished ? getWinningMoves(c4Turn) : [];
       for(let y=0;y<6;y++)for(let x=0;x<7;x++){
-        let v = c4BoardArr[y][x]; let win = c4WinLine.some(([yy,xx])=>yy===y&&xx===x);
-        let selected = (y===c4SelectedRow && x===c4SelectedCol) ? ' style="box-shadow:0 0 0 4px #fbbd23,0 7px 28px #0007"' : '';
+        let v = c4BoardArr[y][x];
+        let win = c4WinLine.some(([yy,xx])=>yy===y&&xx===x);
+        let selected = (y===c4SelectedRow && x===c4SelectedCol) ? ' style="box-shadow:0 0 0 4px #fbbd23,0 7px 28px #0007;z-index:2;"' : '';
         html+=`<div class="c4-cell${win?' win':''}"${selected} onclick="c4CellClick(${x})">`;
+        if(hints.some(([yy,xx])=>yy===y&&xx===x)){
+          html += `<span class="c4-hint">⭐</span>`;
+        }
         if(v){
-          // Animation: если только что дропнули, то анимируем падение
           let dropAnim = "";
           if(c4LastDrop && c4LastDrop.x===x && c4LastDrop.y===y && c4LastDrop.anim){
-            dropAnim = `style="transform:translateY(-${(c4LastDrop.fromRow-y)*52}px);opacity:0;animation:c4-drop 0.38s cubic-bezier(.39,1.01,.19,1.02) 1;animation-fill-mode:forwards;"`;
+            dropAnim = `style="transform:translateY(-${(c4LastDrop.fromRow-y)*54}px);opacity:0;animation:c4-drop 0.38s cubic-bezier(.39,1.01,.19,1.02) 1;animation-fill-mode:forwards;"`;
             c4LastDrop = null;
           }
           html+=`<div class="c4-piece ${v}" ${dropAnim}></div>`;
@@ -183,7 +356,7 @@
     const styleAnim = document.createElement('style');
     styleAnim.innerHTML = `
       @keyframes c4-drop {
-        0% {transform:translateY(-260px); opacity:0;}
+        0% {transform:translateY(-320px); opacity:0;}
         80% {transform:translateY(8px); opacity:1;}
         100% {transform:translateY(0); opacity:1;}
       }
@@ -191,10 +364,14 @@
     document.head.appendChild(styleAnim);
 
     function c4Status(){
-      if(c4WinLine.length) document.getElementById('c4Status').innerHTML = (c4Turn==='r'?(c4Mode==='ai'?"NEON AI":"Sarı"):"Qırmızı")+" qalib oldu!";
-      else if(c4BoardArr.every(row=>row.every(cell=>cell))) document.getElementById('c4Status').innerHTML = "Heç-heçə!";
-      else if(c4Mode==='ai') document.getElementById('c4Status').innerHTML = c4Turn==='r'?"Sənin növbən":"NEON AI düşünür...";
-      else document.getElementById('c4Status').innerHTML = (c4Turn==='r'?"Qırmızı":"Sarı")+" növbədə";
+      let status = "";
+      if(c4WinLine.length) status = (c4Turn==='r'
+          ? (c4Mode==='ai'?LANGS[lang].aiWin:LANGS[lang].yellowWin)
+          : LANGS[lang].redWin);
+      else if(c4BoardArr.every(row=>row.every(cell=>cell))) status = LANGS[lang].tie;
+      else if(c4Mode==='ai') status = c4Turn==='r'?LANGS[lang].yourTurn:LANGS[lang].aiThinking;
+      else status = (c4Turn==='r'?LANGS[lang].turnR:LANGS[lang].turnY);
+      document.getElementById('c4Status').innerHTML = status;
     }
 
     function c4CellClick(col){
@@ -205,7 +382,6 @@
         break;
       }
       if(yDrop === -1) return;
-      // Анимация падения
       c4LastDrop = {x:col, y:yDrop, fromRow:0, anim:true};
       c4BoardArr[yDrop][col]=c4Turn;
       c4SelectedRow=yDrop;
@@ -213,12 +389,12 @@
         c4Finished=true;
         if(c4Turn==='r') c4ScoreR++;
         else c4ScoreY++;
-        c4Render(); c4Status(); c4UpdateScores(); return;
+        c4Render(); c4Status(); c4UpdateScores(); saveC4State(); return;
       }
-      if(c4BoardArr.every(row=>row.every(cell=>cell))){ c4Render(); c4Status(); return;}
+      if(c4BoardArr.every(row=>row.every(cell=>cell))){ c4Render(); c4Status(); saveC4State(); return;}
       c4Turn = c4Turn==='r'?'y':'r';
       c4SelectedCol=3; c4SelectedRow=0;
-      c4Render(); c4Status();
+      c4Render(); c4Status(); c4UpdateScores(); saveC4State();
       if(c4Mode==='ai' && c4Turn==='y') setTimeout(()=>{if(!c4Finished) c4AIMove();},800);
     }
     function c4CheckWin(y,x,p){
@@ -269,13 +445,26 @@
       setTimeout(()=>{
         if(!c4Finished) c4CellClick(col);
         c4AIThinking=false;
-      },350+Math.random()*300);
+      },350+Math.random()*250);
     }
     function getAvailableRow(col){
       for(let y=5;y>=0;y--)if(!c4BoardArr[y][col])return y;
       return -1;
     }
-    // --- Мобильные кнопки и жесты ---
+    // --- Подсказки: возвращает массив выигрышных ходов для игрока p
+    function getWinningMoves(p) {
+      const moves = [];
+      for(let x=0;x<7;x++){
+        let y = getAvailableRow(x);
+        if(y!==-1){
+          c4BoardArr[y][x]=p;
+          if(c4CheckWin(y,x,p)) moves.push([y,x]);
+          c4BoardArr[y][x]=null; c4WinLine=[];
+        }
+      }
+      return moves;
+    }
+    // --- Геймпад + UX
     function setupMobileControls() {
       const left = document.getElementById('btnLeftC4');
       const right = document.getElementById('btnRightC4');
@@ -310,7 +499,8 @@
       });
     }
     setupMobileControls();
-    // --- Свайпы на доске для мобильных
+
+    // --- Свайпы для управления на мобильных
     let touchStartX=0, touchStartY=0;
     document.getElementById('c4Board').addEventListener('touchstart', function(e){
       if(e.touches.length===1){
@@ -333,7 +523,37 @@
         if(dy>70) document.getElementById('btnFS').click();
       }
     });
-    c4Reset();
+
+    // --- Скриншот победного момента
+    document.getElementById('btnScreenshot').onclick = function() {
+      html2canvas(document.getElementById('c4Board')).then(canvas => {
+        const link = document.createElement('a');
+        link.download = `connect4_${Date.now()}.png`;
+        link.href = canvas.toDataURL();
+        link.click();
+      });
+    };
+
+    // --- Туториал (обучение при первом запуске)
+    if(!localStorage.getItem('c4TutorialDone')){
+      setTimeout(()=>{
+        alert("✨ Qaydalar: Öz fişkanızı (rənginizi) sıraya düz — 4 bir sırada!\n\nİdarə: Fişkanı atmaq üçün ⏬ düyməsini basın və ya ustundə klikləyin.\n\nGöstərişlər üçün ⭐ düyməsini aktivləşdirin.\n\nUğurlar!");
+        localStorage.setItem('c4TutorialDone','1');
+      },600);
+    }
+
+    // --- Подсказки: режим включается по долгому нажатию на доску
+    document.getElementById('c4Board').addEventListener('contextmenu', function(e){
+      e.preventDefault();
+      c4HintMode = !c4HintMode;
+      localStorage.setItem("c4Hint", c4HintMode ? "1" : "0");
+      c4Render();
+    });
+
+    // --- Прогресс после обновления
+    if(!loadC4State()){ c4Reset(); }
+    setLang(lang);
+    updateAvatarsNicks();
   </script>
 </body>
 </html>
